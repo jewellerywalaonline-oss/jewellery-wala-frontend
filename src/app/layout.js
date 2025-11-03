@@ -1,0 +1,306 @@
+import { Lato } from "next/font/google";
+import "./globals.css";
+import { Client } from "@/redux/provider/Client";
+import { Toaster } from "sonner";
+import Header from "@/components/comman/Header";
+import Footer from "@/components/comman/Footer";
+import { siteConfig, defaultMetadata, getStructuredAddress } from "@/lib/utils";
+import { cookies } from "next/headers";
+import { cache } from "react";
+import ScrollToTop from "@/components/ui/scroll-to-top";
+import RequirementModal from "@/components/comman/RequirementModal";
+import LoginModal from "@/components/comman/LoginModal";
+import { BottomTabNavigation } from "@/components/ui/BottomTabNavigation";
+
+const lato = Lato({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-lato",
+});
+
+export const metadata = {
+  ...defaultMetadata,
+  title: {
+    default: `${siteConfig.name} - Premium Jewellery Store in Jodhpur | Gold, Silver & Diamond Jewellery`,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  keywords: siteConfig.keywords.join(", "),
+  alternates: {
+    canonical: siteConfig.url,
+  },
+};
+
+// Organization Schema Component
+function OrganizationSchema() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "JewelryStore",
+    "@id": `${siteConfig.url}/#organization`,
+    name: siteConfig.name,
+    legalName: siteConfig.legalName,
+    url: siteConfig.url,
+    logo: `${siteConfig.url}/logo.png`,
+    description: siteConfig.description,
+    foundingDate: siteConfig.business.foundedYear,
+    priceRange: siteConfig.business.priceRange,
+    telephone: siteConfig.contact.phone,
+    email: siteConfig.contact.email,
+    address: getStructuredAddress(),
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: "26.2389",
+      longitude: "73.0243",
+    },
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "10:00",
+        closes: "20:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Saturday", "Sunday"],
+        opens: "10:00",
+        closes: "21:00",
+      },
+    ],
+    sameAs: [
+      siteConfig.social.facebook,
+      siteConfig.social.instagram,
+      siteConfig.social.twitter,
+      siteConfig.social.pinterest,
+      siteConfig.social.youtube,
+    ],
+    areaServed: {
+      "@type": "City",
+      name: "Jodhpur",
+      containedIn: {
+        "@type": "State",
+        name: "Rajasthan",
+        containedIn: {
+          "@type": "Country",
+          name: "India",
+        },
+      },
+    },
+    paymentAccepted: "Cash, Credit Card, Debit Card, UPI, Net Banking",
+    currenciesAccepted: "INR",
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+// Website Schema Component
+function WebsiteSchema() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${siteConfig.url}/#website`,
+    url: siteConfig.url,
+    name: siteConfig.name,
+    description: siteConfig.description,
+    publisher: {
+      "@id": `${siteConfig.url}/#organization`,
+    },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteConfig.url}/product-listing?search={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+const getUser = cache(async () => {
+  const cookie = await cookies();
+  const token = cookie.get("user");
+
+  if (!token) return null;
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}api/website/user/profile`,
+    {
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+      },
+      method: "post",
+    }
+  );
+  if (!response.ok) {
+    return null;
+  }
+  const data = await response.json();
+  if (!response.ok || !data._status) {
+    return null;
+  }
+  return data;
+});
+
+const getLogo = cache(async () => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}api/website/logo`,
+    {
+      method: "post",
+      next: { revalidate: 86400 },
+    }
+  );
+  if (!response.ok) {
+    return null;
+  }
+  const data = await response.json();
+  if (!response.ok || !data._status) {
+    return null;
+  }
+  return data;
+});
+
+const getNavigation = cache(async () => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}api/website/nav`,
+    {
+      method: "POST",
+      next: {
+        revalidate: 3600,
+        tags: ["navigation"],
+      },
+      headers: {
+        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=3600",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    // If there's an error, try to return from cache if available
+    console.error("Failed to fetch navigation data");
+    return null;
+  }
+
+  const data = await response.json();
+
+  if (!data?._status) {
+    console.error("Invalid navigation data format");
+    return null;
+  }
+
+  return data;
+});
+
+async function getCart() {
+  const cookie = await cookies();
+  const token = cookie.get("user");
+
+  if (!token) return null;
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}api/website/cart/view`,
+    {
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+      },
+      method: "post",
+    }
+  );
+  if (!response.ok) {
+    return null;
+  }
+  const data = await response.json();
+  if (!response.ok || !data._status) {
+    return null;
+  }
+  return data;
+}
+
+async function getWishlist() {
+  const cookie = await cookies();
+  const token = cookie.get("user");
+
+  if (!token) return null;
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}api/website/wishlist/view`,
+    {
+      headers: {
+        Authorization: `Bearer ${token.value}`,
+      },
+      method: "post",
+    }
+  );
+  if (!response.ok) {
+    return null;
+  }
+  const data = await response.json();
+  if (!response.ok || !data._status) {
+    return null;
+  }
+  return data;
+}
+
+export default async function RootLayout({ children }) {
+  const [user, cart, wishlist, logo, navigation] = await Promise.all([
+    getUser(),
+    getCart(),
+    getWishlist(),
+    getLogo(),
+    getNavigation(),
+  ]);
+
+  console.clear();
+  return (
+    <html lang="en">
+      <head>
+        <OrganizationSchema />
+        <WebsiteSchema />
+        <link rel="canonical" href={siteConfig.url} />
+        <meta
+          name="google-site-verification"
+          content="4jBIp_u1ex8ub0zCeOXN-UnbczFciy1aAO90vr7yhH8"
+        />
+        <meta name="geo.region" content="IN-RJ" />
+        <meta name="geo.placename" content="Jodhpur" />
+        <meta name="geo.position" content="26.2389;73.0243" />
+        <meta name="ICBM" content="26.2389, 73.0243" />
+
+        {/* Google Login script */}
+        <script
+          src="https://accounts.google.com/gsi/client"
+          async
+          defer
+        ></script>
+      </head>
+      <body
+        className={`min-h-screen bg-background antialiased flex flex-col ${lato.variable} pb-12 md:pb-0`}
+      >
+        <Client
+          preloadedState={{
+            logo: logo,
+            cart: cart,
+            wishlist: wishlist,
+            auth: user,
+          }}
+        >
+          <Header navigationData={navigation} />
+          <main className="flex-1 ">{children}</main>
+          <Footer />
+          <ScrollToTop />
+          <Toaster richColors closeButton position="top-right" />
+          <LoginModal />
+          <RequirementModal user={user} />
+          <BottomTabNavigation />
+        </Client>
+      </body>
+    </html>
+  );
+}

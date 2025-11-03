@@ -1,0 +1,791 @@
+"use client";
+import { useState } from "react";
+import {
+  createOrder,
+  createRazorpayOrder,
+  verifyPayment,
+} from "@/lib/orderService";
+
+import { useSearchParams } from "next/navigation";
+import { useSelector } from "react-redux";
+import Image from "next/image";
+import OrederSummery from "@/components/comman/OrederSummery";
+import { toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { HoldToConfirmButton } from "@/components/ui/hold-to-confirm-button";
+import { LoadingUi } from "./Cart";
+
+export default function Checkout() {
+  const searchParams = useSearchParams();
+  const [alert, setAlert] = useState({
+    title: "",
+    open: false,
+  });
+  const logo = useSelector((state) => state.logo.logo);
+  const purchaseType = searchParams.get("type") || "cart";
+  let cartItems = [];
+  if (purchaseType === "direct") {
+    const item = useSelector((state) => state.cart.buyNowItem);
+    cartItems = Array.isArray(item) ? item : [item];
+  } else {
+    cartItems = useSelector((state) => state.cart.cartItems);
+  }
+
+  const [loading, setLoading] = useState(false);
+  const user = useSelector((state) => state.auth.details);
+
+  const [orderData, setOrderData] = useState({
+    shippingAddress: {
+      fullName: user.name,
+      phone: user.mobile || "",
+      email: user.email,
+      street: user.address.street,
+      area: user.address.area,
+      city: user.address.city,
+      state: user.address.state,
+      pincode: user.address.pincode,
+      instructions: user.address.instructions,
+    },
+    notes: "",
+    isGift: false,
+    giftMessage: "",
+    giftWrap: false,
+    couponCode: "",
+  });
+
+  // Load Razorpay script
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  // Handle payment
+  const handlePayment = async () => {
+    try {
+      if (testError(orderData)) {
+        setAlert({
+          title: `Please Fill ${testError(orderData)}`,
+          open: true,
+        });
+        return;
+      }
+      setLoading(true);
+
+      const orderPayload = {
+        purchaseType,
+        ...orderData,
+        ...(purchaseType == "direct" && { items: cartItems }),
+      };
+
+      const createOrderResponse = await createOrder(orderPayload);
+      const { orderId } = createOrderResponse.order;
+
+      const razorpayResponse = await createRazorpayOrder(orderId);
+      const { razorpayOrderId, amount, currency, keyId } = razorpayResponse;
+
+      const res = await loadRazorpayScript();
+      if (!res) {
+        setAlert({
+          title:
+            "Razorpay SDK failed to load. Please check your internet connection.",
+          open: true,
+        });
+        return;
+      }
+
+      const options = {
+        key: keyId,
+        amount: amount * 100, // Amount in paise
+        currency: currency,
+        name: "Your Jewelry Store",
+        description: `Order #${orderId}`,
+        image: logo || "", // Your logo
+        order_id: razorpayOrderId,
+        prefill: {
+          name: orderData.shippingAddress.fullName,
+          email: orderData.shippingAddress.email,
+          contact: orderData.shippingAddress.phone,
+        },
+        theme: {
+          color: "#3399cc",
+        },
+        handler: async function (response) {
+          // Step 5: Verify payment on backend
+          setLoading(true);
+          try {
+            const verifyResponse = await verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: orderId,
+            });
+
+            if (verifyResponse.success) {
+              setAlert({
+                title: "Payment successful! Check your email for OTP.",
+                open: true,
+              });
+              setTimeout(() => {
+                setLoading(false);
+                // Redirect to order success page
+                window.location.href = `/order-success?orderId=${orderId}&otp=${verifyResponse.order.deliveryOTP}&packageId=${verifyResponse.order.packageId}`;
+              }, 1000);
+            }
+          } catch (error) {
+            console.error("Payment verification failed:", error);
+            setAlert({
+              title: "Payment verification failed. Please contact support.",
+              open: true,
+            });
+            setLoading(false);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setAlert({
+              title: "Payment cancelled",
+              open: true,
+            });
+            setLoading(false);
+          },
+        },
+      };
+
+      // Step 6: Open Razorpay checkout
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
+    } catch (error) {
+      console.error("Payment error:", error);
+      setAlert({
+        title: "Something went wrong. Please try again.",
+        open: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <LoadingUi hidden={loading} />
+
+      <div className="max-w-7xl mx-auto p-4 sm:p-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text ">
+          Complete Your Order
+        </h1>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Shipping & Billing */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Shipping Address */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-medium">
+                    1
+                  </span>
+                  Shipping Information
+                </h2>
+                <button
+                  onClick={() => {
+                    // Pre-fill with user's saved address if available
+                    if (user?.address) {
+                      setOrderData((prev) => ({
+                        ...prev,
+                        shippingAddress: {
+                          ...prev.shippingAddress,
+                          ...user.address,
+                          fullName: user.name,
+                          email: user.email,
+                          phone: user.phone || "",
+                        },
+                      }));
+                    }
+                  }}
+                  className="text-sm font-medium text-amber-600 hover:text-amber-700 transition-colors"
+                >
+                  Use saved address
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Full Name */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={orderData.shippingAddress.fullName}
+                    onChange={(e) =>
+                      setOrderData({
+                        ...orderData,
+                        shippingAddress: {
+                          ...orderData.shippingAddress,
+                          fullName: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    required
+                  />
+                </div>
+
+                {/* Email */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    value={orderData.shippingAddress.email}
+                    onChange={(e) =>
+                      setOrderData({
+                        ...orderData,
+                        shippingAddress: {
+                          ...orderData.shippingAddress,
+                          email: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    required
+                  />
+                </div>
+
+                {/* Phone */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Phone *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <span className="text-gray-500 text-sm">+91</span>
+                    </div>
+                    <input
+                      type="tel"
+                      value={orderData.shippingAddress.phone}
+                      onChange={(e) => {
+                        // Only allow numbers
+                        const value = e.target.value.replace(/\D/g, "");
+                        if (value.length <= 10) {
+                          setOrderData({
+                            ...orderData,
+                            shippingAddress: {
+                              ...orderData.shippingAddress,
+                              phone: value,
+                            },
+                          });
+                        }
+                      }}
+                      className="w-full pl-12 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                      maxLength="10"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Pincode */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Pincode *
+                  </label>
+                  <input
+                    type="text"
+                    value={orderData.shippingAddress.pincode}
+                    onChange={(e) => {
+                      // Only allow numbers and limit to 6 digits
+                      const value = e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 6);
+                      setOrderData({
+                        ...orderData,
+                        shippingAddress: {
+                          ...orderData.shippingAddress,
+                          pincode: value,
+                        },
+                      });
+                    }}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    maxLength="6"
+                    required
+                  />
+                </div>
+
+                {/* Street */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Street (House No, Building) *
+                  </label>
+                  <input
+                    type="text"
+                    value={orderData.shippingAddress.street}
+                    onChange={(e) =>
+                      setOrderData({
+                        ...orderData,
+                        shippingAddress: {
+                          ...orderData.shippingAddress,
+                          street: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    required
+                  />
+                </div>
+
+                {/* Area */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Area *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="E.g., Near Central Park"
+                    value={orderData.shippingAddress.area}
+                    onChange={(e) =>
+                      setOrderData({
+                        ...orderData,
+                        shippingAddress: {
+                          ...orderData.shippingAddress,
+                          area: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                  />
+                </div>
+
+                {/* City */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    City *
+                  </label>
+                  <input
+                    type="text"
+                    value={orderData.shippingAddress.city}
+                    onChange={(e) =>
+                      setOrderData({
+                        ...orderData,
+                        shippingAddress: {
+                          ...orderData.shippingAddress,
+                          city: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    required
+                  />
+                </div>
+
+                {/* State */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    State *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter State "
+                    value={orderData.shippingAddress.state}
+                    onChange={(e) =>
+                      setOrderData({
+                        ...orderData,
+                        shippingAddress: {
+                          ...orderData.shippingAddress,
+                          state: e.target.value,
+                        },
+                      })
+                    }
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Delivery Instructions */}
+              <div className="mt-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Delivery Instructions (Optional)
+                </label>
+                <textarea
+                  placeholder="Any special delivery instructions?"
+                  rows="2"
+                  value={orderData.shippingAddress.instructions}
+                  onChange={(e) =>
+                    setOrderData({
+                      ...orderData,
+                      shippingAddress: {
+                        ...orderData.shippingAddress,
+                        instructions: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Gift Options */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-6">
+                <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-medium">
+                  2
+                </span>
+                Gift Options
+              </h2>
+
+              <div className="flex items-start space-x-3">
+                <div className="flex items-center h-5 mt-0.5">
+                  <input
+                    id="is-gift"
+                    type="checkbox"
+                    checked={orderData.isGift}
+                    onChange={(e) =>
+                      setOrderData({ ...orderData, isGift: e.target.checked })
+                    }
+                    className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label
+                    htmlFor="is-gift"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    This is a gift
+                  </label>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Add a gift message and gift wrap to your order
+                  </p>
+
+                  {orderData.isGift && (
+                    <div className="mt-4 space-y-4 pl-1">
+                      <div>
+                        <label
+                          htmlFor="gift-message"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                          Gift Message (Optional)
+                        </label>
+                        <textarea
+                          id="gift-message"
+                          rows="2"
+                          placeholder="Write a personal message..."
+                          value={orderData.giftMessage}
+                          onChange={(e) =>
+                            setOrderData({
+                              ...orderData,
+                              giftMessage: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all text-sm"
+                        />
+                      </div>
+
+                      <div className="flex items-start space-x-3">
+                        <div className="flex items-center h-5 mt-0.5">
+                          <input
+                            id="gift-wrap"
+                            type="checkbox"
+                            checked={orderData.giftWrap}
+                            onChange={(e) =>
+                              setOrderData({
+                                ...orderData,
+                                giftWrap: e.target.checked,
+                              })
+                            }
+                            className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                          />
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="gift-wrap"
+                            className="text-sm font-medium text-gray-700"
+                          >
+                            Add Gift Wrap (₹50)
+                          </label>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            Premium gift wrapping with a personalized message
+                            card
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Order Notes */}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-4">
+                <span className="w-6 h-6 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-medium">
+                  3
+                </span>
+                Additional Information
+              </h2>
+
+              <div className="space-y-4">
+                {/* Coupon Code */}
+                <div>
+                  <label
+                    htmlFor="coupon"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Coupon Code (Optional)
+                  </label>
+                  <div className="flex space-x-2">
+                    <input
+                      id="coupon"
+                      type="text"
+                      placeholder="Enter coupon code"
+                      value={orderData.couponCode}
+                      onChange={(e) =>
+                        setOrderData({
+                          ...orderData,
+                          couponCode: e.target.value,
+                        })
+                      }
+                      className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    />
+                    <button
+                      type="button"
+                      className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                      onClick={() => {
+                        // Handle coupon application
+                        toast.success("Coupon code applied successfully!");
+                      }}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+
+                {/* Order Notes */}
+                <div>
+                  <label
+                    htmlFor="order-notes"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Order Notes (Optional)
+                  </label>
+                  <textarea
+                    id="order-notes"
+                    rows="2"
+                    placeholder="Notes about your order, e.g. special delivery instructions"
+                    value={orderData.notes}
+                    onChange={(e) =>
+                      setOrderData({ ...orderData, notes: e.target.value })
+                    }
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Order Summary */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-6">
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  Order Summary
+                </h2>
+
+                <OrederSummery
+                  cartItems={cartItems}
+                  type={purchaseType}
+                  orderData={orderData}
+                />
+
+                {/* Payment Button */}
+                <div className="mt-6">
+                  <HoldToConfirmButton
+                    loading={loading}
+                    onConfirm={handlePayment}
+                    duration={2000}
+                    label="Hold to Confirm Purchase"
+                    confirmLabel="Loading Payment Interface..."
+                    className="w-full py-3.5 px-6 rounded-xl font-semibold text-white transition-all"
+                  />
+
+                  <div className="mt-4 flex items-center justify-center space-x-2">
+                    <svg
+                      className="w-8 h-8"
+                      viewBox="0 0 38 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"
+                        fill="#FF5F00"
+                      />
+                      <path
+                        d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32z"
+                        fill="#EB001B"
+                      />
+                      <path
+                        d="M35 1H17v22h18c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2z"
+                        fill="#F79E1B"
+                      />
+                    </svg>
+                    <svg
+                      className="w-8 h-8"
+                      viewBox="0 0 38 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"
+                        fill="#1976D2"
+                      />
+                      <path
+                        d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32z"
+                        fill="#03A9F4"
+                      />
+                      <path
+                        d="M35 1H17v22h18c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2z"
+                        fill="#4CAF50"
+                      />
+                      <path
+                        d="M35 1H17v22h18c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2z"
+                        fill="#F44336"
+                      />
+                      <path
+                        d="M35 1H17v22h18c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2z"
+                        fill="#FFC107"
+                      />
+                    </svg>
+                    <svg
+                      className="w-8 h-8"
+                      viewBox="0 0 38 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z"
+                        fill="#5C2D91"
+                      />
+                      <path
+                        d="M35 1c1.1 0 2 .9 2 2v18c0 1.1-.9 2-2 2H3c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2h32z"
+                        fill="#7B3F84"
+                      />
+                      <path
+                        d="M35 1H17v22h18c1.1 0 2-.9 2-2V3c0-1.1-.9-2-2-2z"
+                        fill="#00AAE4"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Security Badges */}
+              <div className="mt-4 flex items-center justify-center space-x-4">
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-xs text-gray-600">Secure Payment</p>
+                </div>
+
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-xs text-gray-600">Genuine Products</p>
+                </div>
+
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 mb-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                      <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 00.9-1.45l-1.33-2.67A3 3 0 0010.5 9h3.5a1 1 0 00.9-1.45l-1.33-2.67A3 3 0 0012.5 3H3z" />
+                    </svg>
+                  </div>
+                  <p className="text-xs text-gray-600">Free Shipping</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <AlertDialog open={alert.open}>
+          <AlertDialogContent className="max-w-sm">
+            <AlertDialogHeader>
+              <AlertDialogTitle>{alert.title || "Alert"}</AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <Button
+                onClick={() => setAlert({ title: "", open: false })}
+                className="w-full"
+              >
+                Okay
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </>
+  );
+}
+
+const testError = (orderData) => {
+  const { shippingAddress } = orderData;
+  const requiredFields = {
+    fullName: "Full Name",
+    phone: "Phone Number",
+    email: "Email Address",
+    street: "Street Address",
+    area: "Area/Locality",
+    city: "City",
+    state: "State",
+    pincode: "Pincode",
+  };
+
+  for (const [field, fieldName] of Object.entries(requiredFields)) {
+    if (!shippingAddress[field]) {
+      toast.error(`Please enter your ${fieldName}`);
+      return field;
+    }
+  }
+  return "";
+};
