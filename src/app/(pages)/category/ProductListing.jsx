@@ -75,7 +75,7 @@ export default function ProductListing() {
 
     try {
       const requestBody = {
-        categorySlug,
+        // categorySlug,
         subCategorySlug: category.length > 0 ? category : subCategorySlug,
         subSubCategorySlug,
         colorIds: color,
