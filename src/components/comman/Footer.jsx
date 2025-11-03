@@ -53,7 +53,7 @@ export default function Footer() {
               {
                 Icon: Truck,
                 title: "Free Shipping",
-                desc: "On orders over $500",
+                desc: "On orders over  ₹1000",
               },
               { Icon: Shield, title: "Secure Payment", desc: "100% Protected" },
               {
@@ -280,7 +280,7 @@ export default function Footer() {
                         {product.name}
                       </h5>
                       <p className="text-sm font-bold text-yellow-600 flex items-center">
-                        <IndianRupee size={12}/> {product.discount_price}
+                        <IndianRupee size={12} /> {product.discount_price}
                       </p>
                     </div>
                   </Link>

@@ -52,39 +52,7 @@ const getMaterial = cache(async () => {
   return data._data;
 });
 
-const getSubCategory = cache(async () => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}api/website/nav`,
-    {
-      method: "POST",
-      next: {
-        // Revalidate at most every hour
-        // revalidate: 3600,
-        // Keep serving stale data while revalidating
-        tags: ["navigation"],
-      },
-      // Add cache control headers
-      headers: {
-        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
-      },
-    }
-  );
 
-  if (!response.ok) {
-    // If there's an error, try to return from cache if available
-    console.error("Failed to fetch navigation data");
-    return null;
-  }
-
-  const data = await response.json();
-
-  if (!data?._status) {
-    console.error("Invalid navigation data format");
-    return null;
-  }
-
-  return data._data;
-});
 
 export default async function page({ params }) {
   const slug = await params.slug;
