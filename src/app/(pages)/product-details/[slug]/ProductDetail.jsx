@@ -41,6 +41,10 @@ export default function ProductDetailsPage({ details }) {
   );
   const isMobile = useIsMobile();
 
+  useEffect(() => {
+    sessionStorage.setItem(product._id, personalizedName);
+  }, [personalizedName]);
+
   const user = useSelector((state) => state.auth.details);
   const isLogin = useSelector((state) => state.auth.isLogin);
 

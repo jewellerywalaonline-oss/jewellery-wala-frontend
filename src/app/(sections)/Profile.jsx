@@ -45,7 +45,8 @@ export default function AccountPage({ data }) {
   const [formData, setFormData] = useState({
     name: data?.name || "",
     email: data?.email || "",
-    phone: data?.phone || "",
+    gender: data?.gender || "",
+    mobile: data?.mobile || "",
     street: data?.address?.street || "",
     area: data?.address?.area || "",
     city: data?.address?.city || "",
@@ -67,7 +68,16 @@ export default function AccountPage({ data }) {
     }
   }, [params]);
 
+  const router = useRouter();
   const handleTabChange = (value) => {
+    // const paramsChange = new URLSearchParams(params.toString()); // make editable copy
+    // paramsChange.set("tab", value);
+
+    // router.replace(`?${paramsChange.toString()}`); // or router.push() if you want history
+    // window.scrollTo({
+    //   top: 0,
+    //   behavior: "smooth",
+    // });
     setActiveTab(value);
   };
 
@@ -111,18 +121,6 @@ export default function AccountPage({ data }) {
       fileInputRef.current.value = "";
     }
   };
-
-  const saveAvatar = () => {
-    if (previewImage) {
-      setAvatar(previewImage);
-      setPreviewImage(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
-    }
-  };
-
-  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -200,7 +198,6 @@ export default function AccountPage({ data }) {
 
   return (
     <>
-    
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50">
         <div className="max-w-6xl mx-auto p-4 md:p-8">
           {/* Profile Header Card */}
@@ -303,7 +300,11 @@ export default function AccountPage({ data }) {
 
                   {/* Account Tab */}
                   <TabsContent value="account" className="mt-6 animate-fade-in">
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form
+                      id="account"
+                      onSubmit={handleSubmit}
+                      className="space-y-6"
+                    >
                       {/* Image Upload Section */}
                       <div
                         ref={imageUploadRef}
@@ -357,12 +358,6 @@ export default function AccountPage({ data }) {
 
                             {previewImage && (
                               <div className="flex gap-2 mt-4 animate-fade-in">
-                                <button
-                                  onClick={saveAvatar}
-                                  className="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-lg text-sm font-medium shadow-md hover:shadow-lg transform transition-all duration-300 hover:scale-105 active:scale-95"
-                                >
-                                  Save Avatar
-                                </button>
                                 <button
                                   onClick={removePreviewImage}
                                   className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-all duration-300"
@@ -447,11 +442,11 @@ export default function AccountPage({ data }) {
                               <Input
                                 type="text"
                                 name="phone"
-                                value={formData.phone}
+                                value={formData.mobile}
                                 onChange={(e) =>
                                   setFormData({
                                     ...formData,
-                                    phone: e.target.value,
+                                    mobile: e.target.value,
                                   })
                                 }
                                 placeholder="Enter phone number"
@@ -625,7 +620,10 @@ export default function AccountPage({ data }) {
                     value="settings"
                     className="mt-6 animate-fade-in"
                   >
-                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-amber-100/50">
+                    <div
+                      id="settings"
+                      className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-amber-100/50"
+                    >
                       <h2 className="text-xl font-semibold mb-6 text-gray-800">
                         Account Settings
                       </h2>
@@ -674,7 +672,7 @@ export default function AccountPage({ data }) {
           }
         `}</style>
       </div>
-        <LoadingUi hidden={loading} />
+      <LoadingUi hidden={loading} />
     </>
   );
 }

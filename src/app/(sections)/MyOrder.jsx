@@ -8,6 +8,8 @@ import {
   ChevronRight,
   X,
   Eye,
+  Loader2,
+  XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +41,7 @@ export default function MyOrders() {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
+  const [btnLoading, setBtnLoading] = useState(false);
 
   const router = useRouter();
 
@@ -65,22 +68,34 @@ export default function MyOrders() {
 
   const handleCancelOrder = async () => {
     if (!cancelReason.trim()) return;
-
+    setBtnLoading(true);
     try {
       const response = await cancelOrder(selectedOrderId, cancelReason);
       console.log(response);
-      if (response.status === 200 || response.status === 201) {
+      if (response.success) {
         setCancelDialogOpen(false);
         setCancelReason("");
         setSelectedOrderId(null);
         loadOrders();
+        toast.success(response.message || "Order Cancelled");
       } else {
-        toast.error(` ${response.data.message || "Failed to cancel order"}`);
+        toast.error(
+          ` ${
+            response.message ||
+            response.response.data.message ||
+            "Failed to cancel order"
+          }`
+        );
       }
+      setBtnLoading(false);
     } catch (error) {
       console.error("Failed to cancel order:", error);
-      toast.error(error?.response?.data?.message || "Failed to cancel order");
+      toast.error(
+        error?.response?.message || error?.message || "Failed to cancel order"
+      );
+      setBtnLoading(false);
     }
+    setBtnLoading(false);
   };
 
   const openCancelDialog = (orderId) => {
@@ -106,7 +121,7 @@ export default function MyOrders() {
   ];
 
   return (
-    <div className="min-h-screen   p-4 md:p-8">
+    <div id="orders" className="min-h-screen   p-4 md:p-8">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -223,7 +238,9 @@ export default function MyOrders() {
                             >
                               <Image
                                 onClick={() =>
-                                  router.push(`/order-track/${order.orderId}`)
+                                  router.push(
+                                    `/order-track?orderId=${order.orderId}`
+                                  )
                                 }
                                 src={item.images[0]}
                                 alt={item.name}
@@ -233,7 +250,9 @@ export default function MyOrders() {
                               />
                               <div
                                 onClick={() =>
-                                  router.push(`/order-track/${order.orderId}`)
+                                  router.push(
+                                    `/order-track?orderId=${order.orderId}`
+                                  )
                                 }
                                 className="flex-1 cursor-pointer"
                               >
@@ -273,7 +292,9 @@ export default function MyOrders() {
                           )}
                           <Button
                             onClick={() =>
-                              (window.location.href = `/order-track?orderId=${order.orderId}`)
+                              router.push(
+                                `/order-track?orderId=${order.orderId}`
+                              )
                             }
                             size="sm"
                             className="bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600"
@@ -340,6 +361,7 @@ export default function MyOrders() {
           <DialogFooter>
             <Button
               variant="outline"
+              disabled={btnLoading}
               onClick={() => {
                 setCancelDialogOpen(false);
                 setCancelReason("");
@@ -350,10 +372,21 @@ export default function MyOrders() {
             </Button>
             <Button
               onClick={handleCancelOrder}
-              disabled={!cancelReason.trim()}
+              disabled={!cancelReason.trim() || btnLoading}
               className="bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700"
             >
-              Confirm Cancellation
+              {!btnLoading ? (
+                <div className="flex items-center">
+                  <span className="mr-2">
+                    <XCircle className="w-4 h-4" />
+                  </span>
+                  Confirm Cancellation
+                </div>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <Loader2 className="animate-spin" /> Cancelling
+                </span>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

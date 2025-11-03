@@ -1,9 +1,32 @@
-import React from "react";
+"use Client";
+import React, { useEffect, useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 
 export default function OrederSummery({ cartItems, type, orderData }) {
   if (type === "direct" || type === "cart") {
+    const [personalizedName, setPersonalizedName] = useState("");
+
+    // Load personalized name from sessionStorage on component mount
+    useEffect(() => {
+      const storedName = sessionStorage.getItem("personalizedName");
+      if (storedName) {
+        setPersonalizedName(storedName);
+      }
+    }, []);
+
+    // Update sessionStorage when personalizedName changes
+    useEffect(() => {
+      if (personalizedName) {
+        sessionStorage.setItem("personalizedName", personalizedName);
+      }
+    }, [personalizedName]);
+
+    const handleNameChange = (e) => {
+      setPersonalizedName(e.target.value);
+    };
+
     return (
       <div>
         {/* Order Items */}
@@ -46,7 +69,16 @@ export default function OrederSummery({ cartItems, type, orderData }) {
               </div>
               {item.isPersonalized && (
                 <div className="flex items-center space-x-2">
-                  <span className="text-xs text-gray-500">Personalized</span>
+                  <span className="text-xs text-gray-500">
+                    Personalized Name
+                  </span>
+                  <input
+                    type="text"
+                    value={personalizedName}
+                    onChange={handleNameChange}
+                    className="border border-gray-300 rounded px-2 py-1 text-sm"
+                    placeholder="Enter name"
+                  />
                 </div>
               )}
             </div>

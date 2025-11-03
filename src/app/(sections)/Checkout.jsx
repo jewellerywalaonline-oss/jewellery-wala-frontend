@@ -6,7 +6,7 @@ import {
   verifyPayment,
 } from "@/lib/orderService";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 import Image from "next/image";
 import OrederSummery from "@/components/comman/OrederSummery";
@@ -38,7 +38,7 @@ export default function Checkout() {
   } else {
     cartItems = useSelector((state) => state.cart.cartItems);
   }
-
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.auth.details);
 
@@ -134,15 +134,11 @@ export default function Checkout() {
             });
 
             if (verifyResponse.success) {
-              setAlert({
-                title: "Payment successful! Check your email for OTP.",
-                open: true,
-              });
-              setTimeout(() => {
-                setLoading(false);
-                // Redirect to order success page
-                window.location.href = `/order-success?orderId=${orderId}&otp=${verifyResponse.order.deliveryOTP}&packageId=${verifyResponse.order.packageId}`;
-              }, 1000);
+              setLoading(false);
+              // Redirect to order success page
+              router.push(
+                `/order-success?orderId=${orderId}&otp=${verifyResponse.order.deliveryOTP}&packageId=${verifyResponse.order.packageId}`
+              );
             }
           } catch (error) {
             console.error("Payment verification failed:", error);
@@ -199,26 +195,6 @@ export default function Checkout() {
                   </span>
                   Shipping Information
                 </h2>
-                <button
-                  onClick={() => {
-                    // Pre-fill with user's saved address if available
-                    if (user?.address) {
-                      setOrderData((prev) => ({
-                        ...prev,
-                        shippingAddress: {
-                          ...prev.shippingAddress,
-                          ...user.address,
-                          fullName: user.name,
-                          email: user.email,
-                          phone: user.phone || "",
-                        },
-                      }));
-                    }
-                  }}
-                  className="text-sm font-medium text-amber-600 hover:text-amber-700 transition-colors"
-                >
-                  Use saved address
-                </button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
