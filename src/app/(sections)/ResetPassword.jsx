@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Loader2, Lock } from "lucide-react";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -23,11 +24,9 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState("request");
-  
-  const token = Cookies.get("user")
+
+  const token = Cookies.get("user");
   const returnTo = searchParams.get("returnTo");
-
-
 
   const handleRequestReset = async (e) => {
     e.preventDefault();
@@ -89,7 +88,7 @@ export default function ResetPassword() {
             authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            otp: otp.join(""),
+            otp,
             token: Cookies.get("resetToken"),
             newPassword,
           }),
@@ -102,9 +101,7 @@ export default function ResetPassword() {
 
       const data = await response.json();
       if (data._status === true) {
-        toast.success(
-          "Password reset successfully! "
-        );
+        toast.success("Password reset successfully! ");
         router.push(returnTo || "/");
       }
     } catch (error) {
@@ -175,16 +172,23 @@ export default function ResetPassword() {
                   Enter verification code
                 </label>
                 <div className="flex justify-center space-x-2">
-                  {otp.map((digit, i) => (
-                    <Input
-                      key={i}
-                      type="text"
-                      maxLength={1}
-                      value={digit}
-                      onChange={(e) => handleOtpChange(i, e.target.value)}
-                      className="h-12 w-12 text-center text-lg"
-                    />
-                  ))}
+                  <InputOTP
+                    maxLength={6}
+                    value={otp}
+                    onChange={(value) => {
+                      setOtp(value);
+                    }}
+                  >
+                    <InputOTPGroup className="gap-2 flex">
+                      {[...Array(6)].map((_, index) => (
+                        <InputOTPSlot
+                          key={index}
+                          index={index}
+                          className="h-12 w-12 text-lg border-gray-300 focus-visible:ring-2 focus-visible:ring-amber-500 rounded-lg"
+                        />
+                      ))}
+                    </InputOTPGroup>
+                  </InputOTP>
                 </div>
               </div>
               <Button type="submit" className="w-full">

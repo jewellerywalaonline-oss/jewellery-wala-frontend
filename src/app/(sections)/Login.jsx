@@ -158,8 +158,6 @@ const LoginPage = () => {
 
             {/* Password */}
             <div>
-              
-
               <InputPassword
                 name="password"
                 value={formData.password}
@@ -182,7 +180,7 @@ const LoginPage = () => {
             {/* Forgot Password Link */}
             <div className="flex justify-end">
               <Link
-                href="/forgot-password"
+                href="/reset-password"
                 className="text-xs text-amber-600 hover:underline"
                 aria-label="Forgot password?"
               >

@@ -34,13 +34,10 @@ import Image from "next/image";
 import MyOrders from "./MyOrder";
 import Wishlist from "./Wishlist";
 import { LoadingUi } from "./Cart";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function AccountPage({ data }) {
-  const [avatar, setAvatar] = useState(
-    data?.avatar ||
-      "https://api.dicebear.com/7.x/avataaars/svg?seed=" +
-        (data?.name || "User")
-  );
+  const [avatar, setAvatar] = useState(data?.avatar);
   const [activeTab, setActiveTab] = useState("account");
   const [formData, setFormData] = useState({
     name: data?.name || "",
@@ -207,15 +204,25 @@ export default function AccountPage({ data }) {
               <div className="flex flex-col md:flex-row md:items-end md:justify-between">
                 <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-6">
                   <div className="relative group">
+                    {/* Avatar container with same glow + shape */}
                     <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-gradient-to-br from-amber-100 to-orange-100 transform transition-transform duration-300 group-hover:scale-105">
-                      <Image
-                        width={128}
-                        height={128}
-                        src={avatar}
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                      />
+                      <Avatar className="w-full h-full">
+                        <AvatarImage asChild>
+                          <Image
+                            src={avatar}
+                            alt="Profile"
+                            width={128}
+                            height={128}
+                            className="w-full h-full object-cover"
+                          />
+                        </AvatarImage>
+                        <AvatarFallback className="bg-amber-200 text-amber-800 font-semibold text-lg">
+                          JW
+                        </AvatarFallback>
+                      </Avatar>
                     </div>
+
+                    {/* Camera Button */}
                     <button
                       onClick={scrollToImageUpload}
                       className="absolute bottom-2 right-2 bg-amber-600 hover:bg-amber-700 text-white p-2 rounded-full shadow-lg transform transition-all duration-300 hover:scale-110 active:scale-95"
@@ -223,41 +230,7 @@ export default function AccountPage({ data }) {
                       <Camera size={16} />
                     </button>
                   </div>
-
-                  <div className="mb-2 md:mb-4 animate-fade-in">
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-1">
-                      {data?.name || "User"}
-                    </h1>
-                    <p className="text-sm text-gray-500 flex items-center gap-2">
-                      <Mail size={14} /> {data?.email || "No email provided"}
-                      {!data?.isEmailVerified && (
-                        <span className="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">
-                          Unverified
-                        </span>
-                      )}
-                    </p>
-                    {data?.mobile && (
-                      <p className="text-sm text-gray-500 flex items-center gap-2 mt-1">
-                        <Phone size={14} /> {data?.mobile}
-                      </p>
-                    )}
-                    <p className="text-xs text-gray-400 mt-1">
-                      Member since{" "}
-                      {new Date(data?.createdAt).toLocaleDateString("en-US", {
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </p>
-                  </div>
                 </div>
-
-                <button
-                  onClick={scrollToImageUpload}
-                  className="mt-4 md:mt-0 md:mb-4 px-6 py-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-full font-medium shadow-lg hover:shadow-xl transform transition-all duration-300 hover:scale-105 active:scale-95 flex items-center gap-2 justify-center md:justify-start"
-                >
-                  <Settings size={16} />
-                  Edit Profile
-                </button>
               </div>
 
               {/* Tabs */}

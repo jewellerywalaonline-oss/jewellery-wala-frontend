@@ -1,16 +1,7 @@
 "use client";
 
-import {
-  ArrowRight,
-  CheckCircle,
-  Lock,
-  Mail,
-  Phone,
-  X,
-  Key,
-  LogOut,
-} from "lucide-react";
-import { useState, useCallback, useRef } from "react";
+import { ArrowRight, CheckCircle, Lock, Mail, LogOut } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -36,16 +27,8 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { InputPassword } from "@/components/ui/input-password";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
 import { logout } from "@/redux/features/auth";
 import { useDispatch } from "react-redux";
 import Cookies from "js-cookie";
@@ -53,7 +36,6 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-const token = Cookies.get("user");
 // Password Change Options Dialog
 function PasswordOptionsDialog({ open, onOpenChange, onOptionSelect }) {
   return (
@@ -238,11 +220,11 @@ export default function SettingsSection({ data }) {
         if (!resData._status) {
           return toast.error(resData._message);
         }
-        if (resData._status === true) {
+        if (resData._status) {
           Cookies.set("verify", resData._token, {
             expires: new Date(Date.now() + 10 * 60 * 1000),
           });
-          router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
+          router.push(`/verify-email?email=${data.email}`);
         }
       } catch (error) {
         console.error(error);
@@ -286,35 +268,37 @@ export default function SettingsSection({ data }) {
         </button>
 
         {/* Verify Email Button */}
-        <button
-          onClick={() => handleVerifyClick("email")}
-          className="w-full flex items-center justify-between p-4 bg-white/80 rounded-lg border border-gray-200 hover:border-amber-300 hover:shadow-md transition-all duration-300 group"
-        >
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors duration-300">
-              <Mail size={18} className="text-blue-600" />
+        {data?.isEmailVerified ? null : (
+          <button
+            onClick={() => handleVerifyClick("email")}
+            className="w-full flex items-center justify-between p-4 bg-white/80 rounded-lg border border-gray-200 hover:border-amber-300 hover:shadow-md transition-all duration-300 group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors duration-300">
+                <Mail size={18} className="text-blue-600" />
+              </div>
+              <div className="text-left">
+                <p className="font-medium text-gray-800 flex items-center gap-2">
+                  Verify Email
+                  {!data?.isEmailVerified && (
+                    <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">
+                      Pending
+                    </span>
+                  )}
+                  {data?.isEmailVerified && (
+                    <CheckCircle size={16} className="text-green-600" />
+                  )}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {data?.isEmailVerified
+                    ? "Your email is verified"
+                    : "Verify your email address"}
+                </p>
+              </div>
             </div>
-            <div className="text-left">
-              <p className="font-medium text-gray-800 flex items-center gap-2">
-                Verify Email
-                {!data?.isEmailVerified && (
-                  <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">
-                    Pending
-                  </span>
-                )}
-                {data?.isEmailVerified && (
-                  <CheckCircle size={16} className="text-green-600" />
-                )}
-              </p>
-              <p className="text-sm text-gray-500">
-                {data?.isEmailVerified
-                  ? "Your email is verified"
-                  : "Verify your email address"}
-              </p>
-            </div>
-          </div>
-          <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-amber-600 transition-colors" />
-        </button>
+            <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-amber-600 transition-colors" />
+          </button>
+        )}
 
         {/* Logout Button */}
         <div className="pt-4 border-t border-gray-200">

@@ -37,7 +37,7 @@ export default function ProductListing() {
     (state) => state.filters
   );
 
-  const PRODUCTS_PER_PAGE = 12;
+  const PRODUCTS_PER_PAGE = 15;
 
   // SCROLL EFFECT
   useEffect(() => {

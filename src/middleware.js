@@ -15,16 +15,12 @@ export async function middleware(request) {
     );
   }
 
-
-
   // If user is not logged in and tries to access a protected route
-  if ( !token &&
-    pathname.startsWith("/profile") ||
-    (pathname.startsWith("/verify-email"))
+  if (
+    !token &&
+    (pathname.startsWith("/profile") || pathname.startsWith("/verify-email"))
   ) {
-    // Store the intended URL to redirect back after login
     const loginUrl = new URL("/login", request.url);
-    // loginUrl.searchParams.set("returnTo", pathname);
     return NextResponse.redirect(loginUrl);
   }
 

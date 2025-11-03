@@ -74,6 +74,8 @@ export default function VerifyEmailPage() {
       if (data._status === true) {
         toast.success(data._message);
         router.push("/profile");
+      } else {
+        toast.error(data._message);
       }
     } catch (error) {
       console.error("Verification error:", error);
@@ -157,18 +159,17 @@ export default function VerifyEmailPage() {
                     setOtp(value);
                     setIsOtpComplete(value.length === 6);
                   }}
-                  render={({ slots }) => (
-                    <InputOTPGroup className="gap-2">
-                      {slots.map((slot, index) => (
-                        <InputOTPSlot
-                          key={index}
-                          {...slot}
-                          className="h-12 w-12 text-lg border-gray-300"
-                        />
-                      ))}
-                    </InputOTPGroup>
-                  )}
-                />
+                >
+                  <InputOTPGroup className="gap-2 flex">
+                    {[...Array(6)].map((_, index) => (
+                      <InputOTPSlot
+                        key={index}
+                        index={index}
+                        className="h-12 w-12 text-lg border-gray-300 focus-visible:ring-2 focus-visible:ring-amber-500 rounded-lg"
+                      />
+                    ))}
+                  </InputOTPGroup>
+                </InputOTP>
               </div>
             </div>
 
