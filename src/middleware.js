@@ -16,10 +16,7 @@ export async function middleware(request) {
   }
 
   // If user is not logged in and tries to access a protected route
-  if (
-    !token &&
-    (pathname.startsWith("/profile") || pathname.startsWith("/verify-email"))
-  ) {
+  if (!token && pathname.startsWith("/profile")) {
     const loginUrl = new URL("/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
@@ -34,8 +31,3 @@ export async function middleware(request) {
 
   return NextResponse.next();
 }
-
-// Configure which paths the middleware should run on
-export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|images|icons).*)"],
-};

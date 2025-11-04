@@ -298,7 +298,7 @@ export default async function RootLayout({ children }) {
           <LoginModal />
           <RequirementModal user={user} />
           <BottomTabNavigation />
-          <ToolBar />
+          {/* <ToolBar /> */}
         </Client>
       </body>
     </html>

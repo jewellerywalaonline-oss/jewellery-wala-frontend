@@ -136,16 +136,18 @@ export default function Checkout() {
             if (verifyResponse.success) {
               setLoading(false);
               // Redirect to order success page
-              router.push(
-                `/order-success?orderId=${orderId}&otp=${verifyResponse.order.deliveryOTP}&packageId=${verifyResponse.order.packageId}`
-              );
+              router.push(`/order-success?orderId=${orderId}&otp=${verifyResponse.order.deliveryOTP}&packageId=${verifyResponse.order.packageId}`);
             }
+
           } catch (error) {
             console.error("Payment verification failed:", error);
             setAlert({
               title: "Payment verification failed. Please contact support.",
               open: true,
             });
+            setLoading(false);
+          }
+          finally {
             setLoading(false);
           }
         },
