@@ -3,18 +3,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import {
   Heart,
-  ShoppingBag,
   Search,
   Menu,
-  X,
   ChevronDown,
   LogOut,
   Settings,
   User as UserIcon,
   Package,
   MapPin,
-  ChevronsRight,
-  ShoppingBagIcon,
   ShoppingCartIcon, // Added for menu items
 } from "lucide-react";
 
@@ -25,10 +21,8 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {
@@ -51,6 +45,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { useRouter } from "next/navigation";
 import { openLoginModal, setNavigation } from "@/redux/features/uiSlice";
+import Cookies from "js-cookie";
 
 // --- Navigation Data Structure (Centralized and Nested) ---
 const userMenuItems = [
@@ -80,11 +75,12 @@ export default function Header({ navigationData }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn || Cookies.get("loginModal")) {
       return;
     } else {
       setTimeout(() => {
         dispatch(openLoginModal(true));
+        Cookies.set("loginModal", true, { expires: 1 });
       }, 10000);
       return;
     }

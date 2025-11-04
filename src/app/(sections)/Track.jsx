@@ -25,6 +25,7 @@ export default function OrderTracking({ orderIdApi }) {
   };
 
   useEffect(() => {
+    if (!orderId) return;
     const fetchOrder = async () => {
       setLoading(true);
       const details = await getOrderById(orderId);

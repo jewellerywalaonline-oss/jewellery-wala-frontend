@@ -58,31 +58,32 @@ export default function ContactPage() {
     {
       icon: Phone,
       title: "Phone",
-      content: "+91-6378643867",
+      content: process.env.NEXT_PUBLIC_BUSINESS_PHONE,
       subContent: "Mon-Fri, 9am-6pm EST",
       color: "bg-amber-100/80 border border-amber-200/50",
       bgColor: "bg-amber-50/80",
-      href: "tel:+916378643867",
+      href: `tel:${process.env.NEXT_PUBLIC_BUSINESS_PHONE}`,
       ariaLabel: "Contact us by phone",
     },
     {
       icon: Mail,
       title: "Email",
-      content: "jewellerywalaonline@gmail.com",
+      content: process.env.NEXT_PUBLIC_BUSINESS_EMAIL,
       subContent: "We'll respond within 24 hours",
       color: "bg-amber-100/80 border border-amber-200/50",
       bgColor: "bg-amber-50/80",
-      href: "mailto:jewellerywalaonline@gmail.com",
+      href: `mailto:${process.env.NEXT_PUBLIC_BUSINESS_EMAIL}`,
       ariaLabel: "Send us an email",
     },
     {
       icon: MapPin,
       title: "Address",
-      content: "Main Jhalamand Circle Jodhpur",
-      subContent: "Jodhpur, Rajasthan",
+      content: process.env.NEXT_PUBLIC_BUSINESS_ADDRESS,
+      subContent:
+        "Jhalamand circle, Guda Rd, Jhalamand, Jodhpur, Rajasthan 342005",
       color: "bg-amber-100/80 border border-amber-200/50",
       bgColor: "bg-amber-50/80",
-      href: "https://maps.google.com",
+      href: `https://maps.app.goo.gl/ohKdTgWQicv8Xjf89`,
       ariaLabel: "View our location on map",
     },
   ];
@@ -91,10 +92,10 @@ export default function ContactPage() {
     <div id="contact" className="min-h-screen bg-gray-50 overflow-hidden">
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 bg-white rounded-2xl">
-        <h1 className="text-4xl md:text-5xl font-medium text-gray-900 mb-4">
+        <h1 className="text-4xl md:text-5xl font-medium text-gray-900 mb-4 text-center">
           Contact Us
         </h1>
-        <p className="text-gray-600 text-lg mb-12">
+        <p className="text-gray-600 text-lg mb-12 text-center">
           We're here to help. Please reach out with any questions or concerns.
           We will get back to you as soon as possible.
         </p>

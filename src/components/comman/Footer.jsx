@@ -21,24 +21,32 @@ import { useEffect, useState } from "react";
 export default function Footer() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
 
-  useEffect(async () => {
-    const res = await fetch(
-      process.env.NEXT_PUBLIC_API_URL +
-        "api/website/product/featured-for-footer",
-      {
-        method: "POST",
-        next: {
-          revalidate: 86400,
-          tags: ["featured-products"],
-        },
-        headers: {
-          "Cache-Control":
-            "public, s-maxage=86400, stale-while-revalidate=86400",
-        },
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const res = await fetch(
+          process.env.NEXT_PUBLIC_API_URL +
+            "api/website/product/featured-for-footer",
+          {
+            method: "POST",
+            next: {
+              revalidate: 86400,
+              tags: ["featured-products"],
+            },
+            headers: {
+              "Cache-Control":
+                "public, s-maxage=86400, stale-while-revalidate=86400",
+            },
+          }
+        );
+        const data = await res.json();
+        setFeaturedProducts(data._data);
+      } catch (err) {
+        console.error("Failed to fetch featured products:", err);
       }
-    );
-    const data = await res.json();
-    setFeaturedProducts(data._data);
+    };
+
+    fetchFeaturedProducts();
   }, []);
 
   const logo = useSelector((state) => state.logo.logo);
@@ -172,7 +180,7 @@ export default function Footer() {
                 { label: "Track Order", href: "/order-track" },
                 { label: "Our Story", href: "/story" },
                 { label: "FAQ", href: "/faq" },
-                { label: "Contact Us", href: "/contact" },
+                { label: "Contact Us", href: "/contact-us" },
                 { label: "About Us", href: "/about" },
               ].map((link) => (
                 <li key={link.label}>
