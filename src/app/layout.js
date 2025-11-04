@@ -11,6 +11,7 @@ import ScrollToTop from "@/components/ui/scroll-to-top";
 import RequirementModal from "@/components/comman/RequirementModal";
 import LoginModal from "@/components/comman/LoginModal";
 import { BottomTabNavigation } from "@/components/ui/BottomTabNavigation";
+import ToolBar from "@/components/comman/ToolBar";
 
 const lato = Lato({
   subsets: ["latin"],
@@ -156,15 +157,14 @@ const getLogo = cache(async () => {
     `${process.env.NEXT_PUBLIC_API_URL}api/website/logo`,
     {
       method: "post",
-      next: { revalidate: 86400 },
+      next: { revalidate: 3600 },
     }
   );
   if (!response.ok) {
     return null;
   }
   const data = await response.json();
-  console.log(data);
-  
+
   if (!response.ok || !data._status) {
     return null;
   }
@@ -179,9 +179,6 @@ const getNavigation = cache(async () => {
       next: {
         revalidate: 3600,
         tags: ["navigation"],
-      },
-      headers: {
-        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=3600",
       },
     }
   );
@@ -301,6 +298,7 @@ export default async function RootLayout({ children }) {
           <LoginModal />
           <RequirementModal user={user} />
           <BottomTabNavigation />
+          <ToolBar />
         </Client>
       </body>
     </html>
