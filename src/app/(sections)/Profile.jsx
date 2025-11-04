@@ -217,7 +217,7 @@ export default function AccountPage({ data }) {
                           />
                         </AvatarImage>
                         <AvatarFallback className="bg-amber-200 text-amber-800 font-semibold text-lg">
-                          JW
+                          {data?.name?.slice(0, 1).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     </div>

@@ -13,12 +13,12 @@ import {
   DialogPortal,
   DialogClose,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+
 
 export default function RequirementModal({ user }) {
   const isOpen = useSelector((state) => state.ui.isRequirementModalOpen);
   const dispatch = useDispatch();
+console.log(user);
 
   const handleClose = () => {
     dispatch(closeRequirementModal());
@@ -37,7 +37,7 @@ export default function RequirementModal({ user }) {
         }`}
       ></div>
       <DialogPortal>
-        <DialogContent className="fixed left-1/2 top-1/2 z-[1500] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border bg-white p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out sm:rounded-lg px-6 md:px-0">
+        <DialogContent className="fixed left-1/2 top-1/2 z-[1500] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border bg-white p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out sm:rounded-lg px-6 md:px-3">
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle className="text-xl font-semibold text-gray-900">

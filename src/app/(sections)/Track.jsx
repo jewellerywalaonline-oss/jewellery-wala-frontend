@@ -203,10 +203,9 @@ export default function OrderTracking({ orderIdApi }) {
                     ₹{item.priceAtPurchase.toLocaleString("en-IN")}
                   </p>
                   {item.isPersonalized && (
-                    <p className="text-sm text-gray-500">
-                      Personalized: Yes
-                      <span> </span>
-                      <span>{item.personalizedName}</span>
+                    <p className="text-sm text-gray-500 ">
+                      <span>Personalized Name : </span>
+                      <span className="text-orange-600">{item.personalizedName}</span>
                     </p>
                   )}
                   {orderDetails?.order?.isGift && (

@@ -264,7 +264,7 @@ export default function MyOrders() {
                                 </p>
                                 {item.isPersonalized && (
                                   <p className="text-sm text-orange-600 font-medium">
-                                    ✨ Personalized: {item.personalizedName}
+                                    ✨ Personalized Name : {item.personalizedName}
                                   </p>
                                 )}
                               </div>

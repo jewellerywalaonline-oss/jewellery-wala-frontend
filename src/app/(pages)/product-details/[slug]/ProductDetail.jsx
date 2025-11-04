@@ -1,17 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
-  ChevronRight,
   Star,
   Heart,
   ShoppingCart,
   Truck,
-  RotateCcw,
   ShoppingBag,
   AlertCircle,
   Package,
-  Shield,
-  Gift,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -27,12 +23,13 @@ import { openLoginModal, openRequirementModal } from "@/redux/features/uiSlice";
 import { useIsMobile } from "@/hooks/use-mobile";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import Breadcrumb from "./Breadcrumb";
+import Personalized from "@/components/product/Personalized";
 
 export default function ProductDetailsPage({ details }) {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(details);
   const [wishlistLoading, setWishlistLoading] = useState(false);
-  const [personalizedName, setPersonalizedName] = useState("");
+
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -40,10 +37,6 @@ export default function ProductDetailsPage({ details }) {
     details?.colors?.[0]?._id || ""
   );
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    sessionStorage.setItem(product._id, personalizedName);
-  }, [personalizedName]);
 
   const user = useSelector((state) => state.auth.details);
   const isLogin = useSelector((state) => state.auth.isLogin);
@@ -176,9 +169,9 @@ export default function ProductDetailsPage({ details }) {
 
   const handleBuyNow = async () => {
     if (isLogin) {
-      if (!user.isEmailVerified) {
+      if (!user?.isEmailVerified) {
         dispatch(openRequirementModal());
-      } else if (!user.address) {
+      } else if (!user?.address) {
         dispatch(openRequirementModal());
       } else {
         const buyNowItem = {
@@ -687,45 +680,7 @@ export default function ProductDetailsPage({ details }) {
         </div>
 
         {/* Personalized Item Section */}
-        {product?.isPersonalized && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-8 p-6 bg-amber-50 rounded-xl border border-amber-100"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Gift className="w-6 h-6 text-amber-600" />
-              <h3 className="text-lg font-semibold text-amber-900">
-                Personalize This Item
-              </h3>
-            </div>
-            <p className="text-amber-700 mb-4">
-              This item can be personalized with a name or special text. Please
-              enter the text you'd like to be engraved/printed:
-            </p>
-            <div className="space-y-2">
-              <label
-                htmlFor="personalizedName"
-                className="block text-sm font-medium text-amber-800"
-              >
-                Enter text to personalize (max 15 characters)
-              </label>
-              <input
-                type="text"
-                id="personalizedName"
-                maxLength={15}
-                value={personalizedName}
-                onChange={(e) => setPersonalizedName(e.target.value)}
-                placeholder="e.g., Love, Sarah"
-                className="w-full px-4 py-2.5 border border-amber-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all bg-white"
-              />
-              <p className="text-xs text-amber-600">
-                Note: Personalization cannot be changed or removed once ordered.
-              </p>
-            </div>
-          </motion.div>
-        )}
+        {product?.isPersonalized && <Personalized />}
 
         {/* Description Section - Full Width */}
         <motion.div

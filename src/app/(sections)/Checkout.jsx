@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { HoldToConfirmButton } from "@/components/ui/hold-to-confirm-button";
 import { LoadingUi } from "./Cart";
+import Personalized from "@/components/product/Personalized";
 
 export default function Checkout() {
   const searchParams = useSearchParams();
@@ -59,6 +60,10 @@ export default function Checkout() {
     giftMessage: "",
     giftWrap: false,
     couponCode: "",
+    isPersonalizedName:
+      purchaseType == "direct"
+        ? sessionStorage.getItem("personalizedName") || ""
+        : "",
   });
 
   // Load Razorpay script
@@ -100,7 +105,7 @@ export default function Checkout() {
       if (!res) {
         setAlert({
           title:
-            "Razorpay SDK failed to load. Please check your internet connection.",
+            "Razorpay failed to load. Please check your internet connection.",
           open: true,
         });
         return;
@@ -120,7 +125,7 @@ export default function Checkout() {
           contact: orderData.shippingAddress.phone,
         },
         theme: {
-          color: "#3399cc",
+          color: "#dfbf0eff",
         },
         handler: async function (response) {
           // Step 5: Verify payment on backend
@@ -136,9 +141,17 @@ export default function Checkout() {
             if (verifyResponse.success) {
               setLoading(false);
               // Redirect to order success page
-              router.push(`/order-success?orderId=${orderId}&otp=${verifyResponse.order.deliveryOTP}&packageId=${verifyResponse.order.packageId}`);
+              router.push(
+                `/order-success?orderId=${orderId}&otp=${verifyResponse.order.deliveryOTP}&packageId=${verifyResponse.order.packageId}`
+              );
+            } else {
+              setAlert({
+                title:
+                  verifyResponse.message ||
+                  "Payment verification failed. Please contact support.",
+                open: true,
+              });
             }
-
           } catch (error) {
             console.error("Payment verification failed:", error);
             setAlert({
@@ -146,8 +159,7 @@ export default function Checkout() {
               open: true,
             });
             setLoading(false);
-          }
-          finally {
+          } finally {
             setLoading(false);
           }
         },
@@ -415,6 +427,8 @@ export default function Checkout() {
                 />
               </div>
             </div>
+
+            {purchaseType == "direct" && <Personalized />}
 
             {/* Gift Options */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">

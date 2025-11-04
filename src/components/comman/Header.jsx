@@ -401,15 +401,15 @@ export default function Header({ navigationData }) {
                   {/* <div className="hidden group-hover:block fixed top-0 left-0 right-0 bottom-0 bg-white/10 w-full h-screen backdrop-blur-md z-[998] pointer-events-none" /> */}
 
                   {/* Mega Menu Content - Shows on group hover */}
-                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 fixed left-1/2 -translate-x-1/2 top-full pt-2 z-[999] hover:visible hover:opacity-100">
-                    <Card className="w-[1100px] max-w-[90vw] bg-white/95 backdrop-blur-xl shadow-2xl rounded-xl p-8 border-2 border-amber-200 hover:border-amber-400">
-                      <div className="grid grid-cols-5 gap-8">
+                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 fixed left-1/2 -translate-x-1/2 top-full pt-1 z-[999] hover:visible hover:opacity-100">
+                    <Card className="w-[1150px] max-w-[98vw] bg-white/95 backdrop-blur-xl shadow-2xl rounded-xl p-5 border-2 border-amber-200 hover:border-amber-400">
+                      <div className="grid grid-cols-5 gap-5">
                         {cat.subCategories?.map((menu, i) => (
                           <div key={i}>
                             <Link
                               href={"/category/" + cat.slug + "/" + menu.slug}
                             >
-                              <h4 className="font-bold text-gray-800 mb-4 border-b-2 border-amber-400/50 pb-2 text-lg hover:text-amber-600 transition-colors">
+                              <h4 className="font-bold text-gray-800 mb-2 border-b-2 border-amber-400/50  text-lg hover:text-amber-600 transition-colors">
                                 <Badge
                                   variant="outline"
                                   className="text-[15px] font-bold text-amber-600 border-amber-400 mb-1.5 bg-amber-50"
@@ -418,15 +418,15 @@ export default function Header({ navigationData }) {
                                 </Badge>
                               </h4>
                             </Link>
-                            <div className="space-y-5">
+                            <div className="space-y-3">
                               {menu.subSubCategories &&
                                 menu?.subSubCategories?.map((subcat, j) => (
                                   <div key={j}>
-                                    <ul className="space-y-2 text-gray-600 text-sm">
+                                    <ul className="space-y-1 text-gray-600 text-sm">
                                       <li key={subcat._id}>
                                         <Link
                                           href={`/category/${cat.slug}/${menu.slug}/${subcat.slug}`}
-                                          className="block hover:text-amber-600 cursor-pointer transition-all duration-200 hover:translate-x-0.5"
+                                          className="block hover:text-amber-600 cursor-pointer transition-all duration-200 hover:translate-x-1"
                                         >
                                           {subcat.name}
                                         </Link>
