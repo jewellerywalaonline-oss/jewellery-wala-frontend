@@ -31,8 +31,8 @@ export function BottomTabNavigation() {
   const router = useRouter();
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState("home");
+  const [scroll, setScroll] = useState(false);
 
-  // Update active tab based on route
   useEffect(() => {
     const currentTab = tabs.find(
       (tab) =>
@@ -49,8 +49,27 @@ export function BottomTabNavigation() {
     router.push(tab.url);
   };
 
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY) {
+        // Scrolling down
+        setScroll(true);
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling up
+        setScroll(false);
+      }
+      lastScrollY = currentScrollY > 0 ? currentScrollY : 0;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <div className="block md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white shadow-lg border-t border-gray-100">
+    <div className={`block md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white shadow-lg border-t border-gray-100 duration-200 ${scroll ? "top-[100%]" : "bottom-0"}`}>
       <div className="relative h-16">
         <div className="relative h-full flex items-center justify-around px-2">
           {tabs.map((tab) => {

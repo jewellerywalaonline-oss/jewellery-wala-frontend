@@ -1,9 +1,8 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { FaFacebookF, FaInstagram, FaYoutube, FaTwitter } from "react-icons/fa";
+
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Mail,
   MapPin,
@@ -33,7 +32,6 @@ export default function Footer() {
               revalidate: 86400,
               tags: ["featured-products"],
             },
-           
           }
         );
         const data = await res.json();
