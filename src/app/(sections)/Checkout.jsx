@@ -428,7 +428,8 @@ export default function Checkout() {
               </div>
             </div>
 
-            {purchaseType == "direct" && <Personalized />}
+            {purchaseType == "direct" &&
+              cartItems[0].product.isPersonalized && <Personalized />}
 
             {/* Gift Options */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">

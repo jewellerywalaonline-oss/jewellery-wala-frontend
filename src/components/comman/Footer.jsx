@@ -33,10 +33,7 @@ export default function Footer() {
               revalidate: 86400,
               tags: ["featured-products"],
             },
-            headers: {
-              "Cache-Control":
-                "public, s-maxage=86400, stale-while-revalidate=86400",
-            },
+           
           }
         );
         const data = await res.json();
@@ -160,7 +157,7 @@ export default function Footer() {
               ].map((item) => (
                 <li key={item}>
                   <Link
-                    href={`/products?category=${item.toLowerCase()}`}
+                    href={`/category/shop-by-category/${item.toLowerCase()}`}
                     className="text-gray-600 hover:text-yellow-600 hover:translate-x-1 inline-block transition-all duration-200"
                   >
                     {item}

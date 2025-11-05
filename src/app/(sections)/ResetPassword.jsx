@@ -14,7 +14,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Loader2, Lock } from "lucide-react";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 export default function ResetPassword() {
   const router = useRouter();
@@ -24,6 +28,7 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState("request");
+  const [email, setEmail] = useState("");
 
   const token = Cookies.get("user");
   const returnTo = searchParams.get("returnTo");
@@ -35,6 +40,7 @@ export default function ResetPassword() {
       toast.error("Please enter your email address");
       return;
     }
+    setEmail(email);
 
     setIsLoading(true);
     try {
@@ -56,7 +62,7 @@ export default function ResetPassword() {
 
       const data = await response.json();
       if (data._status === true) {
-        Cookies.set("resetToken", data._token, { expires: 1 });
+        Cookies.set("otpToken", data._token, { expires: 1 });
         setStep("otp");
         toast.success("Verification code sent to your email");
       }
@@ -65,6 +71,41 @@ export default function ResetPassword() {
       toast.error(
         error.message || "Failed to send reset link. Please try again."
       );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const verifyOtp = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_API_URL + "api/website/user/verify-otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ otp, token: Cookies.get("otpToken") }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to verify OTP. Please try again.");
+      }
+
+      const data = await response.json();
+      if (data._status === true) {
+        setStep("reset");
+        Cookies.remove("otpToken");
+        Cookies.set("resetToken", data._token, { expires: 1 });
+        toast.success("OTP verified successfully");
+      }
+    } catch (error) {
+      console.error("OTP verification error:", error);
+      toast.error(error.message || "Failed to verify OTP. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -85,12 +126,13 @@ export default function ResetPassword() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            authorization: `Bearer ${token}`,
           },
+
           body: JSON.stringify({
             otp,
             token: Cookies.get("resetToken"),
             newPassword,
+            email,
           }),
         }
       );
@@ -102,6 +144,7 @@ export default function ResetPassword() {
       const data = await response.json();
       if (data._status === true) {
         toast.success("Password reset successfully! ");
+        Cookies.remove("resetToken");
         router.push(returnTo || "/");
       }
     } catch (error) {
@@ -160,13 +203,7 @@ export default function ResetPassword() {
               </Button>
             </form>
           ) : step === "otp" ? (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setStep("reset");
-              }}
-              className="space-y-4"
-            >
+            <form onSubmit={verifyOtp} className="space-y-4">
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Enter verification code
