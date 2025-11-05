@@ -9,7 +9,7 @@ import "swiper/css";
 import Link from "next/link";
 
 export default function RoundCategorySlider() {
-  const categories = useSelector((state) => state.ui.navigation._data);
+  const categories = useSelector((state) => state?.ui?.navigation?._data);
 
   return (
     <section className="w-full py-6">
@@ -24,7 +24,7 @@ export default function RoundCategorySlider() {
 
       {/* Slider */}
       <div className="max-w-[1200px] mx-auto py-2">
-        {categories.map(
+        {categories?.map(
           (cat) =>
             cat.subCategories.length > 0 && (
               <Swiper
@@ -62,7 +62,7 @@ export default function RoundCategorySlider() {
                 }}
               >
                 {cat.subCategories.length > 0 &&
-                  cat.subCategories.map((subCat) => (
+                  cat.subCategories?.map((subCat) => (
                     <SwiperSlide
                       key={subCat._id}
                       className="!w-auto px-2 sm:px-4"

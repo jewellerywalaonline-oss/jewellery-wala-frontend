@@ -121,11 +121,11 @@ export default function MyOrders() {
   ];
 
   return (
-    <div id="orders" className="min-h-screen   p-4 md:p-8">
+    <div id="orders" className="min-h-screen    md:p-8">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-6xl mx-auto"
+        className="max-w-7xl w-full mx-auto"
       >
         <div className="flex items-center gap-3 mb-8">
           <div className="p-3 rounded-xl shadow-lg">
@@ -199,7 +199,7 @@ export default function MyOrders() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
                   >
-                    <Card className="bg-white  backdrop-blur hover:shadow-xl transition-all duration-300">
+                    <Card className="bg-white  backdrop-blur hover:shadow-xl transition-all duration-300 p-2 ">
                       <CardHeader className="">
                         <div className="flex justify-between items-start">
                           <div>
@@ -228,7 +228,7 @@ export default function MyOrders() {
                         </div>
                       </CardHeader>
 
-                      <CardContent className="pt-6">
+                      <CardContent className=" pt-2 md:pt-6 px-0">
                         <div className="space-y-4">
                           {order.items.map((item, index) => (
                             <motion.div
@@ -264,7 +264,8 @@ export default function MyOrders() {
                                 </p>
                                 {item.isPersonalized && (
                                   <p className="text-sm text-orange-600 font-medium">
-                                    ✨ Personalized Name : {item.personalizedName}
+                                    ✨ Personalized Name :{" "}
+                                    {item.personalizedName}
                                   </p>
                                 )}
                               </div>
@@ -312,7 +313,7 @@ export default function MyOrders() {
           </AnimatePresence>
         )}
 
-        {!loading && orders.length > 0 && (
+        {!loading && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

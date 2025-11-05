@@ -17,10 +17,10 @@ import { Loader } from "lucide-react";
 
 export default function ProductListing() {
   const searchParams = useParams();
-  const categorySlug = searchParams.slug[0];
+  const categorySlug =
+    searchParams.slug[0] === "shop-by-category" ? "" : searchParams.slug[0];
   const subCategorySlug = searchParams.slug[1];
   const subSubCategorySlug = searchParams.slug[2];
-
 
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -73,12 +73,11 @@ export default function ProductListing() {
     } else {
       setLoading(true);
     }
-
     try {
       const requestBody = {
-        // categorySlug,
+        categorySlug,
         subCategorySlug: category.length > 0 ? category : subCategorySlug,
-        subSubCategorySlug,
+        subSubCategorySlug: category.length > 0 ? "" : subSubCategorySlug,
         colorIds: color,
         materialIds: material,
         priceFrom,

@@ -196,10 +196,10 @@ export default function AccountPage({ data }) {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50">
-        <div className="max-w-6xl mx-auto p-4 md:p-8">
+        <div className="max-w-7xl w-full mx-auto ">
           {/* Profile Header Card */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden mb-6 border border-amber-100">
-            <div className="px-4 md:px-8 py-8">
+            <div className="px-2 md:px-8 py-2 ">
               {/* Avatar Section */}
               <div className="flex flex-col md:flex-row md:items-end md:justify-between">
                 <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-6">
@@ -207,15 +207,14 @@ export default function AccountPage({ data }) {
                     {/* Avatar container with same glow + shape */}
                     <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white shadow-2xl overflow-hidden bg-gradient-to-br from-amber-100 to-orange-100 transform transition-transform duration-300 group-hover:scale-105">
                       <Avatar className="w-full h-full">
-                        <AvatarImage asChild>
-                          <Image
-                            src={avatar}
-                            alt="Profile"
-                            width={128}
-                            height={128}
-                            className="w-full h-full object-cover"
-                          />
-                        </AvatarImage>
+                        <Image
+                          src={avatar}
+                          alt="Profile"
+                          width={128}
+                          height={128}
+                          className="w-full h-full object-cover"
+                        />
+
                         <AvatarFallback className="bg-amber-200 text-amber-800 font-semibold text-lg">
                           {data?.name?.slice(0, 1).toUpperCase()}
                         </AvatarFallback>

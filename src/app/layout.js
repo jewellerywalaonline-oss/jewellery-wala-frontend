@@ -157,7 +157,7 @@ const getLogo = cache(async () => {
     `${process.env.NEXT_PUBLIC_API_URL}api/website/logo`,
     {
       method: "post",
-      next: { revalidate: 3600 },
+      // next: { revalidate: 3600 },
     }
   );
   if (!response.ok) {
@@ -176,10 +176,10 @@ const getNavigation = cache(async () => {
     `${process.env.NEXT_PUBLIC_API_URL}api/website/nav`,
     {
       method: "POST",
-      next: {
-        revalidate: 3600,
-        tags: ["navigation"],
-      },
+      // next: {
+      //   revalidate: 3600,
+      //   tags: ["navigation"],
+      // },
     }
   );
 
