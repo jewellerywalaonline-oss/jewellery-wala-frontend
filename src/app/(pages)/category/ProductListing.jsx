@@ -1,6 +1,6 @@
 "use client";
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import ProductCard from "@/components/comman/ProductCard";
 import {
   Select,
@@ -16,10 +16,11 @@ import { toast } from "sonner";
 import { Loader } from "lucide-react";
 
 export default function ProductListing() {
-  const searchParams = useSearchParams();
-  const categorySlug = searchParams.get("categorySlug");
-  const subCategorySlug = searchParams.get("subCategorySlug");
-  const subSubCategorySlug = searchParams.get("subSubCategorySlug");
+  const searchParams = useParams();
+  const categorySlug = searchParams.slug[0];
+  const subCategorySlug = searchParams.slug[1];
+  const subSubCategorySlug = searchParams.slug[2];
+
 
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
