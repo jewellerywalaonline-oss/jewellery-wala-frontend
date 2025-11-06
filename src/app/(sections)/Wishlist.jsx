@@ -8,10 +8,9 @@ import { useState } from "react";
 import { LoadingUi } from "./Cart";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Empty, EmptyHeader } from "@/components/ui/empty";
 
 export default function Wishlist({ wishlist }) {
-  const items = wishlist?._data?.items || [];
+  const items = wishlist ;
 
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const router = useRouter();

@@ -254,13 +254,13 @@ export default function AccountPage({ data }) {
                       <History size={16} />
                       <span className=" sm:inline">Orders</span>
                     </TabsTrigger>
-                    <TabsTrigger
+                    {/* <TabsTrigger
                       value="wishlist"
                       className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg px-4 py-2.5 md:py-2 text-sm transition-all duration-300"
                     >
                       <Heart size={16} />
                       <span className=" sm:inline">Wishlist</span>
-                    </TabsTrigger>
+                    </TabsTrigger> */}
                     <TabsTrigger
                       value="settings"
                       className="flex items-center gap-2 data-[state=active]:bg-white data-[state=active]:shadow-md rounded-lg px-4 py-2.5 md:py-2 text-sm transition-all duration-300"
@@ -580,12 +580,12 @@ export default function AccountPage({ data }) {
                   </TabsContent>
 
                   {/* Wishlist Tab */}
-                  <TabsContent
+                  {/* <TabsContent
                     value="wishlist"
                     className="mt-6 animate-fade-in"
                   >
                     <Wishlist />
-                  </TabsContent>
+                  </TabsContent> */}
 
                   {/* Settings Tab */}
                   <TabsContent

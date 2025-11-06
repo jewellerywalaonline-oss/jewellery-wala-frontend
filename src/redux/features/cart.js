@@ -1,21 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "sonner";
 
-
 const getInitialState = (preloadedState) => ({
-  cartItems: preloadedState?._data?.items || [],
-  totalPrice: preloadedState?._data?.totalPrice || 0,
-  totalQuantity: preloadedState?._data?.totalItems || 0,
-  buyNowItem: typeof window !== "undefined"
-    && typeof window.sessionStorage !== "undefined"
-    && sessionStorage.getItem("buyNowProduct")
-    ? JSON.parse(sessionStorage.getItem("buyNowProduct"))
-    : {
-        productId: null,
-        product: null,
-        quantity: 1,
-        colorId: null,
-      },
+  cartItems: [],
+  totalPrice: 0,
+  totalQuantity: 0,
+  buyNowItem:
+    typeof window !== "undefined" &&
+    typeof window.sessionStorage !== "undefined" &&
+    sessionStorage.getItem("buyNowProduct")
+      ? JSON.parse(sessionStorage.getItem("buyNowProduct"))
+      : {
+          productId: null,
+          product: null,
+          quantity: 1,
+          colorId: null,
+        },
 });
 
 const initialState = getInitialState();
@@ -91,11 +91,9 @@ export const cartSlice = createSlice({
       }
     },
     updateFullCart: (state, action) => {
-      state.cartItems = action.payload;
-      state.totalQuantity = action.payload.reduce(
-        (total, item) => total + (item.quantity || 0),
-        0
-      );
+      state.cartItems = action.payload.items;
+      state.totalQuantity = action.payload.totalQuantity;
+      state.totalPrice = action.payload.totalPrice;
     },
     setBuyNowItem: (state, action) => {
       state.buyNowItem = action.payload;

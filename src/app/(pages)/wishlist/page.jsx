@@ -27,8 +27,8 @@ async function getWishlist() {
       method: "post",
     }
   );
-
   const data = await response.json();
+  console.log(data);
 
   if (!response.ok || !data._status) {
     return null;
@@ -47,7 +47,7 @@ export default async function page() {
           </div>
         }
       >
-        <Wishlist wishlist={wishlist} />
+        <Wishlist wishlist={wishlist._data} />
       </Suspense>
     </div>
   );

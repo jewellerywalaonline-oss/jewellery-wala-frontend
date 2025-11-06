@@ -11,11 +11,11 @@ import {
   Shield,
   Truck,
   Heart,
-  InstagramIcon,
   IndianRupee,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import { FaFacebook, FaInstagram, FaWhatsapp } from "react-icons/fa";
 
 export default function Footer() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -43,6 +43,7 @@ export default function Footer() {
 
     fetchFeaturedProducts();
   }, []);
+  const categories = useSelector((state) => state?.ui?.navigation?._data);
 
   const logo = useSelector((state) => state.logo.logo);
 
@@ -112,9 +113,20 @@ export default function Footer() {
             <div className="flex gap-2">
               {[
                 {
-                  Icon: InstagramIcon,
+                  Icon: FaInstagram,
                   label: "Instagram",
                   href: "https://www.instagram.com/jewellery__wala_?igsh=MTBqdHI5cjYyMjZsMA==",
+                },
+                {
+                  Icon: FaFacebook,
+                  label: "Facebook",
+                  href: "https://www.facebook.com/jewellery__wala_?igsh=MTBqdHI5cjYyMjZsMA==",
+                },
+                {
+                  Icon: FaWhatsapp,
+                  label: "Whatsapp",
+                  href:
+                    "https://wa.me/" + process.env.NEXT_PUBLIC_BUSINESS_PHONE,
                 },
               ].map(({ Icon, label, href }) => (
                 <Button
@@ -143,25 +155,18 @@ export default function Footer() {
               Shop
             </h3>
             <ul className="space-y-2.5 text-sm">
-              {[
-                "Rings",
-                "Necklaces",
-                "Earrings",
-                "Bracelets",
-                "Bangles",
-                "Pendants",
-                "Chains",
-                "Anklets",
-              ].map((item) => (
-                <li key={item}>
-                  <Link
-                    href={`/category/shop-by-category/${item.toLowerCase()}`}
-                    className="text-gray-600 hover:text-yellow-600 hover:translate-x-1 inline-block transition-all duration-200"
-                  >
-                    {item}
-                  </Link>
-                </li>
-              ))}
+              {categories?.map((item) =>
+                item.subCategories?.slice(0, 10)?.map((subCategory) => (
+                  <li key={subCategory.name}>
+                    <Link
+                      href={`/category/${item.slug}/${subCategory.slug}`}
+                      className="text-gray-600 hover:text-yellow-600 hover:translate-x-1 inline-block transition-all duration-200"
+                    >
+                      {subCategory.name}
+                    </Link>
+                  </li>
+                ))
+              )}
             </ul>
           </div>
 
@@ -234,26 +239,30 @@ export default function Footer() {
               <li className="flex items-start gap-2">
                 <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-yellow-600" />
                 <a
-                  href="tel:+916378643867"
+                  href={"tel:+91" + process.env.NEXT_PUBLIC_BUSINESS_PHONE}
                   className="hover:text-yellow-600 transition-colors"
                 >
-                  +91 63786 43867
+                  {process.env.NEXT_PUBLIC_BUSINESS_PHONE}
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="w-4 h-4 mt-0.5 flex-shrink-0 text-yellow-600" />
                 <a
-                  href="mailto:support@jewellerywala.com"
+                  href={"mailto:" + process.env.NEXT_PUBLIC_BUSINESS_EMAIL}
                   className="hover:text-yellow-600 transition-colors break-all"
                 >
-                  support@jewellerywala.com
+                  {process.env.NEXT_PUBLIC_BUSINESS_EMAIL}
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-yellow-600" />
-                <span className="leading-relaxed">
-                  Jhalamand Circle, Jodhpur, Rajasthan
-                </span>
+                <a
+                  href={`https://maps.app.goo.gl/ohKdTgWQicv8Xjf89`}
+                  className="leading-relaxed"
+                >
+                  Jhalamand circle, Guda Rd, Jhalamand, Jodhpur, Rajasthan
+                  342005
+                </a>
               </li>
             </ul>
 

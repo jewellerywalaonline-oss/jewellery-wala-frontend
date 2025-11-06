@@ -4,6 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const STORAGE_KEY = "productFilters";
 
 const loadFromSessionStorage = () => {
+
   try {
     const saved = sessionStorage.getItem(STORAGE_KEY);
     if (saved) {

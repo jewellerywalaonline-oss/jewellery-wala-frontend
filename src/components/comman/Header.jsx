@@ -55,7 +55,7 @@ const userMenuItems = [
   {
     label: "Addresses",
     icon: MapPin,
-    href: "/profile?tab=addresses&to=address",
+    href: "/profile?tab=account",
   },
 ];
 

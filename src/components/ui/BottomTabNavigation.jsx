@@ -69,7 +69,11 @@ export function BottomTabNavigation() {
   }, []);
 
   return (
-    <div className={`block md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white shadow-lg border-t border-gray-100 duration-200 ${scroll ? "top-[100%]" : "bottom-0"}`}>
+    <div
+      className={`block md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white shadow-lg border-t border-gray-100 duration-500 ${
+        scroll ? "bottom-[-10%]" : "bottom-0"
+      }`}
+    >
       <div className="relative h-16">
         <div className="relative h-full flex items-center justify-around px-2">
           {tabs.map((tab) => {

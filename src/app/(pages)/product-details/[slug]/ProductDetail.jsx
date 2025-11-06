@@ -29,7 +29,6 @@ export default function ProductDetailsPage({ details }) {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(details);
   const [wishlistLoading, setWishlistLoading] = useState(false);
-
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -321,25 +320,40 @@ export default function ProductDetailsPage({ details }) {
               {product.name}
             </motion.h1>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="flex items-center gap-3 mb-6"
-              role="group"
-              aria-label="Product rating"
-            >
-              <div
-                className="flex items-center gap-1"
-                role="img"
-                aria-label={`Rated ${product.rating || 4} out of 5 stars`}
+            {product.rating ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex items-center gap-3 mb-6"
+                role="group"
+                aria-label="Product rating"
               >
-                {renderStars(product.rating)}
-              </div>
-              <span className="text-sm text-gray-600 font-medium">
-                ({product.reviews || 0} Reviews)
-              </span>
-            </motion.div>
+                <div
+                  className="flex items-center gap-1"
+                  role="img"
+                  aria-label={`Rated ${product.rating} out of 5 stars`}
+                >
+                  {renderStars(product.rating)}
+                </div>
+                <span className="text-sm text-gray-600 font-medium">
+                  ({product.reviewCount || 0} Reviews)
+                </span>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex items-center "
+                role="group"
+                aria-label="Product rating"
+              >
+                <span className="text-sm text-gray-600 font-medium">
+                  No Rating Available
+                </span>
+              </motion.div>
+            )}
 
             <motion.div
               initial={{ opacity: 0, x: -20 }}

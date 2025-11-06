@@ -1,7 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "motion/react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -110,6 +109,10 @@ export const ImagesSlider = ({
 
   const router = useRouter();
 
+  const handleNavigate = () => {
+    router.push("/category/shop-by-category");
+  };
+
   const areImagesLoaded = loadedImages.length > 0;
   const buttonStyles = `
   absolute z-50 p-2 rounded-full bg-black/30 hover:bg-black/50 text-white
@@ -134,9 +137,10 @@ export const ImagesSlider = ({
       {areImagesLoaded && (
         <AnimatePresence>
           <motion.img
-            onClick={() => router.push("/category/shop-by-category")}
+            onClick={handleNavigate}
             key={currentIndex}
             src={loadedImages[currentIndex]}
+            loading="eager"
             initial="initial"
             animate="visible"
             alt={loadedImages[currentIndex] || "banner for jewellry wala"}

@@ -199,59 +199,11 @@ const getNavigation = cache(async () => {
   return data;
 });
 
-async function getCart() {
-  const cookie = await cookies();
-  const token = cookie.get("user");
 
-  if (!token) return null;
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}api/website/cart/view`,
-    {
-      headers: {
-        Authorization: `Bearer ${token.value}`,
-      },
-      method: "post",
-    }
-  );
-  if (!response.ok) {
-    return null;
-  }
-  const data = await response.json();
-  if (!response.ok || !data._status) {
-    return null;
-  }
-  return data;
-}
-
-async function getWishlist() {
-  const cookie = await cookies();
-  const token = cookie.get("user");
-
-  if (!token) return null;
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}api/website/wishlist/view`,
-    {
-      headers: {
-        Authorization: `Bearer ${token.value}`,
-      },
-      method: "post",
-    }
-  );
-  if (!response.ok) {
-    return null;
-  }
-  const data = await response.json();
-  if (!response.ok || !data._status) {
-    return null;
-  }
-  return data;
-}
 
 export default async function RootLayout({ children }) {
-  const [user, cart, wishlist, logo, navigation] = await Promise.all([
+  const [user, logo, navigation] = await Promise.all([
     getUser(),
-    getCart(),
-    getWishlist(),
     getLogo(),
     getNavigation(),
   ]);
@@ -285,8 +237,6 @@ export default async function RootLayout({ children }) {
         <Client
           preloadedState={{
             logo: logo,
-            cart: cart,
-            wishlist: wishlist,
             auth: user,
           }}
         >
