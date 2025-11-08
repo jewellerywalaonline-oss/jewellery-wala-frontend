@@ -12,7 +12,7 @@ export default function GoogleLoginBtn() {
   const handleGoogleLogin = async () => {
     try {
       // Redirect to Google's full OAuth page
-      const redirectUri = `${window.location.origin}/auth/google/callback?redirectUrl=${encodeURIComponent(path)}`;
+      const redirectUri = `${window.location.origin}/auth/google/callback`;
 
       const googleAuthUrl =
         `https://accounts.google.com/o/oauth2/v2/auth?` +

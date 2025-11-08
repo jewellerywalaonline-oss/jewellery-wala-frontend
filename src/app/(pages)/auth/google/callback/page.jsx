@@ -23,13 +23,13 @@ export default function Page() {
 
       if (error) {
         toast.error("Google sign-in was cancelled");
-        router.push(returnTo || "/");
+        router.push(redirectUrl|| returnTo || "/");
         return;
       }
 
       if (!code) {
         toast.error("No authorization code received");
-        router.push(returnTo || "/");
+        router.push(redirectUrl|| returnTo || "/");
         return;
       }
 
@@ -60,15 +60,15 @@ export default function Page() {
           toast.success(data._message || "Login successful!");
           dispatch(login(data._data.token));
           dispatch(setProfile(data._data.user));
-          router.push(redirectUrl || "/profile");
+          router.push(redirectUrl|| "/profile");
         } else {
           toast.error(data._message || "Login failed");
-          router.push(returnTo || "/");
+          router.push(redirectUrl|| returnTo || "/");
         }
       } catch (error) {
         console.error("Callback error:", error);
         toast.error("Authentication failed");
-        router.push(returnTo || "/");
+        router.push(redirectUrl|| returnTo || "/");
       }
     };
 
