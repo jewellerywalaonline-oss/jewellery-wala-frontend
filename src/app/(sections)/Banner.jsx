@@ -1,6 +1,7 @@
 import { ImagesSlider } from "@/components/ui/images-slider";
 import React, { cache, Suspense } from "react";
 import { LoadingUi } from "./Cart";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const GetBanners = cache(async () => {
   const response = await fetch(
@@ -24,7 +25,9 @@ async function BannerContent() {
 export default function Banner() {
   return (
     <div className="w-full h-[30vh] md:h-[50vh] lg:h-[70vh] overflow-hidden">
-      <Suspense fallback={<LoadingUi type="banner" />}>
+      <Suspense
+        fallback={<Skeleton className="h-[30vh] md:h-[50vh] lg:h-[70vh]" />}
+      >
         <BannerContent />
       </Suspense>
     </div>
