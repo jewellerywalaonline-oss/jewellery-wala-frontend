@@ -15,7 +15,6 @@ async function getCart() {
         Authorization: `Bearer ${token}`,
       },
       method: "post",
-     
     }
   );
   if (!response.ok) {
@@ -55,7 +54,7 @@ export async function fetchAndDispatchCart(dispatch) {
   try {
     const [cartData] = await Promise.all([getCart()]);
 
-    if (cartData) {
+    if (cartData && cartData._data?.items?.length > 0) {
       dispatch(updateFullCart(cartData._data || []));
     }
 
@@ -69,7 +68,7 @@ export async function fetchAndDispatchWishlist(dispatch) {
   try {
     const [wishlistData] = await Promise.all([getWishlist()]);
 
-    if (wishlistData) {
+    if (wishlistData && wishlistData._data?.length > 0) {
       dispatch(setWishlist(wishlistData._data || []));
     }
 

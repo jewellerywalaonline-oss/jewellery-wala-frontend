@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { setWishlist } from "@/redux/features/wishlist";
 
 export default function Wishlist({ wishlist }) {
-  const items = wishlist;
+  const [items, setItems] = useState([]);
 
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const router = useRouter();
@@ -50,7 +50,8 @@ export default function Wishlist({ wishlist }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setWishlist(items));
+    setItems(wishlist?.items || wishlist);
+    dispatch(setWishlist(wishlist));
   }, [wishlist]);
 
   if (!wishlist || items.length === 0) {
