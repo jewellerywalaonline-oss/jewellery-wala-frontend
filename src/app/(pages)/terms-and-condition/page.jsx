@@ -1,5 +1,6 @@
 import React from "react";
 import { siteConfig } from "@/lib/utils";
+import OurPolicy from "@/app/(sections)/OurPolicy";
 
 export const metadata = {
   title: `Terms and Conditions - ${siteConfig.name}`,
@@ -18,5 +19,5 @@ export const metadata = {
 };
 
 export default function page() {
-  return <div>No Code here create about component and import it</div>;
+  return <OurPolicy />;
 }

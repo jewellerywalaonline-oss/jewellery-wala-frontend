@@ -3,14 +3,16 @@ import { Button } from "@/components/ui/button";
 import { useDispatch } from "react-redux";
 import { closeLoginModal } from "@/redux/features/uiSlice";
 import { toast } from "sonner";
+import { usePathname } from "next/navigation";
 
 export default function GoogleLoginBtn() {
   const dispatch = useDispatch();
+  const path = usePathname();
 
   const handleGoogleLogin = async () => {
     try {
       // Redirect to Google's full OAuth page
-      const redirectUri = `${window.location.origin}/auth/google/callback`;
+      const redirectUri = `${window.location.origin}/auth/google/callback?redirectUrl=${encodeURIComponent(path)}`;
 
       const googleAuthUrl =
         `https://accounts.google.com/o/oauth2/v2/auth?` +

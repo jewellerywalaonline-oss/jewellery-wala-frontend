@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
-import axios from "axios";
+
 
 const getInitialState = (preloadedState) => ({
   user: Cookies.get("user") || preloadedState?._data?._id || null,

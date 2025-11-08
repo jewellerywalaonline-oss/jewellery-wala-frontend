@@ -4,10 +4,16 @@ import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { login, setProfile } from "@/redux/features/auth";
+
 
 export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirectUrl");
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -52,7 +58,9 @@ export default function Page() {
 
   
           toast.success(data._message || "Login successful!");
-          router.push( "/profile");
+          dispatch(login(data._data.token));
+          dispatch(setProfile(data._data.user));
+          router.push(redirectUrl || "/profile");
         } else {
           toast.error(data._message || "Login failed");
           router.push(returnTo || "/");
