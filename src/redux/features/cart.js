@@ -92,7 +92,7 @@ export const cartSlice = createSlice({
     },
     updateFullCart: (state, action) => {
       state.cartItems = action.payload.items;
-      state.totalQuantity = action.payload.totalQuantity;
+      state.totalQuantity = action.payload.totalItems;
       state.totalPrice = action.payload.totalPrice;
     },
     setBuyNowItem: (state, action) => {

@@ -7,7 +7,6 @@ import Slider from "./(sections)/Slider";
 import WhyChooseUs from "./(sections)/WhyChooseUs";
 import Testimonial from "./(sections)/Testimonial";
 import FullVideoSection from "./(sections)/video";
-import GiftItems from "./(sections)/GiftItems";
 import { siteConfig } from "@/lib/utils";
 import { cache } from "react";
 

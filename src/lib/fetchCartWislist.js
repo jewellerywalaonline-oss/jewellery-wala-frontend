@@ -1,13 +1,42 @@
+"use client";
+
+import { updateFullCart } from "@/redux/features/cart";
+import { setWishlist } from "@/redux/features/wishlist";
+import Cookies from "js-cookie";
+
 async function getCart() {
-  const cookie = await cookies();
-  const token = cookie.get("user");
+  const token = Cookies.get("user");
 
   if (!token) return null;
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}api/website/cart/view`,
     {
       headers: {
-        Authorization: `Bearer ${token.value}`,
+        Authorization: `Bearer ${token}`,
+      },
+      method: "post",
+     
+    }
+  );
+  if (!response.ok) {
+    return null;
+  }
+  const data = await response.json();
+  if (!response.ok || !data._status) {
+    return null;
+  }
+  return data;
+}
+
+async function getWishlist() {
+  const token = Cookies.get("user");
+
+  if (!token) return null;
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}api/website/wishlist/view`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
       method: "post",
     }
@@ -22,26 +51,31 @@ async function getCart() {
   return data;
 }
 
-async function getWishlist() {
-  const cookie = await cookies();
-  const token = cookie.get("user");
+export async function fetchAndDispatchCart(dispatch) {
+  try {
+    const [cartData] = await Promise.all([getCart()]);
 
-  if (!token) return null;
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}api/website/wishlist/view`,
-    {
-      headers: {
-        Authorization: `Bearer ${token.value}`,
-      },
-      method: "post",
+    if (cartData) {
+      dispatch(updateFullCart(cartData._data || []));
     }
-  );
-  if (!response.ok) {
-    return null;
+
+    return { cart: cartData };
+  } catch (error) {
+    console.error("Error fetching cart or wishlist:", error);
+    return { cart: null };
   }
-  const data = await response.json();
-  if (!response.ok || !data._status) {
-    return null;
+}
+export async function fetchAndDispatchWishlist(dispatch) {
+  try {
+    const [wishlistData] = await Promise.all([getWishlist()]);
+
+    if (wishlistData) {
+      dispatch(setWishlist(wishlistData._data || []));
+    }
+
+    return { totalWishlist: wishlistData };
+  } catch (error) {
+    console.error("Error fetching wishlist:", error);
+    return { totalWishlist: null };
   }
-  return data;
 }

@@ -42,7 +42,7 @@ import {
 import { PlaceholdersAndVanishInput } from "../ui/placeholders-and-vanish-input";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
-
+import { fetchAndDispatchCart, fetchAndDispatchCartWishlist, fetchAndDispatchWishlist } from "@/lib/fetchCartWislist";
 import { useRouter } from "next/navigation";
 import { openLoginModal, setNavigation } from "@/redux/features/uiSlice";
 import Cookies from "js-cookie";
@@ -67,6 +67,8 @@ export default function Header({ navigationData }) {
   const cartCount = useSelector((state) => state.cart.totalQuantity);
   const wishlistCount = useSelector((state) => state.wishlist.totalQuantity);
 
+  
+
   const router = useRouter();
   const isLoggedIn = useSelector((state) => state.auth.isLogin);
   const user = useSelector((state) => state.auth.details);
@@ -89,6 +91,13 @@ export default function Header({ navigationData }) {
   useEffect(() => {
     dispatch(setNavigation(navigationData));
   }, [navigationData]);
+
+  
+  useEffect(() => {
+    fetchAndDispatchWishlist(dispatch)
+    fetchAndDispatchCart(dispatch);
+  }, []);
+
 
   // SCROLL EFFECT
   useEffect(() => {

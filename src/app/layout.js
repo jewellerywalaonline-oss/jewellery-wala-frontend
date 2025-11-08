@@ -152,34 +152,34 @@ const getUser = cache(async () => {
   return data;
 });
 
-const getLogo = cache(async () => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}api/website/logo`,
-    {
-      method: "post",
-      // next: { revalidate: 3600 },
-    }
-  );
-  if (!response.ok) {
-    return null;
-  }
-  const data = await response.json();
+// const getLogo = cache(async () => {
+//   const response = await fetch(
+//     `${process.env.NEXT_PUBLIC_API_URL}api/website/logo`,
+//     {
+//       method: "post",
+//       // next: { revalidate: 3600 },
+//     }
+//   );
+//   if (!response.ok) {
+//     return null;
+//   }
+//   const data = await response.json();
 
-  if (!response.ok || !data._status) {
-    return null;
-  }
-  return data;
-});
+//   if (!response.ok || !data._status) {
+//     return null;
+//   }
+//   return data;
+// });
 
 const getNavigation = cache(async () => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}api/website/nav`,
     {
       method: "POST",
-      // next: {
-      //   revalidate: 3600,
-      //   tags: ["navigation"],
-      // },
+      next: {
+        revalidate: 3600,
+        tags: ["navigation"],
+      },
     }
   );
 
@@ -199,12 +199,9 @@ const getNavigation = cache(async () => {
   return data;
 });
 
-
-
 export default async function RootLayout({ children }) {
-  const [user, logo, navigation] = await Promise.all([
+  const [user, navigation] = await Promise.all([
     getUser(),
-    getLogo(),
     getNavigation(),
   ]);
 
@@ -236,7 +233,7 @@ export default async function RootLayout({ children }) {
       >
         <Client
           preloadedState={{
-            logo: logo,
+            // logo: logo,
             auth: user,
           }}
         >

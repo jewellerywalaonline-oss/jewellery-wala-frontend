@@ -13,14 +13,13 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
-import { Empty } from "@/components/ui/empty";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { updateFullCart } from "@/redux/features/cart";
 export default function Cart({ cart }) {
-  const [appliedCoupon, setAppliedCoupon] = useState("");
   const [loading, setLoading] = useState(false);
-  const [couponInput, setCouponInput] = useState("");
-  const [discount, setDiscount] = useState(0);
+
   const router = useRouter();
 
   const updateQuantity = async (id, newQuantity) => {
@@ -78,18 +77,8 @@ export default function Cart({ cart }) {
     }
   };
 
-  const applyCoupon = () => {
-    if (couponInput.toUpperCase() === "SAVE20") {
-      setDiscount(0.2);
-      setAppliedCoupon("SAVE20");
-      setCouponInput("");
-    } else {
-      alert("Invalid coupon code");
-    }
-  };
-
   const subtotal = cart?._data?.totalPrice || 0;
-  const discountAmount = subtotal * discount;
+  const discountAmount = subtotal * 0;
   const finalSubtotal = subtotal - discountAmount;
   const shipping = finalSubtotal > 1000 ? 0 : 50;
   const estimatedTotal = finalSubtotal + shipping;
@@ -122,6 +111,12 @@ export default function Cart({ cart }) {
       setLoading(false);
     }
   };
+
+  const dispatch = useDispatch()
+
+  useEffect(()=>{
+    dispatch(updateFullCart(cart._data))
+  },[cart])
 
   if (cart === null || cart?._data?.items.length === 0) {
     return (

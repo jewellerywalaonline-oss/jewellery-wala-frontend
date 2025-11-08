@@ -18,15 +18,16 @@ export const wishlistSlice = createSlice({
   },
   reducers: {
     addToWishlist: (state, action) => {
-      if (state.wishlistItems.find((item) => item._id === action.payload)) {
+      if (state.wishlistItems.find((item) => item._id === action.payload._id)) {
         return;
       } else {
         state.wishlistItems.push(action.payload);
+        state.totalQuantity = state.wishlistItems.length;
       }
     },
     removeFromWishlist: (state, action) => {
       state.wishlistItems = state.wishlistItems.filter(
-        (item) => item._id !== action.payload
+        (item) => item._id !== action.payload._id
       );
       state.totalQuantity = state.wishlistItems.length;
     },

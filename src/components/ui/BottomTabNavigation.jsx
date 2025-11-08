@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, usePathname } from "next/navigation";
 import { Home, User, Settings, ShoppingCartIcon } from "lucide-react";
+import { useSelector } from "react-redux";
 const tabs = [
   { id: "home", url: "/", label: "Home", icon: <Home size={24} /> },
 
@@ -32,6 +33,7 @@ export function BottomTabNavigation() {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState("home");
   const [scroll, setScroll] = useState(false);
+  const cartCount = useSelector((state) => state.cart.totalQuantity);
 
   useEffect(() => {
     const currentTab = tabs.find(
@@ -99,7 +101,9 @@ export function BottomTabNavigation() {
                     />
                   )}
                 </AnimatePresence>
-
+                {/* {tab.id == "cart" && (
+                  <span className="absoulte top-[100%] right-0">{cartCount}</span>
+                )} */}
                 <motion.div
                   className={`relative z-10 flex flex-col items-center p-2 ${
                     isActive ? "text-blue-600" : "text-gray-500"

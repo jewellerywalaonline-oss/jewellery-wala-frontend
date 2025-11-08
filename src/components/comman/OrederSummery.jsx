@@ -31,8 +31,8 @@ export default function OrederSummery({ cartItems, type, orderData }) {
       <div>
         {/* Order Items */}
         <div className="space-y-4 mb-6">
-          {cartItems.map((item) => (
-            <div key={item._id} className="flex items-start space-x-4">
+          {cartItems.map((item, index) => (
+            <div key={item._id || index} className="flex items-start space-x-4">
               <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                 <Link
                   className="w-full h-full"
@@ -53,9 +53,11 @@ export default function OrederSummery({ cartItems, type, orderData }) {
                 </h3>
                 <p className="text-sm text-gray-500">
                   Qty: {item?.quantity}{" "}
-                  <span className="text-xs text-amber-500  font-medium">
-                    ({type == "cart" && item?.color?.name})
-                  </span>
+                  {type == "cart" && (
+                    <span className="text-xs text-amber-500  font-medium">
+                      ({item?.color?.name})
+                    </span>
+                  )}
                 </p>
 
                 <p className="text-sm font-medium text-gray-900 mt-1">
@@ -120,13 +122,6 @@ export default function OrederSummery({ cartItems, type, orderData }) {
             <div className="flex justify-between text-sm text-gray-600">
               <span>Gift Wrap</span>
               <span>₹50</span>
-            </div>
-          )}
-
-          {orderData.couponCode && (
-            <div className="flex justify-between text-sm text-green-600">
-              <span>Discount ({orderData.couponCode})</span>
-              <span>-₹100</span>
             </div>
           )}
 

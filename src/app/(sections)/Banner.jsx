@@ -1,20 +1,18 @@
 import { ImagesSlider } from "@/components/ui/images-slider";
-import React, { Suspense } from "react";
+import React, { cache, Suspense } from "react";
 import { LoadingUi } from "./Cart";
 
-// Cache the banners for 1 hour (3600 seconds)
-const GetBanners = async () => {
+const GetBanners = cache(async () => {
   const response = await fetch(
     process.env.NEXT_PUBLIC_API_URL + "api/website/banner",
     {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      next: { revalidate: 3600 },
     }
   );
   const data = await response.json();
   return data._data;
-};
+});
 
-// Separate async component for the actual content
 async function BannerContent() {
   const banners = await GetBanners();
   const images = banners.map((item) => item.image);

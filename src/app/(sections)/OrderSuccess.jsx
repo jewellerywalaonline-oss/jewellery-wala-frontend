@@ -98,7 +98,7 @@ export default function OrderSuccess() {
           className="text-center mb-6"
         >
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            Payment Successful!
+            Order Successful!
           </h1>
           <p className="text-green-100 text-lg mb-3">
             Your order has been placed

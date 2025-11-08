@@ -18,7 +18,6 @@ import {
 export default function RequirementModal({ user }) {
   const isOpen = useSelector((state) => state.ui.isRequirementModalOpen);
   const dispatch = useDispatch();
-console.log(user);
 
   const handleClose = () => {
     dispatch(closeRequirementModal());

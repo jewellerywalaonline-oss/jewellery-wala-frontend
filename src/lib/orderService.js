@@ -42,6 +42,11 @@ export const verifyPayment = async (paymentData) => {
   return response.data;
 };
 
+export const verifyCod = async (orderId) => {
+  const response = await api.post("/orders/buy-with-cod", { orderId });
+  return response.data;
+};
+
 // 4. Get User Orders
 export const getUserOrders = async (params = {}) => {
   const response = await api.get("/orders/my-orders", { params });

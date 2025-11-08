@@ -4,13 +4,15 @@ import { X, Heart, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoadingUi } from "./Cart";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { setWishlist } from "@/redux/features/wishlist";
 
 export default function Wishlist({ wishlist }) {
-  const items = wishlist ;
+  const items = wishlist;
 
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const router = useRouter();
@@ -44,6 +46,12 @@ export default function Wishlist({ wishlist }) {
       setWishlistLoading(false);
     }
   };
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setWishlist(items));
+  }, [wishlist]);
 
   if (!wishlist || items.length === 0) {
     return (
@@ -117,10 +125,13 @@ export default function Wishlist({ wishlist }) {
                   >
                     <div className="relative h-64 w-full">
                       <Image
+                        onClick={() =>
+                          router.push(`/product-details/${item.slug}`)
+                        }
                         src={item.image}
                         alt={item.name}
                         fill
-                        className="object-cover border-b border-gray-200"
+                        className="cursor-pointer object-cover border-b border-gray-200"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                       <button

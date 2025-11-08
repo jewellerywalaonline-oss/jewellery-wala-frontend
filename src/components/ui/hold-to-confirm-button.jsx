@@ -1,9 +1,6 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-
-
-
+import { useState, useRef, useEffect } from "react";
 
 export function HoldToConfirmButton({
   onConfirm,
@@ -11,61 +8,61 @@ export function HoldToConfirmButton({
   label = "Hold to Confirm",
   confirmLabel = "Confirmed!",
   className = "",
-  loading ,
+  loading,
 }) {
-  const [isHolding, setIsHolding] = useState(false)
-  const [progress, setProgress] = useState(0)
-  const [isConfirmed, setIsConfirmed] = useState(false)
-  const timeoutRef = useRef()
-  const animationRef = useRef()
-  const startTimeRef = useRef()
+  const [isHolding, setIsHolding] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const timeoutRef = useRef();
+  const animationRef = useRef();
+  const startTimeRef = useRef();
 
   const handleMouseDown = () => {
-    setIsHolding(true)
-    startTimeRef.current = Date.now()
+    setIsHolding(true);
+    startTimeRef.current = Date.now();
 
     const animate = () => {
-      if (!startTimeRef.current) return
+      if (!startTimeRef.current) return;
 
-      const elapsed = Date.now() - startTimeRef.current
-      const newProgress = Math.min((elapsed / duration) * 100, 100)
+      const elapsed = Date.now() - startTimeRef.current;
+      const newProgress = Math.min((elapsed / duration) * 100, 100);
 
-      setProgress(newProgress)
+      setProgress(newProgress);
 
       if (newProgress >= 100) {
-        setIsConfirmed(true)
-        onConfirm()
-        setIsHolding(false)
+        setIsConfirmed(true);
+        onConfirm();
+        setIsHolding(false);
 
         // Reset after 1.5 seconds
         timeoutRef.current = setTimeout(() => {
-          setIsConfirmed(false)
-          setProgress(0)
-        }, 1500)
+          setIsConfirmed(false);
+          setProgress(0);
+        }, 1500);
       } else {
-        animationRef.current = requestAnimationFrame(animate)
+        animationRef.current = requestAnimationFrame(animate);
       }
-    }
+    };
 
-    animationRef.current = requestAnimationFrame(animate)
-  }
+    animationRef.current = requestAnimationFrame(animate);
+  };
 
   const handleMouseUp = () => {
-    setIsHolding(false)
+    setIsHolding(false);
     if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current)
+      cancelAnimationFrame(animationRef.current);
     }
     if (!isConfirmed) {
-      setProgress(0)
+      setProgress(0);
     }
-  }
+  };
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-      if (animationRef.current) cancelAnimationFrame(animationRef.current)
-    }
-  }, [])
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+  }, []);
 
   return (
     <button
@@ -93,7 +90,9 @@ export function HoldToConfirmButton({
       <div
         className="absolute inset-0 rounded-xl pointer-events-none transition-all duration-300"
         style={{
-          boxShadow: isHolding ? `inset 0 0 20px rgba(217, 119, 6, 0.4), 0 0 20px rgba(217, 119, 6, 0.3)` : "none",
+          boxShadow: isHolding
+            ? `inset 0 0 20px rgba(217, 119, 6, 0.4), 0 0 20px rgba(217, 119, 6, 0.3)`
+            : "none",
         }}
       />
 
@@ -101,19 +100,33 @@ export function HoldToConfirmButton({
       <div className="relative flex items-center justify-center gap-2">
         {isConfirmed ? (
           <>
-            <svg className="w-5 h-5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg
+              className="w-5 h-5 animate-pulse"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
             <span>{confirmLabel}</span>
           </>
         ) : (
           <>
             <span>{label}</span>
-            {isHolding && <span className="text-sm opacity-75">{Math.round(progress)}%</span>}
+            {isHolding && (
+              <span className="text-sm opacity-75">
+                {Math.round(progress)}%
+              </span>
+            )}
           </>
         )}
       </div>
-
+     
       {/* Animated particles on hold */}
       {isHolding && (
         <>
@@ -134,7 +147,8 @@ export function HoldToConfirmButton({
 
       <style jsx>{`
         @keyframes float {
-          0%, 100% {
+          0%,
+          100% {
             transform: translateY(0px) translateX(0px);
             opacity: 0;
           }
@@ -142,11 +156,12 @@ export function HoldToConfirmButton({
             opacity: 0.6;
           }
           100% {
-            transform: translateY(-20px) translateX(${Math.random() * 20 - 10}px);
+            transform: translateY(-20px)
+              translateX(${Math.random() * 20 - 10}px);
             opacity: 0;
           }
         }
       `}</style>
     </button>
-  )
+  );
 }

@@ -3,15 +3,13 @@ import { useState } from "react";
 import {
   createOrder,
   createRazorpayOrder,
+  verifyCod,
   verifyPayment,
 } from "@/lib/orderService";
-
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
-import Image from "next/image";
 import OrederSummery from "@/components/comman/OrederSummery";
 import { toast } from "sonner";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -185,6 +183,47 @@ export default function Checkout() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const codHandle = async () => {
+    if (testError(orderData)) {
+      setAlert({
+        title: `Please Fill ${testError(orderData)}`,
+        open: true,
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const orderPayload = {
+        purchaseType,
+        ...orderData,
+        ...(purchaseType == "direct" && { items: cartItems }),
+      };
+
+      const createOrderResponse = await createOrder(orderPayload);
+      const { orderId } = createOrderResponse.order;
+      console.log(orderId);
+      
+      const confirmOrder = await verifyCod(orderId);
+
+      if (confirmOrder.success) {
+        setLoading(false);
+        router.push(
+          `/order-success?orderId=${orderId}&otp=${confirmOrder.order.deliveryOTP}&packageId=${confirmOrder.order.packageId}`
+        );
+      } else {
+        setLoading(false);
+
+        toast.error(confirmOrder.message || "Something Went Wrong");
+      }
+    } catch (error) {
+      setLoading(false);
+
+      toast.error(error.message || "Something Went Wrong");
     }
   };
 
@@ -608,12 +647,21 @@ export default function Checkout() {
                   <HoldToConfirmButton
                     loading={loading}
                     onConfirm={handlePayment}
-                    duration={2000}
-                    label="Hold to Confirm Purchase"
+                    duration={1200}
+                    label="Pay Online "
                     confirmLabel="Loading Payment Interface..."
                     className="w-full py-3.5 px-6 rounded-xl font-semibold text-white transition-all"
                   />
 
+                  {purchaseType == "direct" && (
+                    <Button
+                      onClick={codHandle}
+                      className="mt-4 w-full py-4 rounded-xl"
+                      variant="outline"
+                    >
+                      Purchase With Cash On delivery
+                    </Button>
+                  )}
                   <div className="mt-4 flex items-center justify-center space-x-2">
                     <svg
                       className="w-8 h-8"

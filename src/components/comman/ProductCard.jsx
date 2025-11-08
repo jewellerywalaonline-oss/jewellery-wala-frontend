@@ -89,6 +89,15 @@ export default function ProductCard({
         );
         const responseData = await response.json();
         if (response.ok || responseData._status) {
+          dispatch(
+            removeFromWishlist({
+              _id: data?._id,
+              name: data?.name,
+              image: data?.image,
+              price: data?.price,
+              discount_price: data?.discount_price,
+            })
+          );
           return toast.success(responseData._message);
         } else {
           return toast.error(responseData._message);
@@ -115,6 +124,15 @@ export default function ProductCard({
         );
         const responseData = await response.json();
         if (response.ok || responseData._status) {
+          dispatch(
+            addToWishlist({
+              _id: data?._id,
+              name: data?.name,
+              image: data?.image,
+              price: data?.price,
+              discount_price: data?.discount_price,
+            })
+          );
           return toast.success(responseData._message);
         } else {
           return toast.error(responseData._message);
@@ -288,12 +306,12 @@ export default function ProductCard({
               exit="exit"
               className="absolute inset-0"
             >
-              <Image
+              <img
                 width={500}
                 height={500}
                 src={src}
                 alt={`${data.name} - Product image`}
-                loading="lazy"
+                // loading="lazy"
                 className="w-full h-full object-cover cursor-pointer"
                 itemProp="image"
                 title={data.name}
