@@ -4,18 +4,18 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function GenderCategorySection() {
-  const navigation = useSelector((state) => state.ui.navigation._data);
+  const navigation = useSelector((state) => state?.ui?.navigation?._data);
 
   function getCategoryWithMensAndWomens(categories) {
-    const categoryWithSubs = categories.find(
-      (cat) => cat.subCategories && cat.subCategories.length > 0
+    const categoryWithSubs = categories?.find(
+      (cat) => cat?.subCategories && cat?.subCategories?.length > 0
     );
 
     if (!categoryWithSubs) {
       return [];
     }
 
-    const filteredSubCategories = categoryWithSubs.subCategories.filter(
+    const filteredSubCategories = categoryWithSubs?.subCategories?.filter(
       (sub) => sub.name === "Mens" || sub.name === "Womens"
     );
 

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   createOrder,
   createRazorpayOrder,
@@ -45,8 +45,16 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.auth.details);
 
-  const totalAmount = cartItems.reduce(
-    (total, item) => total + item.product.discount_price * item.quantity,
+  useEffect(() => {
+    if (purchaseType == "direct") {
+      if (!sessionStorage.getItem("buyNowProduct")) {
+        router.push("/");
+      }
+    }
+  }, [purchaseType]);
+
+  const totalAmount = cartItems?.reduce(
+    (total, item) => total + item?.product?.discount_price * item.quantity,
     0
   );
 
@@ -476,7 +484,7 @@ export default function Checkout() {
             </div>
 
             {purchaseType == "direct" &&
-              cartItems[0].product.isPersonalized && <Personalized />}
+              cartItems[0]?.product?.isPersonalized && <Personalized />}
 
             {/* Gift Options */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-amber-100">

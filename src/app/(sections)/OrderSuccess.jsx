@@ -35,6 +35,41 @@ export default function OrderSuccess() {
     }
   }, [orderId]);
 
+  // Handle audio playback
+  useEffect(() => {
+    if (audioRef.current) {
+      // Some browsers require user interaction before playing audio
+      const playAudio = async () => {
+        try {
+          await audioRef.current.play();
+        } catch (err) {
+          console.log("Audio playback failed:", err);
+        }
+      };
+
+      // Try to play immediately
+      playAudio();
+
+      // Some browsers require user interaction first
+      const handleFirstInteraction = () => {
+        playAudio();
+        window.removeEventListener("click", handleFirstInteraction);
+        window.removeEventListener("keydown", handleFirstInteraction);
+        window.removeEventListener("touchstart", handleFirstInteraction);
+      };
+
+      window.addEventListener("click", handleFirstInteraction);
+      window.addEventListener("keydown", handleFirstInteraction);
+      window.addEventListener("touchstart", handleFirstInteraction);
+
+      return () => {
+        window.removeEventListener("click", handleFirstInteraction);
+        window.removeEventListener("keydown", handleFirstInteraction);
+        window.removeEventListener("touchstart", handleFirstInteraction);
+      };
+    }
+  }, []);
+
   const loadOrder = async () => {
     try {
       const response = await getOrderById(orderId);
@@ -50,9 +85,12 @@ export default function OrderSuccess() {
       <audio
         ref={audioRef}
         autoPlay
-        onEnded={() => audioRef.current.end()}
-        src="/order.mp3"
-      />
+        loop={false}
+        onEnded={() => audioRef.current.pause()}
+      >
+        <source src="/order.mp3" type="audio/mp3" />
+        Your browser does not support the audio element.
+      </audio>
       {/* Top Green Section with Pattern */}
       <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-green-600 to-green-500 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
