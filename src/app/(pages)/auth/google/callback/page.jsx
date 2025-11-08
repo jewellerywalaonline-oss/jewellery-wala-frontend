@@ -7,7 +7,6 @@ import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { login, setProfile } from "@/redux/features/auth";
 
-
 export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -23,13 +22,13 @@ export default function Page() {
 
       if (error) {
         toast.error("Google sign-in was cancelled");
-        router.push(redirectUrl|| returnTo || "/");
+        router.push(returnTo || "/");
         return;
       }
 
       if (!code) {
         toast.error("No authorization code received");
-        router.push(redirectUrl|| returnTo || "/");
+        router.push(returnTo || "/");
         return;
       }
 
@@ -56,19 +55,18 @@ export default function Page() {
             sameSite: "strict",
           });
 
-  
           toast.success(data._message || "Login successful!");
           dispatch(login(data._data.token));
           dispatch(setProfile(data._data.user));
-          router.push(redirectUrl|| "/profile");
+          router.push("/profile");
         } else {
           toast.error(data._message || "Login failed");
-          router.push(redirectUrl|| returnTo || "/");
+          router.push(returnTo || "/");
         }
       } catch (error) {
         console.error("Callback error:", error);
         toast.error("Authentication failed");
-        router.push(redirectUrl|| returnTo || "/");
+        router.push(returnTo || "/");
       }
     };
 

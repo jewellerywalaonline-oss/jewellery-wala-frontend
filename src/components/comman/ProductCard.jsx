@@ -306,12 +306,11 @@ export default function ProductCard({
               exit="exit"
               className="absolute inset-0"
             >
-              <img
+              <Image
                 width={500}
                 height={500}
                 src={src}
                 alt={`${data.name} - Product image`}
-                // loading="lazy"
                 className="w-full h-full object-cover cursor-pointer"
                 itemProp="image"
                 title={data.name}
@@ -432,7 +431,7 @@ export default function ProductCard({
             >
               <ShoppingCart size={14} aria-hidden="true" />
               <span className="text-xs sm:text-sm ">
-                {loading ? "Adding..." : "Add to Cart"}
+                {loading ? "Adding..." : data.stock === 0 ? "Out of Stock" : "Add to Cart"}
               </span>
             </Button>
           </motion.div>

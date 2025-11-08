@@ -191,7 +191,10 @@ export default function Header({ navigationData }) {
         <div
           className={`w-full  text-center bg-gradient-to-r from-amber-600 to-amber-500 text-white text-sm py-2 transition-all duration-300 `}
         >
-          <span>Free Shipping above ₹2000 | Welcome to Jewellery Wala</span>
+          <span>
+            Free Shipping above ₹1000 | Welcome to{" "}
+            {process.env.NEXT_PUBLIC_APP_NAME}
+          </span>
         </div>
 
         {/* Main Header Bar */}

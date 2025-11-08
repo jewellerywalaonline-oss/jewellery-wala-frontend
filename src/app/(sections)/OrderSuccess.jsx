@@ -1,6 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Check,
@@ -27,6 +27,7 @@ export default function OrderSuccess() {
   const deliveryOTP = searchParams.get("otp");
   const packageId = searchParams.get("packageId");
   const [order, setOrder] = useState(null);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     if (orderId) {
@@ -45,6 +46,13 @@ export default function OrderSuccess() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-green-600 via-white to-gray-50">
+      {/* audio */}
+      <audio
+        ref={audioRef}
+        autoPlay
+        onEnded={() => audioRef.current.end()}
+        src="/order.mp3"
+      />
       {/* Top Green Section with Pattern */}
       <div className="absolute top-0 left-0 right-0 h-80 bg-gradient-to-b from-green-600 to-green-500 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
@@ -143,10 +151,6 @@ export default function OrderSuccess() {
                 <div className="flex items-center gap-1.5">
                   <Mail className="w-3.5 h-3.5 text-green-600" />
                   <span>Email sent</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Phone className="w-3.5 h-3.5 text-green-600" />
-                  <span>SMS sent</span>
                 </div>
               </div>
             </CardContent>

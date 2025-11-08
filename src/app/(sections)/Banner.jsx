@@ -1,6 +1,5 @@
 import { ImagesSlider } from "@/components/ui/images-slider";
 import React, { cache, Suspense } from "react";
-import { LoadingUi } from "./Cart";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const GetBanners = cache(async () => {

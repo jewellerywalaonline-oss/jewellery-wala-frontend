@@ -39,6 +39,7 @@ export default function ProductListing() {
   );
 
   const PRODUCTS_PER_PAGE = 15;
+  const MAX_PRODUCTS = 35; // Maximum number of products to load
 
   // SCROLL EFFECT
   useEffect(() => {
@@ -112,7 +113,8 @@ export default function ProductListing() {
 
       if (append) {
         setFilteredProducts((prev) => {
-          return [...prev, ...newProducts];
+          const combined = [...prev, ...newProducts];
+          return combined.slice(0, MAX_PRODUCTS); // Ensure we don't exceed the limit
         });
       } else {
         setFilteredProducts(newProducts);
@@ -125,8 +127,9 @@ export default function ProductListing() {
         const hasMoreProducts = page * PRODUCTS_PER_PAGE < total;
         setHasMore(hasMoreProducts);
       } else {
-        // Fallback: if we got fewer products than requested, we've reached the end
-        const hasMoreProducts = newProducts.length === PRODUCTS_PER_PAGE;
+        // Check if we've reached the maximum number of products or the end of the list
+        const hasReachedMax = filteredProducts.length + newProducts.length >= MAX_PRODUCTS;
+        const hasMoreProducts = !hasReachedMax && newProducts.length === PRODUCTS_PER_PAGE;
 
         setHasMore(hasMoreProducts);
       }

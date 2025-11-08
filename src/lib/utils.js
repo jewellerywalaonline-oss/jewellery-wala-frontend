@@ -7,8 +7,8 @@ export function cn(...inputs) {
 
 // SEO Configuration for Jewellery Walla
 export const siteConfig = {
-  name: "Jewellery Wala",
-  legalName: "Jewellery Wala Private Limited",
+  name: "Jewellery Walla",
+  legalName: "Jewellery Walla Private Limited",
   description:
     "Premium jewelry store in Jodhpur offering all types of jewelery for men and women. Discover unique designs and traditional craftsmanship.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://www.jewellerywalla.com",
@@ -37,20 +37,22 @@ export const siteConfig = {
 
   business: {
     foundedYear: "2020",
-    priceRange: "₹₹₹",
+    priceRange: "₹200 - ₹50000",
     hoursWeekday: "10:00 AM - 10:00 PM",
     hoursWeekend: "10:00 AM - 10:00 PM",
   },
 
   keywords: [
-    "jewelry wala",
+    "jewelry walla",
     "jewellery store jodhpur",
-    "jewellery wala store jodhpur",
+    "jewellery walla store jodhpur",
     "gold jewellery jodhpur",
     "silver jewellery jodhpur",
+    "cheap jewellery shop",
+    "jewellery shop in jodhpur",
     "diamond jewellery jodhpur",
     "traditional jewellery rajasthan",
-    "bridal jewellery jodhpur",
+    "bridal jewellery ",
     "men jewellery",
     "women jewellery",
     "jewellery shop near me",
@@ -81,7 +83,7 @@ export const siteConfig = {
     "Women's Jewellery",
     "Personalised Jewellery",
     "Gift Items",
-    "Track Your Order",
+
     "Contact Us",
   ],
 };
@@ -157,7 +159,7 @@ export const defaultMetadata = {
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    
   },
   manifest: "/site.webmanifest",
 };

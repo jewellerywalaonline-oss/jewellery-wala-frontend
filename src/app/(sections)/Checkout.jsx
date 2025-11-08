@@ -12,10 +12,14 @@ import OrederSummery from "@/components/comman/OrederSummery";
 import { toast } from "sonner";
 import {
   AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { HoldToConfirmButton } from "@/components/ui/hold-to-confirm-button";
@@ -40,6 +44,11 @@ export default function Checkout() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.auth.details);
+
+  const totalAmount = cartItems.reduce(
+    (total, item) => total + item.product.discount_price * item.quantity,
+    0
+  );
 
   const [orderData, setOrderData] = useState({
     shippingAddress: {
@@ -206,8 +215,7 @@ export default function Checkout() {
 
       const createOrderResponse = await createOrder(orderPayload);
       const { orderId } = createOrderResponse.order;
-      console.log(orderId);
-      
+
       const confirmOrder = await verifyCod(orderId);
 
       if (confirmOrder.success) {
@@ -648,19 +656,39 @@ export default function Checkout() {
                     loading={loading}
                     onConfirm={handlePayment}
                     duration={1200}
-                    label="Pay Online "
-                    confirmLabel="Loading Payment Interface..."
+                    label="Pay Online With Razorpay"
+                    confirmLabel="Loading Payment..."
                     className="w-full py-3.5 px-6 rounded-xl font-semibold text-white transition-all"
                   />
 
-                  {purchaseType == "direct" && (
-                    <Button
-                      onClick={codHandle}
-                      className="mt-4 w-full py-4 rounded-xl"
-                      variant="outline"
-                    >
-                      Purchase With Cash On delivery
-                    </Button>
+                  {purchaseType == "direct" && totalAmount < 1000 && (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          className="w-full mt-4 py-5 px-6 rounded-xl font-semibold  transition-all border-2 border-amber-500"
+                          variant="outline"
+                        >
+                          Purchase With Cash On delivery
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Do you want to Continue?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Purchase The Item With Cash ON delivery , Please
+                            Click On Continue To Complete Order
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={codHandle}>
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   )}
                   <div className="mt-4 flex items-center justify-center space-x-2">
                     <svg
