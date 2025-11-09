@@ -17,6 +17,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { updateFullCart } from "@/redux/features/cart";
+
+
 export default function Cart({ cart }) {
   const [loading, setLoading] = useState(false);
 
@@ -333,11 +335,7 @@ export default function Cart({ cart }) {
                     </Link>
                   </div>
 
-                  <div className="mt-6 border-t border-gray-200 pt-4 text-xs text-gray-600 space-y-1">
-                    <p>✓ Free shipping on orders over $100</p>
-                    <p>✓ 30-day return policy</p>
-                    <p>✓ Secure checkout with SSL encryption</p>
-                  </div>
+                  
                 </div>
               </div>
             </div>

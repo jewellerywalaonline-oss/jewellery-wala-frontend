@@ -141,6 +141,36 @@ html {
   }
 }
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes enterFlip {
+  0% {
+    opacity: 0;
+    transform: perspective(1500px) rotateY(30deg);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(1500px) rotateY(0deg);
+  }
+}
+
+@keyframes leaveFlip {
+  0% {
+    opacity: 1;
+    transform: perspective(1500px) rotateY(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(1500px) rotateY(-30deg);
+  }
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
 }
@@ -166,7 +196,6 @@ html {
   transition: all 0.3s ease;
   border: 1px solid #f79c1d !important;
 }
-
 
 @media (max-width: 768px) {
   .swiper-button-next,

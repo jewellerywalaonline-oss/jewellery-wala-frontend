@@ -12,6 +12,7 @@ import {
   Package,
   MapPin,
   ShoppingCartIcon,
+  Truck,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -117,7 +118,7 @@ export default function Header({ navigationData }) {
 
   // SCROLL EFFECT
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    const handleScroll = () => setIsScrolled(window.scrollY > 150);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -203,10 +204,10 @@ export default function Header({ navigationData }) {
       <header className="w-full bg-white/90 backdrop-blur-xl z-[100] sticky top-0 left-0  shadow-sm">
         {/* Top Bar */}
         <div
-          className={`w-full  text-center bg-gradient-to-r from-amber-600 to-amber-500 text-white text-sm py-2 transition-all duration-300 `}
+          className={`w-full  text-center bg-gradient-to-r from-amber-600 to-amber-500 text-white text-sm leading-3 py-2 transition-all duration-300 `}
         >
           <span>
-            Free Shipping above ₹1000 | Welcome to{" "}
+            <Truck className="inline rotate-y-180" size={14} /> Free Shipping above ₹1000 | Welcome to{" "}
             {process.env.NEXT_PUBLIC_APP_NAME}
           </span>
         </div>
@@ -429,7 +430,7 @@ export default function Header({ navigationData }) {
                   {/* <div className="hidden group-hover:block fixed top-0 left-0 right-0 bottom-0 bg-white/10 w-full h-screen backdrop-blur-md z-[998] pointer-events-none" /> */}
 
                   {/* Mega Menu Content - Shows on group hover */}
-                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 fixed left-1/2 -translate-x-1/2 top-full pt-1 z-[999] hover:visible hover:opacity-100">
+                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 [transform:_perspective(600px)_rotateX(-90deg)] duration-500 skew-x-10 group-hover:skew-x-0 origin-top group-hover:[transform:_perspective(1200px)_rotateX(0deg)] transition-all fixed left-1/2 -translate-x-1/2 top-full pt-1 z-[999] hover:visible hover:opacity-100">
                     <Card className="w-[1150px] max-w-[98vw] bg-white/95 backdrop-blur-xl shadow-2xl rounded-xl p-5 border-2 border-amber-200 hover:border-amber-400">
                       <div className="grid grid-cols-5 gap-5">
                         {cat.subCategories?.map((menu, i) => (

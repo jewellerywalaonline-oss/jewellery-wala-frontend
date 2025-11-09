@@ -50,6 +50,7 @@ async function getWishlist() {
   return data;
 }
 
+
 export async function fetchAndDispatchCart(dispatch) {
   try {
     const [cartData] = await Promise.all([getCart()]);
