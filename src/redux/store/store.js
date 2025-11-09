@@ -6,7 +6,7 @@ import filtersReducer from "../features/filters";
 import uiReducer from "../features/uiSlice";
 import logoReducer from "../features/logo";
 
-export const makeStore = (preloadedState) => {
+export const makeStore = () => {
   const store = configureStore({
     reducer: {
       auth: authReducer,
@@ -16,16 +16,10 @@ export const makeStore = (preloadedState) => {
       ui: uiReducer,
       logo: logoReducer,
     },
-    preloadedState,
+   
   });
 
-  // Dispatch a REPLACE_STATE action to let each slice handle its own preloaded state
-  if (preloadedState) {
-    store.dispatch({
-      type: "REPLACE_STATE",
-      payload: preloadedState,
-    });
-  }
+
 
   return store;
 };

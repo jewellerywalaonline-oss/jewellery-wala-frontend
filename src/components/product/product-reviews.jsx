@@ -165,7 +165,7 @@ export default function ProductReviews({ productId }) {
       if (response.ok) {
         setSubmitSuccess(true);
         // Refresh reviews
-        router.refresh();
+        router.push(window.location.pathname);
         setFormData({ name: "", comment: "", rating: 0 });
         setFormErrors({});
         // Close modal after 2 seconds

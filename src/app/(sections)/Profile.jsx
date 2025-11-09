@@ -81,6 +81,10 @@ export default function AccountPage() {
   };
 
   useEffect(() => {
+    if (data && data._id) {
+      setLoading(false);
+      return;
+    }
     fetchUser();
   }, []);
 
@@ -93,7 +97,6 @@ export default function AccountPage() {
     }
   }, [params]);
 
-  const router = useRouter();
   const handleTabChange = (value) => {
     // const paramsChange = new URLSearchParams(params.toString()); // make editable copy
     // paramsChange.set("tab", value);
@@ -199,7 +202,7 @@ export default function AccountPage() {
       );
       if (response.data._status) {
         toast.success(response.data._message);
-        router.refresh();
+        fetchUser();
       } else {
         toast.error(response.data._message);
       }

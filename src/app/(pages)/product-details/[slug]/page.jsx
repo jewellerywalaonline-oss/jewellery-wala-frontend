@@ -1,3 +1,4 @@
+export const revalidate = 3600;
 import { siteConfig, defaultMetadata } from "@/lib/utils";
 import ProductDetailsPage from "./ProductDetail";
 
@@ -11,7 +12,7 @@ export async function generateMetadata({ params }) {
 
   if (!product) {
     return {
-      title: "Product Not Found | Jewellry Wala",
+      title: "Product Not Found | Jewellery Walla",
       description: "The requested product could not be found.",
     };
   }
@@ -42,7 +43,7 @@ export async function generateMetadata({ params }) {
   ].join(", ");
 
   const enhancedDescription =
-    product.meta_description ||
+    product.description ||
     `Buy authentic ${product.name} from ${
       siteConfig.name
     }, your trusted jewellery shop in Jodhpur, Rajasthan. ${
@@ -81,7 +82,7 @@ export async function generateMetadata({ params }) {
       card: "summary_large_image",
       title: `${product.name} | ${siteConfig.name}`,
       description:
-        product.meta_description ||
+        product.description ||
         `Buy ${product.name} from Jodhpur's trusted jewellery shop.`,
       images: [productImage],
     },
@@ -119,7 +120,7 @@ export async function generateProductSchema(product, productUrl) {
       name: product.name,
       image: productImage,
       description:
-        product.meta_description ||
+        product.description ||
         `Buy ${product.name} from ${siteConfig.name} in Jodhpur, Rajasthan. ${
           product.short_description || ""
         }`,
@@ -163,11 +164,11 @@ export async function generateProductSchema(product, productUrl) {
       image: siteConfig.url + "/images/shop-image.jpg",
       "@id": siteConfig.url,
       url: siteConfig.url,
-      telephone: siteConfig.phone || "+91-XXXXXXXXXX", // Add your phone number
+      telephone: siteConfig.contact.phone || "+91-XXXXXXXXXX", // Add your phone number
       priceRange: "₹₹",
       address: {
         "@type": "PostalAddress",
-        streetAddress: siteConfig.address || "Your Street Address", // Add your address
+        streetAddress: siteConfig.contact.address || "Your Street Address", // Add your address
         addressLocality: "Jodhpur",
         addressRegion: "Rajasthan",
         postalCode: "342001", // Update with your postal code
@@ -209,7 +210,7 @@ async function getProducts(slug) {
     `${process.env.NEXT_PUBLIC_API_URL}api/website/product/details/${slug}`,
     {
       method: "post",
-    } 
+    }
   );
 
   if (!response.ok) {
@@ -224,7 +225,7 @@ export default async function Page({ params }) {
   const allParams = await params;
   const { slug } = await allParams;
   const product = await getProducts(slug);
-  
+
   if (!product) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">

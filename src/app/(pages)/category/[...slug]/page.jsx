@@ -1,3 +1,4 @@
+export const revalidate = 3600;
 import ProductListing from "../ProductListing";
 import React, { cache } from "react";
 import { siteConfig } from "@/lib/utils";
@@ -26,7 +27,6 @@ const getColor = cache(async () => {
     `${process.env.NEXT_PUBLIC_API_URL}api/website/color`,
     {
       method: "post",
-      revalidate: 3600,
     }
   );
 
@@ -42,7 +42,6 @@ const getMaterial = cache(async () => {
     `${process.env.NEXT_PUBLIC_API_URL}api/website/material`,
     {
       method: "post",
-      revalidate: 3600,
     }
   );
   const data = await material.json();
@@ -51,8 +50,6 @@ const getMaterial = cache(async () => {
   }
   return data._data;
 });
-
-
 
 export default async function page({ params }) {
   const slug = await params.slug;
@@ -63,7 +60,6 @@ export default async function page({ params }) {
 
   const color = await getColor();
   const material = await getMaterial();
-  
 
   return (
     <div className="">
@@ -97,11 +93,7 @@ export default async function page({ params }) {
         {/* main content */}
         <div className="flex  lg:gap-8 py-8">
           <div className="">
-            <FilterSidebar
-              color={color}
-              material={material}
-             
-            />
+            <FilterSidebar color={color} material={material} />
           </div>
           <main className="flex-1">
             <ProductListing />

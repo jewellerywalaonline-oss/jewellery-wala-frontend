@@ -43,7 +43,7 @@ export default function Cart({ cart }) {
       if (!response.ok || !updatedCart._status) {
         toast.error(updatedCart._message || "Failed to update cart");
       }
-      router.refresh();
+      router.push("/cart");
     } catch (error) {
       toast.error(error.message || "Failed to update cart");
     } finally {
@@ -69,7 +69,7 @@ export default function Cart({ cart }) {
       if (!response.ok || !updatedCart._status) {
         toast.error(updatedCart._message || "Failed to remove item from cart");
       }
-      router.refresh();
+      router.push("/cart");
     } catch (error) {
       toast.error(error.message || "Failed to remove item from cart");
     } finally {
@@ -104,7 +104,7 @@ export default function Cart({ cart }) {
       if (!response.ok || !updatedCart._status) {
         toast.error(updatedCart._message || "Failed to update cart");
       }
-      router.refresh();
+      router.push("/cart");
     } catch (error) {
       toast.error(error.message || "Failed to update cart");
     } finally {
@@ -112,11 +112,11 @@ export default function Cart({ cart }) {
     }
   };
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  useEffect(()=>{
-    dispatch(updateFullCart(cart._data))
-  },[cart])
+  useEffect(() => {
+    dispatch(updateFullCart(cart._data));
+  }, [cart]);
 
   if (cart === null || cart?._data?.items.length === 0) {
     return (

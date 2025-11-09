@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { getOrderById } from "@/lib/orderService";
 import Link from "next/link";
@@ -8,26 +9,28 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { LoadingUi } from "./Cart";
 import { motion } from "framer-motion";
-import { 
-  Package, 
-  CheckCircle, 
-  Truck, 
-  MapPin, 
-  Clock, 
+import {
+  Package,
+  CheckCircle,
+  Truck,
+  MapPin,
+  Clock,
   XCircle,
   Gift,
-  FileText
+  FileText,
 } from "lucide-react";
 
-export default function OrderTracking({ orderIdApi }) {
+export default function OrderTracking() {
   const [orderNumber, setOrderNumber] = useState("");
-  const [orderId, setOrderId] = useState(orderIdApi);
+  const [orderId, setOrderId] = useState();
   const [orderDetails, setOrderDetails] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const searchParams = useSearchParams();
+
   useEffect(() => {
-    setOrderId(orderIdApi);
-  }, [orderIdApi]);
+    setOrderId(searchParams?.get("orderId") || "");
+  }, [searchParams]);
 
   const handleTrackOrder = (e) => {
     if (e) e.preventDefault();
@@ -97,7 +100,7 @@ export default function OrderTracking({ orderIdApi }) {
   return (
     <div className="min-h-[50vh] p-4 md:p-10">
       {orderId == "" || !orderId ? (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-3xl mx-auto"
@@ -120,7 +123,7 @@ export default function OrderTracking({ orderIdApi }) {
                 placeholder="ORD-1234567890-ABC123"
                 value={orderNumber}
                 onChange={(e) => setOrderNumber(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleTrackOrder()}
+                onKeyPress={(e) => e.key === "Enter" && handleTrackOrder()}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
               />
             </div>
@@ -133,18 +136,18 @@ export default function OrderTracking({ orderIdApi }) {
           </div>
         </motion.div>
       ) : (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="max-w-4xl mx-auto space-y-6"
         >
           {/* Order Header */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className={`rounded-xl shadow-lg overflow-hidden ${
-              isCancelled 
-                ? "bg-gradient-to-r from-red-500 to-red-600" 
+              isCancelled
+                ? "bg-gradient-to-r from-red-500 to-red-600"
                 : isDelivered
                 ? "bg-gradient-to-r from-green-500 to-green-600"
                 : "bg-gradient-to-r from-yellow-500 to-yellow-600"
@@ -193,7 +196,7 @@ export default function OrderTracking({ orderIdApi }) {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             {/* Order Status Timeline */}
             {!isCancelled && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.2 }}
@@ -211,99 +214,119 @@ export default function OrderTracking({ orderIdApi }) {
                       <div className="absolute top-5 left-0 right-0 h-1 bg-gray-200 mx-5">
                         <motion.div
                           initial={{ width: 0 }}
-                          animate={{ width: getProgressWidth(orderDetails?.order?.status) }}
+                          animate={{
+                            width: getProgressWidth(
+                              orderDetails?.order?.status
+                            ),
+                          }}
                           transition={{ duration: 1, ease: "easeOut" }}
                           className="h-full bg-green-500"
                         />
                       </div>
 
                       {/* Status Points */}
-                      {["pending", "confirmed", "shipped", "delivered"].map((status, index) => {
-                        const statusItem = orderDetails?.order?.statusHistory.find(
-                          (s) => s.status === status
-                        );
-                        const isActive = statusItem && statusItem.status === orderDetails?.order?.status;
-                        const isCompleted = orderDetails?.order?.statusHistory.some(
-                          (s) => s.status === status
-                        );
+                      {["pending", "confirmed", "shipped", "delivered"].map(
+                        (status, index) => {
+                          const statusItem =
+                            orderDetails?.order?.statusHistory.find(
+                              (s) => s.status === status
+                            );
+                          const isActive =
+                            statusItem &&
+                            statusItem.status === orderDetails?.order?.status;
+                          const isCompleted =
+                            orderDetails?.order?.statusHistory.some(
+                              (s) => s.status === status
+                            );
+
+                          return (
+                            <motion.div
+                              key={status}
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              transition={{ delay: 0.1 * index }}
+                              className="flex flex-col items-center relative z-10"
+                            >
+                              <motion.div
+                                animate={isActive ? { scale: [1, 1.1, 1] } : {}}
+                                transition={{ repeat: Infinity, duration: 2 }}
+                                className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg ${getStatusColor(
+                                  status,
+                                  isActive,
+                                  isCompleted
+                                )}`}
+                              >
+                                {getStatusIcon(status)}
+                              </motion.div>
+                              <span className="text-sm font-medium mt-2 capitalize">
+                                {status}
+                              </span>
+                              {statusItem && (
+                                <span className="text-xs text-gray-500 mt-1">
+                                  {new Date(
+                                    statusItem.timestamp
+                                  ).toLocaleDateString("en-IN")}
+                                </span>
+                              )}
+                            </motion.div>
+                          );
+                        }
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Mobile Timeline */}
+                  <div className="md:hidden space-y-4">
+                    {["pending", "confirmed", "shipped", "delivered"].map(
+                      (status, index) => {
+                        const statusItem =
+                          orderDetails?.order?.statusHistory.find(
+                            (s) => s.status === status
+                          );
+                        const isActive =
+                          statusItem &&
+                          statusItem.status === orderDetails?.order?.status;
+                        const isCompleted =
+                          orderDetails?.order?.statusHistory.some(
+                            (s) => s.status === status
+                          );
 
                         return (
                           <motion.div
                             key={status}
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * index }}
-                            className="flex flex-col items-center relative z-10"
+                            className="flex items-center gap-4"
                           >
-                            <motion.div
-                              animate={isActive ? { scale: [1, 1.1, 1] } : {}}
-                              transition={{ repeat: Infinity, duration: 2 }}
-                              className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg ${getStatusColor(
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${getStatusColor(
                                 status,
                                 isActive,
                                 isCompleted
                               )}`}
                             >
                               {getStatusIcon(status)}
-                            </motion.div>
-                            <span className="text-sm font-medium mt-2 capitalize">
-                              {status}
-                            </span>
-                            {statusItem && (
-                              <span className="text-xs text-gray-500 mt-1">
-                                {new Date(statusItem.timestamp).toLocaleDateString("en-IN")}
-                              </span>
-                            )}
+                            </div>
+                            <div className="flex-1">
+                              <p className="font-medium capitalize">{status}</p>
+                              {statusItem && (
+                                <p className="text-xs text-gray-500">
+                                  {new Date(
+                                    statusItem.timestamp
+                                  ).toLocaleDateString("en-IN", {
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })}
+                                </p>
+                              )}
+                            </div>
                           </motion.div>
                         );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Mobile Timeline */}
-                  <div className="md:hidden space-y-4">
-                    {["pending", "confirmed", "shipped", "delivered"].map((status, index) => {
-                      const statusItem = orderDetails?.order?.statusHistory.find(
-                        (s) => s.status === status
-                      );
-                      const isActive = statusItem && statusItem.status === orderDetails?.order?.status;
-                      const isCompleted = orderDetails?.order?.statusHistory.some(
-                        (s) => s.status === status
-                      );
-
-                      return (
-                        <motion.div
-                          key={status}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.1 * index }}
-                          className="flex items-center gap-4"
-                        >
-                          <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${getStatusColor(
-                              status,
-                              isActive,
-                              isCompleted
-                            )}`}
-                          >
-                            {getStatusIcon(status)}
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-medium capitalize">{status}</p>
-                            {statusItem && (
-                              <p className="text-xs text-gray-500">
-                                {new Date(statusItem.timestamp).toLocaleDateString("en-IN", {
-                                  month: "short",
-                                  day: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })}
-                              </p>
-                            )}
-                          </div>
-                        </motion.div>
-                      );
-                    })}
+                      }
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -311,7 +334,7 @@ export default function OrderTracking({ orderIdApi }) {
 
             {/* Cancelled Status */}
             {isCancelled && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 className="p-6 border-b bg-red-50"
@@ -325,8 +348,9 @@ export default function OrderTracking({ orderIdApi }) {
                     <p className="text-sm text-red-500">
                       This order was cancelled on{" "}
                       {new Date(
-                        orderDetails?.order?.statusHistory?.find((s) => s.status === "cancelled")
-                          ?.timestamp || orderDetails?.order?.updatedAt
+                        orderDetails?.order?.statusHistory?.find(
+                          (s) => s.status === "cancelled"
+                        )?.timestamp || orderDetails?.order?.updatedAt
                       ).toLocaleDateString("en-IN", {
                         year: "numeric",
                         month: "long",
@@ -340,7 +364,7 @@ export default function OrderTracking({ orderIdApi }) {
 
             {/* Delivered Badge */}
             {isDelivered && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="p-4 bg-green-50 border-l-4 border-green-500 mx-6 mt-6 rounded-r-lg"
@@ -348,12 +372,15 @@ export default function OrderTracking({ orderIdApi }) {
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-600" />
-                    <span className="font-semibold text-green-800">Delivered On:</span>
+                    <span className="font-semibold text-green-800">
+                      Delivered On:
+                    </span>
                   </div>
                   <span className="font-semibold text-green-600">
                     {new Date(
-                      orderDetails?.order?.statusHistory?.find((s) => s.status === "delivered")
-                        ?.timestamp
+                      orderDetails?.order?.statusHistory?.find(
+                        (s) => s.status === "delivered"
+                      )?.timestamp
                     ).toLocaleDateString("en-IN", {
                       year: "numeric",
                       month: "long",
@@ -365,7 +392,7 @@ export default function OrderTracking({ orderIdApi }) {
             )}
 
             {/* Order Items */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -396,9 +423,13 @@ export default function OrderTracking({ orderIdApi }) {
                       </div>
                     </Link>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        {item.name}
+                      </h3>
                       <div className="flex items-center gap-4 mt-1 flex-wrap">
-                        <span className="text-sm text-gray-600">Qty: {item.quantity}</span>
+                        <span className="text-sm text-gray-600">
+                          Qty: {item.quantity}
+                        </span>
                         <span className="text-lg font-semibold text-yellow-600">
                           ₹{item.priceAtPurchase.toLocaleString("en-IN")}
                         </span>
@@ -406,16 +437,18 @@ export default function OrderTracking({ orderIdApi }) {
                       {item.isPersonalized && item.personalizedName && (
                         <p className="text-sm text-gray-600 mt-2 bg-orange-50 px-2 py-1 rounded inline-block">
                           <span className="font-medium">Personalized:</span>{" "}
-                          <span className="text-orange-600">{item.personalizedName}</span>
+                          <span className="text-orange-600">
+                            {item.personalizedName}
+                          </span>
                         </p>
                       )}
                     </div>
                   </motion.div>
                 ))}
               </div>
-              
+
               {orderDetails?.order?.isGift && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="mt-4 p-4 bg-pink-50 border-l-4 border-pink-400 rounded-r-lg"
@@ -426,7 +459,8 @@ export default function OrderTracking({ orderIdApi }) {
                       <p className="font-semibold text-pink-900">Gift Order</p>
                       {orderDetails?.order?.giftMessage && (
                         <p className="text-sm text-pink-700 mt-1">
-                          <span className="font-medium">Message:</span> {orderDetails?.order?.giftMessage}
+                          <span className="font-medium">Message:</span>{" "}
+                          {orderDetails?.order?.giftMessage}
                         </p>
                       )}
                     </div>
@@ -436,7 +470,7 @@ export default function OrderTracking({ orderIdApi }) {
             </motion.div>
 
             {/* Order Summary */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
@@ -447,34 +481,46 @@ export default function OrderTracking({ orderIdApi }) {
                 <div className="flex justify-between text-gray-700">
                   <span>Subtotal</span>
                   <span className="font-medium">
-                    ₹{orderDetails?.order?.pricing?.subtotal?.toLocaleString("en-IN")}
+                    ₹
+                    {orderDetails?.order?.pricing?.subtotal?.toLocaleString(
+                      "en-IN"
+                    )}
                   </span>
                 </div>
                 <div className="flex justify-between text-gray-700">
                   <span>Shipping</span>
                   <span className="font-medium">
-                    ₹{orderDetails?.order?.pricing?.shipping?.toLocaleString("en-IN")}
+                    ₹
+                    {orderDetails?.order?.pricing?.shipping?.toLocaleString(
+                      "en-IN"
+                    )}
                   </span>
                 </div>
                 {orderDetails?.order?.pricing?.discount?.amount > 0 && (
                   <div className="flex justify-between text-green-600">
                     <span>Discount</span>
                     <span className="font-medium">
-                      -₹{orderDetails?.order?.pricing?.discount?.amount?.toLocaleString("en-IN")}
+                      -₹
+                      {orderDetails?.order?.pricing?.discount?.amount?.toLocaleString(
+                        "en-IN"
+                      )}
                     </span>
                   </div>
                 )}
                 <div className="flex justify-between font-bold text-lg pt-3 border-t-2 border-gray-300">
                   <span>Total</span>
                   <span className="text-yellow-600">
-                    ₹{orderDetails?.order?.pricing?.total?.toLocaleString("en-IN")}
+                    ₹
+                    {orderDetails?.order?.pricing?.total?.toLocaleString(
+                      "en-IN"
+                    )}
                   </span>
                 </div>
               </div>
             </motion.div>
 
             {/* Shipping Information */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
@@ -497,7 +543,9 @@ export default function OrderTracking({ orderIdApi }) {
                         {orderDetails?.order?.shippingAddress?.city},{" "}
                         {orderDetails?.order?.shippingAddress?.state}
                       </p>
-                      <p>India - {orderDetails?.order?.shippingAddress?.pincode}</p>
+                      <p>
+                        India - {orderDetails?.order?.shippingAddress?.pincode}
+                      </p>
                       <p className="mt-3 pt-3 border-t border-gray-200">
                         <span className="font-medium">Phone:</span>{" "}
                         {orderDetails?.order?.shippingAddress?.phone}
@@ -523,7 +571,7 @@ export default function OrderTracking({ orderIdApi }) {
                           </p>
                         </div>
                       )}
-                      
+
                       <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400">
                         <p className="text-sm font-medium text-yellow-900 mb-1">
                           Package ID
@@ -551,7 +599,7 @@ export default function OrderTracking({ orderIdApi }) {
           </div>
 
           {/* Track Another Order Form */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
@@ -564,7 +612,7 @@ export default function OrderTracking({ orderIdApi }) {
                 placeholder="Enter Order Number"
                 value={orderNumber}
                 onChange={(e) => setOrderNumber(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleTrackOrder()}
+                onKeyPress={(e) => e.key === "Enter" && handleTrackOrder()}
                 className="flex-1 min-w-[200px] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
               />
               <Button

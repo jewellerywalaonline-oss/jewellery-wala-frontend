@@ -79,8 +79,10 @@ export default function Header({ navigationData }) {
   const dispatch = useDispatch();
 
   const fetchUser = async () => {
+    if (user && user._id) {
+      return;
+    }
     const user = await getUser();
-    console.log(user);
     dispatch(setProfile(user._data));
   };
 

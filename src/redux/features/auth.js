@@ -1,24 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 
-
-const getInitialState = (preloadedState) => ({
-  user: Cookies.get("user") || preloadedState?._data?._id || null,
-  isLogin: !!(Cookies.get("user") || preloadedState?._data?._id),
-  details: preloadedState?._data || {},
-});
-
-const initialState = getInitialState();
+const initialState = {
+  user: Cookies.get("user") || null,
+  isLogin: !!Cookies.get("user"),
+  details: {},
+};
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
-  extraReducers: (builder) => {
-    builder.addCase("REPLACE_STATE", (state, action) => {
-      const newState = getInitialState(action.payload?.auth);
-      return { ...state, ...newState };
-    });
-  },
+
   reducers: {
     login: (state, action) => {
       state.user = action.payload;
@@ -49,11 +41,8 @@ export const authSlice = createSlice({
     setProfile: (state, action) => {
       state.details = action.payload;
     },
-   
   },
 });
 
-export const { login, logout, register, setProfile, setUser } = authSlice.actions;
+export const { login, logout, register, setProfile } = authSlice.actions;
 export default authSlice.reducer;
-
-

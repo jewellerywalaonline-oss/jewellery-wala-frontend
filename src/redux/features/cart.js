@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "sonner";
 
-const getInitialState = (preloadedState) => ({
+
+
+const initialState = {
   cartItems: [],
   totalPrice: 0,
   totalQuantity: 0,
@@ -16,19 +18,11 @@ const getInitialState = (preloadedState) => ({
           quantity: 1,
           colorId: null,
         },
-});
-
-const initialState = getInitialState();
+};
 
 export const cartSlice = createSlice({
   name: "cart",
   initialState,
-  extraReducers: (builder) => {
-    builder.addCase("REPLACE_STATE", (state, action) => {
-      const newState = getInitialState(action.payload?.cart);
-      return { ...state, ...newState };
-    });
-  },
   reducers: {
     addToCart: (state, action) => {
       const { productId, quantity = 1, colorId } = action.payload;

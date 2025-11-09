@@ -1,21 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const getInitialState = (preloadedState) => ({
+const initialState = {
   wishlistItems: [],
   totalQuantity: 0,
-});
-
-const initialState = getInitialState();
+};
 
 export const wishlistSlice = createSlice({
   name: "wishlist",
   initialState,
-  extraReducers: (builder) => {
-    builder.addCase("REPLACE_STATE", (state, action) => {
-      const newState = getInitialState(action.payload?.wishlist);
-      return { ...state, ...newState };
-    });
-  },
   reducers: {
     addToWishlist: (state, action) => {
       if (state.wishlistItems.find((item) => item._id === action.payload._id)) {

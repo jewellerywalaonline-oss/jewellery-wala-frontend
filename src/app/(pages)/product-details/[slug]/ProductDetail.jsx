@@ -24,6 +24,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import RelatedProducts from "@/components/product/RelatedProducts";
 import Breadcrumb from "./Breadcrumb";
 import Personalized from "@/components/product/Personalized";
+import { addToWishlist, removeFromWishlist } from "@/redux/features/wishlist";
 
 export default function ProductDetailsPage({ details }) {
   const [quantity, setQuantity] = useState(1);
@@ -124,6 +125,15 @@ export default function ProductDetailsPage({ details }) {
         );
         const responseData = await response.json();
         if (response.ok || responseData._status) {
+          dispatch(
+            removeFromWishlist({
+              _id: product?._id,
+              name: product?.name,
+              image: product?.image,
+              price: product?.price,
+              discount_price: product?.discount_price,
+            })
+          );
           return toast.success(responseData._message);
         } else {
           return toast.error(responseData._message);
@@ -150,6 +160,15 @@ export default function ProductDetailsPage({ details }) {
         );
         const responseData = await response.json();
         if (response.ok || responseData._status) {
+          dispatch(
+            addToWishlist({
+              _id: product?._id,
+              name: product?.name,
+              image: product?.image,
+              price: product?.price,
+              discount_price: product?.discount_price,
+            })
+          );
           return toast.success(responseData._message);
         } else {
           return toast.error(responseData._message);

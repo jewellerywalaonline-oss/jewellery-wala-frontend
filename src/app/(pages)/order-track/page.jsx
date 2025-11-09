@@ -1,6 +1,5 @@
 import OrderTracking from "@/app/(sections)/Track";
 import { siteConfig } from "@/lib/utils";
-import { getOrderById } from "@/lib/orderService";
 
 const pageTitle = "Track Your Order";
 const pageDescription =
@@ -33,12 +32,10 @@ export const metadata = {
   ].join(", "),
 };
 
-export default async function Page({ searchParams }) {
-  const orderId = await searchParams.orderId;
-
+export default async function Page() {
   return (
     <main>
-      <OrderTracking orderIdApi={orderId} />
+      <OrderTracking />
     </main>
   );
 }
