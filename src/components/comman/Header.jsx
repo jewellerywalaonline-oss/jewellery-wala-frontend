@@ -82,8 +82,8 @@ export default function Header({ navigationData }) {
     if (user && user._id) {
       return;
     }
-    const user = await getUser();
-    dispatch(setProfile(user._data));
+    const userData = await getUser();
+    dispatch(setProfile(userData._data));
   };
 
   useEffect(() => {
