@@ -1,6 +1,9 @@
-# https://www.robotstxt.org/robotstxt.html
+# *
 User-agent: *
 Allow: /
 
-# Sitemap
+# Host
+Host: https://jewellerywalla.com/
+
+# Sitemaps
 Sitemap: https://jewellerywalla.com/sitemap.xml

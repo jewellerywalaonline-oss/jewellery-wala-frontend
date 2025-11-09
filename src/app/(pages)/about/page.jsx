@@ -18,9 +18,5 @@ export const metadata = {
 };
 
 export default function page() {
-  return (
-    <>
-      <JewelleryAboutUs />
-    </>
-  );
+  return <JewelleryAboutUs />;
 }

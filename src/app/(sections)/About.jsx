@@ -1,10 +1,7 @@
-"use client";
-import { Button } from "@/components/ui/button";
+
 import React from "react";
-import { useRouter } from "next/navigation";
 
 export default function JewelleryAboutUs() {
-  const router = useRouter();
   return (
     <div className="bg-white min-h-screen">
       {/* <iframe
@@ -25,7 +22,7 @@ export default function JewelleryAboutUs() {
             {/* Main Large Image */}
             <div className="overflow-hidden rounded-lg shadow-lg">
               <img
-                src="https://i.pinimg.com/736x/74/24/e6/7424e6012a5b2547cb42816840acf826.jpg"
+                src="noimage.jpg"
                 alt="Traditional Indian Jewellery Woman"
                 className="w-full h-96 object-cover hover:scale-105 transition-transform duration-300"
               />
@@ -34,7 +31,7 @@ export default function JewelleryAboutUs() {
             {/* Secondary Large Image */}
             <div className="overflow-hidden rounded-lg shadow-lg">
               <img
-                src="https://i.pinimg.com/736x/20/9b/b3/209bb313b8e1b0471d794886f65b719b.jpg"
+                src="noimage.jpg"
                 alt="Elegant Jewellery Display"
                 className="w-full h-80 object-cover hover:scale-105 transition-transform duration-300"
               />
@@ -90,15 +87,7 @@ export default function JewelleryAboutUs() {
               </p>
             </div>
 
-            {/* CTA Button */}
-            <div className="pt-4">
-              <Button
-                onClick={() => router.push("/product-listing")}
-                className="bg-gradient-to-r from-amber-800 to-amber-700 text-white px-12 py-3 rounded-lg font-sans text-md uppercase hover:shadow-lg hover:scale-105 transition-all duration-300 tracking-wide"
-              >
-                Explore Collection
-              </Button>
-            </div>
+           
           </div>
         </div>
       </div>

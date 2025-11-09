@@ -136,18 +136,22 @@ export const ImagesSlider = ({
       )}
       {areImagesLoaded && (
         <AnimatePresence>
-          <motion.img
-            onClick={handleNavigate}
+          <motion.div 
             key={currentIndex}
-            src={loadedImages[currentIndex]}
-            loading="eager"
             initial="initial"
             animate="visible"
-            alt={loadedImages[currentIndex] || "banner for jewellry wala"}
             exit={direction === "up" ? "upExit" : "downExit"}
             variants={slideVariants}
-            className="image h-full w-full cursor-pointer absolute  aspect-video object-fill   "
-          />
+            className="h-full w-full absolute"
+          >
+            <img
+              onClick={handleNavigate}
+              src={loadedImages[currentIndex]}
+              loading="eager"
+              alt={loadedImages[currentIndex] || "banner for jewellery wala"}
+              className="h-full w-full cursor-pointer aspect-video object-fill"
+            />
+          </motion.div>
         </AnimatePresence>
       )}
       {/* Previous Button */}

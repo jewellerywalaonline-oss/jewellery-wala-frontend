@@ -5,7 +5,6 @@ import { Toaster } from "sonner";
 import Header from "@/components/comman/Header";
 import Footer from "@/components/comman/Footer";
 import { siteConfig, defaultMetadata, getStructuredAddress } from "@/lib/utils";
-import { cookies } from "next/headers";
 import { cache } from "react";
 import ScrollToTop from "@/components/ui/scroll-to-top";
 import RequirementModal from "@/components/comman/RequirementModal";
@@ -128,30 +127,6 @@ function WebsiteSchema() {
   );
 }
 
-const getUser = cache(async () => {
-  const cookie = await cookies();
-  const token = cookie.get("user");
-
-  if (!token) return null;
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}api/website/user/profile`,
-    {
-      headers: {
-        Authorization: `Bearer ${token.value}`,
-      },
-      method: "post",
-    }
-  );
-  if (!response.ok) {
-    return null;
-  }
-  const data = await response.json();
-  if (!response.ok || !data._status) {
-    return null;
-  }
-  return data;
-});
-
 // const getLogo = cache(async () => {
 //   const response = await fetch(
 //     `${process.env.NEXT_PUBLIC_API_URL}api/website/logo`,
@@ -200,10 +175,7 @@ const getNavigation = cache(async () => {
 });
 
 export default async function RootLayout({ children }) {
-  const [user, navigation] = await Promise.all([
-    getUser(),
-    getNavigation(),
-  ]);
+  const [navigation] = await Promise.all([getNavigation()]);
 
   console.clear();
   return (
@@ -232,10 +204,10 @@ export default async function RootLayout({ children }) {
         className={`min-h-screen bg-background antialiased flex flex-col ${lato.variable} pb-12 md:pb-0`}
       >
         <Client
-          preloadedState={{
-            // logo: logo,
-            auth: user,
-          }}
+        // preloadedState={{
+        //   // logo: logo,
+        //   // auth: user,
+        // }}
         >
           <Header navigationData={navigation} />
           <main className="flex-1 ">{children}</main>
@@ -243,7 +215,7 @@ export default async function RootLayout({ children }) {
           <ScrollToTop />
           <Toaster richColors closeButton position="top-right" />
           <LoginModal />
-          <RequirementModal user={user} />
+          <RequirementModal />
           <BottomTabNavigation />
           <ToolBar />
         </Client>

@@ -11,10 +11,9 @@ import {
   User as UserIcon,
   Package,
   MapPin,
-  ShoppingCartIcon, // Added for menu items
+  ShoppingCartIcon,
 } from "lucide-react";
 
-// SHADCN COMPONENTS
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -44,14 +43,14 @@ import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAndDispatchCart,
-  fetchAndDispatchCartWishlist,
   fetchAndDispatchWishlist,
 } from "@/lib/fetchCartWislist";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { openLoginModal, setNavigation } from "@/redux/features/uiSlice";
 import Cookies from "js-cookie";
+import { getUser } from "@/lib/fetchUser";
+import { setProfile } from "@/redux/features/auth";
 
-// --- Navigation Data Structure (Centralized and Nested) ---
 const userMenuItems = [
   { label: "My Profile", icon: UserIcon, href: "/profile?tab=account" },
   { label: "My Orders", icon: Package, href: "/profile?tab=orders" },
@@ -63,7 +62,6 @@ const userMenuItems = [
   },
 ];
 
-// --- Component ---
 export default function Header({ navigationData }) {
   const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -71,12 +69,26 @@ export default function Header({ navigationData }) {
   const cartCount = useSelector((state) => state.cart.totalQuantity);
   const wishlistCount = useSelector((state) => state.wishlist.totalQuantity);
 
+  const pathName = usePathname();
+
   const router = useRouter();
   const isLoggedIn = useSelector((state) => state.auth.isLogin);
   const user = useSelector((state) => state.auth.details);
   const logo = useSelector((state) => state.logo.logo);
 
   const dispatch = useDispatch();
+
+  const fetchUser = async () => {
+    const user = await getUser();
+    console.log(user);
+    dispatch(setProfile(user._data));
+  };
+
+  useEffect(() => {
+    if (pathName !== "/profile") {
+      fetchUser();
+    }
+  }, []);
 
   useEffect(() => {
     if (isLoggedIn || Cookies.get("loginModal")) {

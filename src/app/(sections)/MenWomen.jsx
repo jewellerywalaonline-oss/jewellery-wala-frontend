@@ -41,7 +41,10 @@ export default function GenderCategorySection() {
       </div>
 
       {result.map((category) => (
-        <div className="grid grid-cols-1 md:grid-cols-2 h-[65vh]">
+        <div
+          key={category._id}
+          className="grid grid-cols-1 md:grid-cols-2 h-[65vh]"
+        >
           {category.subCategories.map((subCategory) => (
             <Link
               key={subCategory._id}
@@ -53,7 +56,7 @@ export default function GenderCategorySection() {
                   src={subCategory.image}
                   alt={subCategory.name}
                   fill
-                  className="object-cover transition-transform duration-300 h-full"
+                  className="object-fit transition-transform duration-300 h-full"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6">

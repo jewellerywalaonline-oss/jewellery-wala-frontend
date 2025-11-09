@@ -2,13 +2,9 @@
 import { useState, useRef, useEffect } from "react";
 import {
   User,
-  Heart,
   History,
   Settings,
-  LogOut,
   Camera,
-  Mail,
-  Phone,
   MapPin,
   Upload,
   X,
@@ -32,11 +28,19 @@ import Cookies from "js-cookie";
 import { toast } from "sonner";
 import Image from "next/image";
 import MyOrders from "./MyOrder";
-import Wishlist from "./Wishlist";
-import { LoadingUi } from "./Cart";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export default function AccountPage({ data }) {
+import { LoadingUi } from "./Cart";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useSelector } from "react-redux";
+import { getUser } from "@/lib/fetchUser";
+import { useDispatch } from "react-redux";
+import { setProfile } from "@/redux/features/auth";
+
+export default function AccountPage() {
+  const dispatch = useDispatch();
+
+  const data = useSelector((state) => state.auth.details);
+
   const [avatar, setAvatar] = useState(data?.avatar);
   const [activeTab, setActiveTab] = useState("account");
   const [formData, setFormData] = useState({
@@ -51,10 +55,34 @@ export default function AccountPage({ data }) {
     pincode: data?.address?.pincode || "",
     instructions: data?.address?.instructions || "",
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [previewImage, setPreviewImage] = useState(null);
   const fileInputRef = useRef(null);
   const imageUploadRef = useRef(null);
+
+  const fetchUser = async () => {
+    setLoading(true);
+    const user = await getUser();
+    dispatch(setProfile(user._data));
+    setFormData({
+      name: user._data.name,
+      email: user._data.email,
+      gender: user._data.gender,
+      mobile: user._data.mobile,
+      street: user._data.address.street,
+      area: user._data.address.area,
+      city: user._data.address.city,
+      state: user._data.address.state,
+      pincode: user._data.address.pincode,
+      instructions: user._data.address.instructions,
+    });
+    setAvatar(user._data.avatar);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   const params = useSearchParams();
 
@@ -192,6 +220,13 @@ export default function AccountPage({ data }) {
     }
     setLoading(false);
   };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingUi hidden={loading} />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -644,7 +679,6 @@ export default function AccountPage({ data }) {
           }
         `}</style>
       </div>
-      <LoadingUi hidden={loading} />
     </>
   );
 }

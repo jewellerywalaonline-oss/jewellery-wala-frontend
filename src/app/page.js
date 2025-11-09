@@ -11,10 +11,11 @@ import { siteConfig } from "@/lib/utils";
 import { cache } from "react";
 
 export const metadata = {
-  title: `Jewellery Wala in Jodhpur | Best Gold & Silver Jewellery Shop | ${siteConfig.name}`,
-  description: `Best Jewellery Wala in Jodhpur - ${siteConfig.name} offers exquisite collection of Gold, Silver, Diamond & Polki jewellery. Visit our store in Jodhpur for traditional & modern designs. Free Shipping & Lifetime Exchange.`,
+  title: `Jewellery Walla in Jodhpur | Best Gold & Silver Jewellery Shop | ${siteConfig.name}`,
+  description: `Best Jewellery Walla in Jodhpur - ${siteConfig.name} offers exquisite collection of Gold, Silver, Diamond & Polki jewellery. Visit our store in Jodhpur for traditional & modern designs. Free Shipping & Lifetime Exchange.`,
   keywords: [
-    "Jewellery Wala Jodhpur",
+    "jewelry vala",
+    "Jewellery Walla Jodhpur",
     "Best Jewellery Shop in Jodhpur",
     "Gold Jewellery Jodhpur",
     "Silver Jewellery Jodhpur",
@@ -27,8 +28,8 @@ export const metadata = {
     ...siteConfig.keywords,
   ].join(", "),
   openGraph: {
-    title: `Jewellery Wala in Jodhpur | Best Gold & Silver Jewellery | ${siteConfig.name}`,
-    description: `Discover the finest collection of traditional and contemporary jewellery at ${siteConfig.name}, the leading Jewellery Wala in Jodhpur. Best prices on Gold, Silver, Diamond & Polki jewellery.`,
+    title: `Jewellery Walla in Jodhpur | Best Gold & Silver Jewellery | ${siteConfig.name}`,
+    description: `Discover the finest collection of traditional and contemporary jewellery at ${siteConfig.name}, the leading Jewellery Walla in Jodhpur. Best prices on Gold, Silver, Diamond & Polki jewellery.`,
     url: siteConfig.url,
     siteName: siteConfig.name,
     images: [
@@ -45,19 +46,17 @@ export const metadata = {
       streetAddress: "Your Store Address",
       addressLocality: "Jodhpur",
       addressRegion: "Rajasthan",
-      postalCode: "342001",
+      postalCode: "342005",
       addressCountry: "IN",
     },
-    phone: "+91-XXXXXXXXXX",
-    email: "contact@yourjewellerywala.com",
+    phone: `+91-${process.env.NEXT_PUBLIC_BUSINESS_PHONE}`,
+    email: `${process.env.NEXT_PUBLIC_BUSINESS_EMAIL}`,
   },
   twitter: {
     card: "summary_large_image",
-    title: `Jewellery Wala in Jodhpur | ${siteConfig.name} | Best Jewellery Store`,
+    title: `Jewellery Walla in Jodhpur | ${siteConfig.name} | Best Jewellery Store`,
     description: `Explore our exclusive collection of Gold, Silver & Diamond jewellery in Jodhpur. Best prices & latest designs at ${siteConfig.name}. Visit us today!`,
     images: [`${siteConfig.url}/og-image.jpg`],
-    site: "@yourjewellerywala",
-    creator: "@yourjewellerywala",
   },
   alternates: {
     canonical: siteConfig.url,
@@ -85,15 +84,15 @@ const jsonLd = {
   "@type": "JewelryStore",
   name: siteConfig.name,
   image: `${siteConfig.url}/og-image.jpg`,
-  description: `Best Jewellery Wala in Jodhpur offering Gold, Silver, Diamond & Polki jewellery. Visit our store in Jodhpur for traditional & modern designs.`,
+  description: `Best Jewellery Walla in Jodhpur offering Gold, Silver, Diamond & Polki jewellery. Visit our store in Jodhpur for traditional & modern designs.`,
   url: siteConfig.url,
-  telephone: "+91-XXXXXXXXXX",
+  telephone: `+91-${process.env.NEXT_PUBLIC_BUSINESS_PHONE}`,
   address: {
     "@type": "PostalAddress",
     streetAddress: "Your Store Address",
     addressLocality: "Jodhpur",
     addressRegion: "Rajasthan",
-    postalCode: "342001",
+    postalCode: "342005",
     addressCountry: "IN",
   },
   geo: {
@@ -115,11 +114,11 @@ const jsonLd = {
     opens: "10:00",
     closes: "21:00",
   },
-  priceRange: "₹₹₹",
+  priceRange: "₹200 - ₹50000",
   sameAs: [
-    "https://www.facebook.com/yourjewellerywala",
-    "https://www.instagram.com/yourjewellerywala",
-    "https://twitter.com/yourjewellerywala",
+    "https://www.facebook.com/jewellery__wala_?igsh=MTBqdHI5cjYyMjZsMA==",
+    "https://www.instagram.com/jewellery__wala_?igsh=MTBqdHI5cjYyMjZsMA==",
+    "https://maps.app.goo.gl/ohKdTgWQicv8Xjf89",
   ],
 };
 
@@ -128,7 +127,7 @@ const GetTestimonials = cache(async () => {
   const response = await fetch(
     process.env.NEXT_PUBLIC_API_URL + "api/website/testimonial",
     {
-      revalidate: 86400,
+      revalidate: 3600,
     }
   );
   const data = await response.json();
@@ -141,7 +140,7 @@ const getTabsData = cache(async () => {
     process.env.NEXT_PUBLIC_API_URL + "api/website/product/tab-products",
     {
       method: "POST",
-      revalidate: 86400,
+      revalidate: 3600,
     }
   );
   const data = await response.json();
@@ -154,7 +153,7 @@ const getNewArrivals = cache(async () => {
     process.env.NEXT_PUBLIC_API_URL + "api/website/product/new-arrivals",
     {
       method: "POST",
-      revalidate: 86400,
+      revalidate: 3600,
     }
   );
   const data = await response.json();
@@ -167,7 +166,7 @@ const getTrendingProducts = cache(async () => {
     process.env.NEXT_PUBLIC_API_URL + "api/website/product/trending-products",
     {
       method: "POST",
-      revalidate: 86400,
+      revalidate: 3600,
     }
   );
   const data = await response.json();
@@ -203,8 +202,12 @@ export default async function Home() {
       <FullVideoSection />
       <Slider data={newArrivals} heading="Perfect Gift Items" />
 
-      <Slider data={trendingProducts} heading="Trending Products" bg="bg-[#f8f8f8]" />
-      <Testimonial data={testimonials}  />
+      <Slider
+        data={trendingProducts}
+        heading="Trending Products"
+        bg="bg-[#f8f8f8]"
+      />
+      <Testimonial data={testimonials} />
     </>
   );
 }

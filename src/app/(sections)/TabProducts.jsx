@@ -1,8 +1,8 @@
-"use client";
-import React, { useState } from "react";
+import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProductCard from "@/components/comman/ProductCard";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function TabProducts({ data }) {
   return (
@@ -64,9 +64,11 @@ export default function TabProducts({ data }) {
           </TabsContent>
 
           <div className="flex justify-center mt-10 ">
-            <Button className="bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 px-10 py-3 rounded-full font-semibold text-sm uppercase hover:shadow-lg hover:scale-105 transition-all">
-              View More
-            </Button>
+            <Link href={"/category/personalized-jewellery"}>
+              <Button className="bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 px-10 py-3 rounded-full font-semibold text-sm uppercase hover:shadow-lg hover:scale-105 transition-all">
+                View More
+              </Button>
+            </Link>
           </div>
         </Tabs>
       </div>

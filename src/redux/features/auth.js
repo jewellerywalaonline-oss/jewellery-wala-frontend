@@ -49,10 +49,11 @@ export const authSlice = createSlice({
     setProfile: (state, action) => {
       state.details = action.payload;
     },
+   
   },
 });
 
-export const { login, logout, register, setProfile } = authSlice.actions;
+export const { login, logout, register, setProfile, setUser } = authSlice.actions;
 export default authSlice.reducer;
 
 

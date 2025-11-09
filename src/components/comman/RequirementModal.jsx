@@ -15,7 +15,8 @@ import {
 } from "@/components/ui/dialog";
 
 
-export default function RequirementModal({ user }) {
+export default function RequirementModal() {
+  const user = useSelector((state) => state.auth.details);
   const isOpen = useSelector((state) => state.ui.isRequirementModalOpen);
   const dispatch = useDispatch();
 

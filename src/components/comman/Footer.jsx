@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { FaFacebook, FaInstagram, FaWhatsapp } from "react-icons/fa";
+import { InstagramIcon, FacebookIcon, WhatsAppIcon } from "../icons";
 
 export default function Footer() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -29,7 +29,7 @@ export default function Footer() {
           {
             method: "POST",
             next: {
-              revalidate: 86400,
+              revalidate: 3600,
               tags: ["featured-products"],
             },
           }
@@ -113,20 +113,19 @@ export default function Footer() {
             <div className="flex gap-2">
               {[
                 {
-                  Icon: FaInstagram,
+                  Icon: InstagramIcon,
                   label: "Instagram",
                   href: "https://www.instagram.com/jewellery__wala_?igsh=MTBqdHI5cjYyMjZsMA==",
                 },
                 {
-                  Icon: FaFacebook,
+                  Icon: FacebookIcon,
                   label: "Facebook",
                   href: "https://www.facebook.com/jewellery__wala_?igsh=MTBqdHI5cjYyMjZsMA==",
                 },
                 {
-                  Icon: FaWhatsapp,
+                  Icon: WhatsAppIcon,
                   label: "Whatsapp",
-                  href:
-                    "https://wa.me/" + process.env.NEXT_PUBLIC_BUSINESS_PHONE,
+                  href: "https://wa.me/" + process.env.NEXT_PUBLIC_BUSINESS_PHONE,
                 },
               ].map(({ Icon, label, href }) => (
                 <Button
@@ -142,7 +141,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     aria-label={label}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon />
                   </a>
                 </Button>
               ))}

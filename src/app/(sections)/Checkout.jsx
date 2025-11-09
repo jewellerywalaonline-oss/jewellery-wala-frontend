@@ -46,6 +46,9 @@ export default function Checkout() {
   const user = useSelector((state) => state.auth.details);
 
   useEffect(() => {
+    if (!purchaseType) {
+      router.push("/");
+    }
     if (purchaseType == "direct") {
       if (!sessionStorage.getItem("buyNowProduct")) {
         router.push("/");

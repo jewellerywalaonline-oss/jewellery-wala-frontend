@@ -48,11 +48,23 @@ const Slider = ({ data, heading, bg }) => {
                 spaceBetween: 24,
               },
               1280: {
-                slidesPerView: 5,
+                slidesPerView: 4,
                 spaceBetween: 24,
               },
               1440: {
-                slidesPerView: 9,
+                slidesPerView: 5,
+                spaceBetween: 24,
+              },
+              1600: {
+                slidesPerView: 6,
+                spaceBetween: 24,
+              },
+              1800: {
+                slidesPerView: 7,
+                spaceBetween: 24,
+              },
+              2000: {
+                slidesPerView: 8,
                 spaceBetween: 24,
               },
             }}

@@ -1,15 +1,16 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { setPriceRange } from "@/redux/features/filters";
+import { Gift, Heart, IndianRupee, Star } from "lucide-react";
 import Link from "next/link";
-import { FaRupeeSign, FaStar, FaGift, FaHeart } from "react-icons/fa";
+
 import { useDispatch } from "react-redux";
 
 const ShopByPrice = () => {
   const priceCategories = [
     {
       icon: (
-        <FaRupeeSign
+        <IndianRupee
           size={30}
           className="text-amber-500 group-hover:text-amber-600 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300"
         />
@@ -23,7 +24,7 @@ const ShopByPrice = () => {
     },
     {
       icon: (
-        <FaStar
+        <Star
           size={30}
           className="text-purple-500 group-hover:text-purple-600 group-hover:animate-pulse group-hover:rotate-12 transition-all duration-300"
         />
@@ -37,7 +38,7 @@ const ShopByPrice = () => {
     },
     {
       icon: (
-        <FaGift
+        <Gift
           size={30}
           className="text-rose-500 group-hover:text-rose-600 group-hover:scale-110 group-hover:-rotate-6 transition-all duration-500"
         />
@@ -51,7 +52,7 @@ const ShopByPrice = () => {
     },
     {
       icon: (
-        <FaHeart
+        <Heart
           size={30}
           className="text-emerald-500 group-hover:text-emerald-600 group-hover:scale-110 group-hover:animate-pulse transition-all duration-300"
         />
