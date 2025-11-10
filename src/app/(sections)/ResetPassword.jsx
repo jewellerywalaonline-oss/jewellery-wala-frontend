@@ -93,7 +93,14 @@ export default function ResetPassword() {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to verify OTP. Please try again.");
+        try {
+          const errorData = await response.json();
+          toast.error(errorData._message || "Failed to verify OTP. Please try again.");
+        } catch (e) {
+          // Fallback in case response isn't JSON
+          toast.error("Failed to verify OTP. Please try again.");
+        }
+        return;
       }
 
       const data = await response.json();
@@ -138,7 +145,16 @@ export default function ResetPassword() {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to reset password. Please try again.");
+        try {
+          const errorData = await response.json();
+          toast.error(
+            errorData._message || "Failed to reset password. Please try again."
+          );
+        } catch (e) {
+          // Fallback in case response isn't JSON
+          toast.error("Failed to reset password. Please try again.");
+        }
+        return;
       }
 
       const data = await response.json();
@@ -146,6 +162,8 @@ export default function ResetPassword() {
         toast.success("Password reset successfully! ");
         Cookies.remove("resetToken");
         router.push(returnTo || "/");
+      } else {
+        toast.error(data._message || "Something Went Wrong");
       }
     } catch (error) {
       console.error("Reset password error:", error);

@@ -240,14 +240,6 @@ const OurPolicy = () => {
                 silver, and gemstones.
               </p>
             </div>
-
-            {/* Placeholder for an image */}
-            <div className="mt-8 bg-white rounded-xl border border-gray-200 shadow-md flex items-center justify-center h-60">
-              <span className="text-gray-400 italic">
-                [ Image Placeholder — e.g. Hallmark Certification / Secure
-                Delivery Graphic ]
-              </span>
-            </div>
           </motion.div>
 
           {/* Additional Information */}
