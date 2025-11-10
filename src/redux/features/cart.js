@@ -1,23 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "sonner";
 
-
-
 const initialState = {
   cartItems: [],
   totalPrice: 0,
   totalQuantity: 0,
-  buyNowItem:
-    typeof window !== "undefined" &&
-    typeof window.sessionStorage !== "undefined" &&
-    sessionStorage.getItem("buyNowProduct")
-      ? JSON.parse(sessionStorage.getItem("buyNowProduct"))
-      : {
-          productId: null,
-          product: null,
-          quantity: 1,
-          colorId: null,
-        },
+  buyNowItem: {
+    productId: null,
+    product: null,
+    quantity: 1,
+    colorId: null,
+  },
 };
 
 export const cartSlice = createSlice({
