@@ -4,7 +4,6 @@ import { Autoplay } from "swiper/modules";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 
-// Import Swiper styles
 import "swiper/css";
 import Link from "next/link";
 
@@ -36,6 +35,7 @@ export default function RoundCategorySlider() {
                 autoplay={{
                   delay: 1200,
                   disableOnInteraction: false,
+                  waitForTransition: true,
                 }}
                 speed={2000}
                 breakpoints={{

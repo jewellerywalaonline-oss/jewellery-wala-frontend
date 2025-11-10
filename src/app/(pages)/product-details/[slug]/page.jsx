@@ -1,4 +1,3 @@
-export const revalidate = 3600;
 import { siteConfig, defaultMetadata } from "@/lib/utils";
 import ProductDetailsPage from "./ProductDetail";
 
@@ -210,6 +209,9 @@ async function getProducts(slug) {
     `${process.env.NEXT_PUBLIC_API_URL}api/website/product/details/${slug}`,
     {
       method: "post",
+      next: {
+        revalidate: 600,
+      },
     }
   );
 

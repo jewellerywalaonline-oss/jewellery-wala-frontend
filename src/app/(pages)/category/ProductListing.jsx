@@ -94,9 +94,7 @@ export default function ProductListing() {
           headers: {
             "Content-Type": "application/json",
           },
-          next: {
-            revalidate: 600, 
-          },
+          
           body: JSON.stringify(requestBody),
         }
       );

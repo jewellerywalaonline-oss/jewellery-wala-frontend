@@ -127,7 +127,9 @@ const GetTestimonials = cache(async () => {
   const response = await fetch(
     process.env.NEXT_PUBLIC_API_URL + "api/website/testimonial",
     {
-      revalidate: 3600,
+      next: {
+        revalidate: 3600,
+      },
     }
   );
   const data = await response.json();
@@ -139,8 +141,9 @@ const getTabsData = cache(async () => {
   const response = await fetch(
     process.env.NEXT_PUBLIC_API_URL + "api/website/product/tab-products",
     {
-      method: "POST",
-      revalidate: 3600,
+      next: {
+        revalidate: 3600,
+      },
     }
   );
   const data = await response.json();
@@ -152,8 +155,9 @@ const getNewArrivals = cache(async () => {
   const response = await fetch(
     process.env.NEXT_PUBLIC_API_URL + "api/website/product/new-arrivals",
     {
-      method: "POST",
-      revalidate: 3600,
+      next: {
+        revalidate: 3600,
+      },
     }
   );
   const data = await response.json();
@@ -165,8 +169,9 @@ const getTrendingProducts = cache(async () => {
   const response = await fetch(
     process.env.NEXT_PUBLIC_API_URL + "api/website/product/trending-products",
     {
-      method: "POST",
-      revalidate: 3600,
+      next: {
+        revalidate: 3600,
+      },
     }
   );
   const data = await response.json();

@@ -27,7 +27,6 @@ export default function Footer() {
           process.env.NEXT_PUBLIC_API_URL +
             "api/website/product/featured-for-footer",
           {
-            method: "POST",
             next: {
               revalidate: 3600,
               tags: ["featured-products"],
@@ -125,7 +124,8 @@ export default function Footer() {
                 {
                   Icon: WhatsAppIcon,
                   label: "Whatsapp",
-                  href: "https://wa.me/" + process.env.NEXT_PUBLIC_BUSINESS_PHONE,
+                  href:
+                    "https://wa.me/" + process.env.NEXT_PUBLIC_BUSINESS_PHONE,
                 },
               ].map(({ Icon, label, href }) => (
                 <Button

@@ -26,7 +26,9 @@ const getColor = cache(async () => {
   const color = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}api/website/color`,
     {
-      method: "post",
+      next: {
+        revalidate: 600,
+      },
     }
   );
 
@@ -41,7 +43,9 @@ const getMaterial = cache(async () => {
   const material = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}api/website/material`,
     {
-      method: "post",
+      next: {
+        revalidate: 600,
+      },
     }
   );
   const data = await material.json();
@@ -52,7 +56,8 @@ const getMaterial = cache(async () => {
 });
 
 export default async function page({ params }) {
-  const slug = await params.slug;
+  const allParams = await params;
+  const slug = await allParams.slug;
 
   const categorySlug = slug[0];
   const subCategorySlug = slug[1] || "";

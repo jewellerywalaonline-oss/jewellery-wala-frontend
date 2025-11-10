@@ -150,7 +150,6 @@ const getNavigation = cache(async () => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}api/website/nav`,
     {
-      method: "POST",
       next: {
         revalidate: 3600,
         tags: ["navigation"],
@@ -203,12 +202,7 @@ export default async function RootLayout({ children }) {
       <body
         className={`min-h-screen bg-background antialiased flex flex-col ${lato.variable} pb-12 md:pb-0`}
       >
-        <Client
-        // preloadedState={{
-        //   // logo: logo,
-        //   // auth: user,
-        // }}
-        >
+        <Client>
           <Header navigationData={navigation} />
           <main className="flex-1 ">{children}</main>
           <Footer />
