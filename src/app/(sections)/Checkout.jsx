@@ -49,11 +49,7 @@ export default function Checkout() {
     if (!purchaseType) {
       router.push("/");
     }
-    if (purchaseType == "direct") {
-      if (!sessionStorage.getItem("buyNowProduct")) {
-        router.push("/");
-      }
-    }
+    
   }, [purchaseType]);
 
   const totalAmount = cartItems?.reduce(
@@ -65,13 +61,13 @@ export default function Checkout() {
     shippingAddress: {
       fullName: user.name,
       phone: user.mobile || "",
-      email: user.email,
-      street: user.address.street,
-      area: user.address.area,
-      city: user.address.city,
-      state: user.address.state,
-      pincode: user.address.pincode,
-      instructions: user.address.instructions,
+      email: user.email || "",
+      street: user.address.street || "",
+      area: user.address.area || "",
+      city: user.address.city || "",
+      state: user.address.state || "",
+      pincode: user.address.pincode || "",
+      instructions: user.address.instructions || "",
     },
     notes: "",
     isGift: false,
