@@ -9,7 +9,7 @@ import Link from "next/link";
 const Slider = ({ data, heading, bg }) => {
   return (
     <section className={`py-12 ${bg}`} id={heading}>
-      <div className="max-w-[100vw] w-full overflow-x-hidden mx-auto px-4">
+      <div className="max-w-7xl w-full overflow-x-hidden mx-auto px-4">
         {/* Section Heading */}
         <div className="text-center mb-10">
           <h2 className="text-3xl font-serif text-[#8B4513] mb-3">{heading}</h2>
@@ -45,26 +45,6 @@ const Slider = ({ data, heading, bg }) => {
               },
               1024: {
                 slidesPerView: 4,
-                spaceBetween: 24,
-              },
-              1280: {
-                slidesPerView: 4,
-                spaceBetween: 24,
-              },
-              1440: {
-                slidesPerView: 5,
-                spaceBetween: 24,
-              },
-              1600: {
-                slidesPerView: 6,
-                spaceBetween: 24,
-              },
-              1800: {
-                slidesPerView: 7,
-                spaceBetween: 24,
-              },
-              2000: {
-                slidesPerView: 8,
                 spaceBetween: 24,
               },
             }}

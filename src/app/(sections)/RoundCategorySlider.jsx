@@ -23,7 +23,7 @@ export default function RoundCategorySlider() {
       </div>
 
       {/* Slider */}
-      <div className="max-w-[100vw] mx-auto py-2">
+      <div className="max-w-7xl mx-auto py-2">
         {categories?.map(
           (cat) =>
             cat.subCategories.length > 0 && (
@@ -32,7 +32,7 @@ export default function RoundCategorySlider() {
                 modules={[Autoplay]}
                 spaceBetween={10}
                 slidesPerView={5}
-                loop={true}
+                loop={false}
                 autoplay={{
                   delay: 1200,
                   disableOnInteraction: false,
