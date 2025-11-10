@@ -34,13 +34,16 @@ export default function Checkout() {
   });
   const logo = useSelector((state) => state.logo.logo);
   const purchaseType = searchParams.get("type") || "cart";
-  let cartItems = [];
-  if (purchaseType === "direct") {
-    const item = useSelector((state) => state.cart.buyNowItem);
-    cartItems = Array.isArray(item) ? item : [item];
-  } else {
-    cartItems = useSelector((state) => state.cart.cartItems);
-  }
+  const buyNowItem = useSelector((state) => state.cart.buyNowItem);
+  const cartItemsState = useSelector((state) => state.cart.cartItems);
+
+  const cartItems =
+    purchaseType === "direct"
+      ? Array.isArray(buyNowItem)
+        ? buyNowItem
+        : [buyNowItem]
+      : cartItemsState;
+
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.auth.details);
@@ -49,7 +52,6 @@ export default function Checkout() {
     if (!purchaseType) {
       router.push("/");
     }
-    
   }, [purchaseType]);
 
   const totalAmount = cartItems?.reduce(
@@ -59,15 +61,15 @@ export default function Checkout() {
 
   const [orderData, setOrderData] = useState({
     shippingAddress: {
-      fullName: user.name,
-      phone: user.mobile || "",
-      email: user.email || "",
-      street: user.address.street || "",
-      area: user.address.area || "",
-      city: user.address.city || "",
-      state: user.address.state || "",
-      pincode: user.address.pincode || "",
-      instructions: user.address.instructions || "",
+      fullName: user?.name,
+      phone: user?.mobile || "",
+      email: user?.email || "",
+      street: user?.address?.street || "",
+      area: user?.address?.area || "",
+      city: user?.address?.city || "",
+      state: user?.address?.state || "",
+      pincode: user?.address?.pincode || "",
+      instructions: user?.address?.instructions || "",
     },
     notes: "",
     isGift: false,

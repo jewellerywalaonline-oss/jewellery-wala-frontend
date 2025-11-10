@@ -8,7 +8,7 @@ import Image from "next/image";
 
 // You can add a loading component here if needed
 const Loading = () => (
-  <div className="max-w-[1200px] mx-auto flex flex-col items-center justify-center w-screen h-screen bg-white">
+  <div className="max-w-[1200px] mx-auto flex flex-col items-center justify-center w-full h-screen bg-white">
     <Image
       src="/images/logo.png"
       className="animate-pulse w-24 h-20"
