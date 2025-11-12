@@ -101,9 +101,6 @@ export function BottomTabNavigation() {
                     />
                   )}
                 </AnimatePresence>
-                {/* {tab.id == "cart" && (
-                  <span className="absoulte top-[100%] right-0">{cartCount}</span>
-                )} */}
                 <motion.div
                   className={`relative z-10 flex flex-col items-center p-2 ${
                     isActive ? "text-blue-600" : "text-gray-500"
@@ -121,6 +118,11 @@ export function BottomTabNavigation() {
                           : "text-gray-500 group-hover:text-blue-400"
                       }`,
                     })}
+                    {tab.id === "cart" && cartCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                        {cartCount > 9 ? '9+' : cartCount}
+                      </span>
+                    )}
                   </div>
                   <motion.span
                     className={`text-xs font-medium mt-1 ${

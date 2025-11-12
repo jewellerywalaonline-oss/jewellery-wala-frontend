@@ -29,6 +29,9 @@ export const metadata = {
   alternates: {
     canonical: siteConfig.url,
   },
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 // Organization Schema Component
@@ -191,7 +194,9 @@ export default async function RootLayout({ children }) {
         <meta name="geo.placename" content="Jodhpur" />
         <meta name="geo.position" content="26.2389;73.0243" />
         <meta name="ICBM" content="26.2389, 73.0243" />
-
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="theme-color" content="#F58E00" />
+        <meta name="msapplication-TileColor" content="#F58E00" />
         {/* Google Login script */}
         <script
           src="https://accounts.google.com/gsi/client"

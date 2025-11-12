@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Heart,
   Search,
@@ -200,18 +200,48 @@ export default function Header({ navigationData }) {
     </nav>
   );
 
+  const mobileSearchRef = useRef(null);
+
+  // Close search when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        mobileSearchRef.current &&
+        !mobileSearchRef.current.contains(event.target)
+      ) {
+        // Check if the click is not on the search toggle button
+        const searchToggleButton = document.getElementById(
+          "search-toggle-button"
+        );
+        if (searchToggleButton && !searchToggleButton.contains(event.target)) {
+          setIsSearchOpen(false);
+        }
+      }
+    };
+
+    if (isSearchOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [isSearchOpen]);
+
   return (
     <>
+      <div
+        className={`w-full  text-center bg-gradient-to-r from-amber-600 to-amber-500 text-white text-sm leading-3 py-2 transition-all duration-300 `}
+      >
+        <span>
+          <Truck className="inline rotate-y-180" size={14} /> Free Shipping
+          above ₹1000 | Welcome to {process.env.NEXT_PUBLIC_APP_NAME}
+        </span>
+      </div>
       <header className=" max-w-screen w-full bg-white/90 backdrop-blur-xl z-[100] sticky top-0 left-0  shadow-sm">
         {/* Top Bar */}
-        <div
-          className={`w-full  text-center bg-gradient-to-r from-amber-600 to-amber-500 text-white text-sm leading-3 py-2 transition-all duration-300 `}
-        >
-          <span>
-            <Truck className="inline rotate-y-180" size={14} /> Free Shipping
-            above ₹1000 | Welcome to {process.env.NEXT_PUBLIC_APP_NAME}
-          </span>
-        </div>
 
         {/* Main Header Bar */}
         <div
@@ -290,6 +320,7 @@ export default function Header({ navigationData }) {
 
               {/* Mobile Search Toggle */}
               <Button
+                id="search-toggle-button"
                 variant="ghost"
                 size="icon"
                 className="lg:hidden hover:bg-amber-50 hover:text-amber-600"
@@ -391,11 +422,10 @@ export default function Header({ navigationData }) {
 
           {/* Mobile Search Bar (Conditionally Visible) */}
           <div
+            ref={mobileSearchRef}
             id="mobile-search-bar"
             className={`w-full lg:hidden  transition-all duration-300 ${
-              isSearchOpen
-                ? " opacity-100 px-4  mt-3"
-                : "max-h-0 opacity-0"
+              isSearchOpen ? " opacity-100 px-4  mt-3" : "max-h-0 opacity-0"
             }`}
           >
             <SearchBar className="relative" />
@@ -529,12 +559,10 @@ const SearchBar = ({ className }) => {
     const fetch = async () => {
       if (value.trim().length > 1) {
         // Only fetch if more than 1 character
-        console.log(value);
         try {
           const res = await axios.get(
             `${process.env.NEXT_PUBLIC_API_URL}api/website/result/suggestion?search=${value}`
           );
-          console.log(res.data._data);
           setSuggestions(res.data._data);
           setIsSuggestionsOpen(true);
         } catch (error) {
@@ -553,6 +581,7 @@ const SearchBar = ({ className }) => {
 
     return () => clearTimeout(debounceTimer);
   }, [value]);
+
   return (
     <div className={`relative ${className}`}>
       <PlaceholdersAndVanishInput
@@ -570,12 +599,19 @@ const SearchBar = ({ className }) => {
         size={20}
         className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 text-amber-600 pointer-events-none"
       />
+      <div
+        onClick={() => setIsSuggestionsOpen(false)}
+        className={`fixed top-full left-0 right-0 h-screen w-screen max-w-[100%] mt-1 bg-black/70 z-[8999] overflow-hidden ${
+          isSuggestionsOpen ? "visible opacity-100" : "invisible opacity-0"
+        }`}
+      />
+
       {isSuggestionsOpen && (
         <motion.div
           initial="closed"
           animate={isSuggestionsOpen ? "open" : "closed"}
           variants={suggestionVariants}
-          className="absolute top-full left-0 right-0 h-auto w-full mt-1 bg-white rounded-lg shadow-lg z-[9999] border border-gray-200 overflow-hidden"
+          className="absolute top-full left-0 right-0 h-auto w-[78%] md:w-full mt-1 bg-white rounded-lg shadow-lg z-[9999] border border-gray-200 overflow-x-hidden overflow-y-auto no-scrollbar"
         >
           <div className="grid grid-cols-[30%_auto] divide-x divide-gray-200">
             {/* Suggestions Column */}
