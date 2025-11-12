@@ -20,12 +20,18 @@ export const authSlice = createSlice({
         sameSite: "lax",
         expires: 7,
       });
+      Cookies.set("expires", Date.now() + 6 * 24 * 60 * 60 * 1000, {
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
       state.isLogin = true;
     },
     logout: (state) => {
       state.user = null;
       state.details = {};
       Cookies.remove("user");
+      Cookies.remove("expires");
       state.isLogin = false;
     },
     register: (state, action) => {
@@ -35,6 +41,11 @@ export const authSlice = createSlice({
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         expires: 7,
+      });
+      Cookies.set("expires", Date.now() + 7 * 24 * 60 * 60 * 1000, {
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
       });
       state.isLogin = true;
     },

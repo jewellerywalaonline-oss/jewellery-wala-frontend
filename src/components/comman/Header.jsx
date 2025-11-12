@@ -91,7 +91,7 @@ export default function Header({ navigationData }) {
     if (pathName !== "/profile") {
       fetchUser();
     }
-  }, []);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     if (isLoggedIn || Cookies.get("loginModal")) {
@@ -114,7 +114,7 @@ export default function Header({ navigationData }) {
       fetchAndDispatchWishlist(dispatch);
       fetchAndDispatchCart(dispatch);
     }
-  }, []);
+  }, [isLoggedIn]);
 
   // SCROLL EFFECT
   useEffect(() => {
@@ -207,8 +207,8 @@ export default function Header({ navigationData }) {
           className={`w-full  text-center bg-gradient-to-r from-amber-600 to-amber-500 text-white text-sm leading-3 py-2 transition-all duration-300 `}
         >
           <span>
-            <Truck className="inline rotate-y-180" size={14} /> Free Shipping above ₹1000 | Welcome to{" "}
-            {process.env.NEXT_PUBLIC_APP_NAME}
+            <Truck className="inline rotate-y-180" size={14} /> Free Shipping
+            above ₹1000 | Welcome to {process.env.NEXT_PUBLIC_APP_NAME}
           </span>
         </div>
 

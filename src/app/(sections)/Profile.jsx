@@ -35,7 +35,44 @@ import { useSelector } from "react-redux";
 import { getUser } from "@/lib/fetchUser";
 import { useDispatch } from "react-redux";
 import { setProfile } from "@/redux/features/auth";
-
+const INDIAN_STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi",
+  "Jammu and Kashmir",
+  "Ladakh",
+  "Lakshadweep",
+  "Puducherry",
+];
 export default function AccountPage() {
   const dispatch = useDispatch();
 
@@ -544,19 +581,27 @@ export default function AccountPage() {
                               <Label className="block text-sm font-medium text-gray-700">
                                 State
                               </Label>
-                              <Input
-                                type="text"
-                                name="state"
+                              <Select
                                 value={formData.state}
-                                onChange={(e) =>
-                                  setFormData({
-                                    ...formData,
-                                    state: e.target.value,
-                                  })
-                                }
-                                placeholder="Enter state"
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-300 bg-white/80"
-                              />
+                                onChange={formData.state}
+                                name="state"
+                                required
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select State" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {INDIAN_STATES.map((state) => (
+                                    <SelectItem
+                                      key={state}
+                                      value={state}
+                                      className="cursor-pointer border-b-1 border-gray-300"
+                                    >
+                                      {state}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
                           </div>
 

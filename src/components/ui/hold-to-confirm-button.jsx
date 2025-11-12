@@ -117,16 +117,24 @@ export function HoldToConfirmButton({
           </>
         ) : (
           <>
-            <span>{label}</span>
-            {isHolding && (
-              <span className="text-sm opacity-75">
-                {Math.round(progress)}%
+            <div className="flex flex-col">
+              <span>
+                {label}{" "}
+                {isHolding && (
+                  <span className="text-sm opacity-75">
+                    {Math.round(progress)}%
+                  </span>
+                )}
               </span>
-            )}
+
+              <div className="block text-[12px] w-fit mx-auto text-center">
+                Hold TO Confirm
+              </div>
+            </div>
           </>
         )}
       </div>
-     
+
       {/* Animated particles on hold */}
       {isHolding && (
         <>

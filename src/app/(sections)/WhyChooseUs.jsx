@@ -36,7 +36,7 @@ const WhyChooseUsItem = ({ item, index }) => {
   return (
     <article
       className={`group relative flex flex-col items-center bg-gradient-to-br ${
-        colorMap[index] || "from-slate-100 via-gray-50 to-white"
+        colorMap[index] || "from-slate-100/50 via-amber-200/50 to-white/50"
       } rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all duration-500 border border-slate-200 hover:border-transparent cursor-pointer overflow-hidden hover:-translate-y-1`}
     >
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-tr from-white/40 via-transparent to-transparent animate-pulse"></div>
@@ -74,9 +74,9 @@ const WhyChooseUsContent = async () => {
   );
 };
 
-const WhyChooseUs = ({ bg }) => {
+const WhyChooseUs = () => {
   return (
-    <section className={`w-full  ${bg}`} aria-labelledby="why-choose-us">
+    <section className={`w-full bg-gradient-to-br from-amber-50/30 via-amber-100/20 to-white/30 `} aria-labelledby="why-choose-us">
       <div className="max-w-6xl mx-auto px-4">
         <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mb-6"></div>
 

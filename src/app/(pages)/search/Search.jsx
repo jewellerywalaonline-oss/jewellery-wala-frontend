@@ -2,7 +2,7 @@
 
 import ProductCard from "@/components/comman/ProductCard";
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Search as SearchIcon, Sparkles, Package } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -13,14 +13,21 @@ export default function Search({ products, q }) {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.05, // Reduced from 0.1
+        delayChildren: 0, // Start immediately
       },
     },
   };
 
   const item = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
+    show: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.3, // Faster animation
+      }
+    },
   };
 
   if (!products || products.length === 0) {
@@ -87,6 +94,7 @@ export default function Search({ products, q }) {
     <div className="max-w-7xl mx-auto w-full px-3 space-y-8 py-8">
       {/* Header Section */}
       <motion.div
+        key={`header-${q}`}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -141,42 +149,45 @@ export default function Search({ products, q }) {
       </motion.div>
 
       {/* Products Grid */}
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
-      >
-        {products.map((product, index) => (
-          <motion.div
-            key={product._id}
-            variants={item}
-            transition={{ duration: 0.4 }}
-            whileHover={{ y: -8 }}
-            className="relative group"
-          >
-            {/* Golden shimmer effect on hover */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-400 rounded-xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-500" />
-            <div className="relative">
-              <ProductCard data={product} />
-            </div>
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`grid-${q}`} // Force re-mount on search change
+          variants={container}
+          initial="hidden"
+          animate="show"
+          exit="hidden"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+        >
+          {products.map((product, index) => (
+            <motion.div
+              key={product._id}
+              variants={item}
+              whileHover={{ y: -8 }}
+              className="relative group"
+            >
+              {/* Golden shimmer effect on hover */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-400 rounded-xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-500" />
+              <div className="relative">
+                <ProductCard data={product} />
+              </div>
 
-            {/* Index badge for first 3 items */}
-            {index < 3 && (
-              <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ delay: 0.5 + index * 0.1, type: "spring" }}
-                className="absolute -top-2 -right-2 z-10"
-              >
-                <div className="bg-gradient-to-br from-amber-500 to-yellow-600 text-white text-xs font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-lg border-2 border-white">
-                  {index + 1}
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-        ))}
-      </motion.div>
+              {/* Index badge for first 3 items */}
+              {index < 3 && (
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1, type: "spring" }}
+                  className="absolute -top-2 -right-2 z-10"
+                >
+                  <div className="bg-gradient-to-br from-amber-500 to-yellow-600 text-white text-xs font-bold rounded-full w-8 h-8 flex items-center justify-center shadow-lg border-2 border-white">
+                    {index + 1}
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          ))}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

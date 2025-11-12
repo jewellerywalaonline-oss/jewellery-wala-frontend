@@ -25,6 +25,52 @@ import { Button } from "@/components/ui/button";
 import { HoldToConfirmButton } from "@/components/ui/hold-to-confirm-button";
 import { LoadingUi } from "./Cart";
 import Personalized from "@/components/product/Personalized";
+import {
+  Select,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+
+const INDIAN_STATES = [
+  "Andhra Pradesh",
+  "Arunachal Pradesh",
+  "Assam",
+  "Bihar",
+  "Chhattisgarh",
+  "Goa",
+  "Gujarat",
+  "Haryana",
+  "Himachal Pradesh",
+  "Jharkhand",
+  "Karnataka",
+  "Kerala",
+  "Madhya Pradesh",
+  "Maharashtra",
+  "Manipur",
+  "Meghalaya",
+  "Mizoram",
+  "Nagaland",
+  "Odisha",
+  "Punjab",
+  "Rajasthan",
+  "Sikkim",
+  "Tamil Nadu",
+  "Telangana",
+  "Tripura",
+  "Uttar Pradesh",
+  "Uttarakhand",
+  "West Bengal",
+  "Andaman and Nicobar Islands",
+  "Chandigarh",
+  "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi",
+  "Jammu and Kashmir",
+  "Ladakh",
+  "Lakshadweep",
+  "Puducherry",
+];
 
 export default function Checkout() {
   const searchParams = useSearchParams();
@@ -81,6 +127,26 @@ export default function Checkout() {
         ? sessionStorage.getItem("personalizedName") || ""
         : "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setOrderData({
+        ...orderData,
+        shippingAddress: {
+          ...orderData.shippingAddress,
+          fullName: user.name,
+          phone: user.mobile || "",
+          email: user.email || "",
+          street: user.address?.street || "",
+          area: user.address?.area || "",
+          city: user.address?.city || "",
+          state: user.address?.state || "",
+          pincode: user.address?.pincode || "",
+          instructions: user.address?.instructions || "",
+        },
+      });
+    }
+  }, [user]);
 
   // Load Razorpay script
   const loadRazorpayScript = () => {
@@ -297,6 +363,7 @@ export default function Checkout() {
                   </label>
                   <input
                     type="email"
+                    readOnly
                     value={orderData.shippingAddress.email}
                     onChange={(e) =>
                       setOrderData({
@@ -442,9 +509,7 @@ export default function Checkout() {
                   <label className="text-sm font-medium text-gray-700">
                     State *
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Enter State "
+                  <Select
                     value={orderData.shippingAddress.state}
                     onChange={(e) =>
                       setOrderData({
@@ -455,9 +520,24 @@ export default function Checkout() {
                         },
                       })
                     }
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
+                    name="state"
                     required
-                  />
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select State" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {INDIAN_STATES.map((state) => (
+                        <SelectItem
+                          key={state}
+                          value={state}
+                          className="cursor-pointer border-b-1 border-gray-300"
+                        >
+                          {state}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -860,10 +940,34 @@ const testError = (orderData) => {
   };
 
   for (const [field, fieldName] of Object.entries(requiredFields)) {
-    if (!shippingAddress[field]) {
+    const value = shippingAddress[field];
+    if (!value || (typeof value === "string" && value.trim() === "")) {
       toast.error(`Please enter your ${fieldName}`);
       return field;
     }
   }
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(shippingAddress.email)) {
+    toast.error("Please enter a valid Email Address");
+    return "email";
+  }
+
+  // Validate Indian phone number (10 digits, optionally starting with +91 or 91)
+  const phoneRegex = /^(\+91|91)?[6-9]\d{9}$/;
+  const cleanPhone = String(shippingAddress.phone).replace(/[\s-]/g, "");
+  if (!phoneRegex.test(cleanPhone)) {
+    toast.error("Please enter a valid 10-digit Indian Phone Number");
+    return "phone";
+  }
+
+  // Validate Indian pincode (6 digits)
+  const pincodeRegex = /^\d{6}$/;
+  if (!pincodeRegex.test(String(shippingAddress.pincode))) {
+    toast.error("Please enter a valid 6-digit Pincode");
+    return "pincode";
+  }
+
   return "";
 };

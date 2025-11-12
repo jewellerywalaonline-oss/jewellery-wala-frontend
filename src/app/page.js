@@ -9,6 +9,7 @@ import Testimonial from "./(sections)/Testimonial";
 import FullVideoSection from "./(sections)/video";
 import { siteConfig } from "@/lib/utils";
 import { cache } from "react";
+import ProductsTab from "./(sections)/ProductsTab";
 
 export const metadata = {
   title: `Jewellery Walla in Jodhpur | Best Gold & Silver Jewellery Shop | ${siteConfig.name}`,
@@ -206,13 +207,14 @@ export default async function Home() {
       <Slider data={newArrivals} heading="New Arrivals" />
       <FullVideoSection />
       <Slider data={newArrivals} heading="Perfect Gift Items" />
+      <ProductsTab />
 
       <Slider
         data={trendingProducts}
         heading="Trending Products"
-        bg="bg-[#f8f8f8]"
+       
       />
-      <Testimonial data={testimonials} />
+      <Testimonial data={testimonials}  bg="bg-[#f8f8f8]/50" />
     </>
   );
 }

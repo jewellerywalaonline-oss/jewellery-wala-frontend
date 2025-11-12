@@ -6,7 +6,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Image from "next/image";
 
-const Testimonial = ({ data  }) => {
+const Testimonial = ({ data, bg }) => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const Testimonial = ({ data  }) => {
 
   return (
     <section
-      className="max-w-[1300px] mx-auto w-full overflow-x-hidden   py-10"
+      className={` mx-auto w-full overflow-x-hidden   py-10 ${bg}`}
       itemScope
       itemType="https://schema.org/Review"
     >
