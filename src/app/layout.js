@@ -200,7 +200,7 @@ export default async function RootLayout({ children }) {
         ></script>
       </head>
       <body
-        className={`min-h-screen bg-background antialiased flex flex-col ${lato.variable} pb-12 md:pb-0`}
+        className={`pt-0 !mr-0 bg-background antialiased flex flex-col ${lato.variable} pb-12 md:pb-0`}
       >
         <Client>
           <Header navigationData={navigation} />

@@ -14,7 +14,7 @@ import {
   ShoppingCartIcon,
   Truck,
 } from "lucide-react";
-
+import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -51,6 +51,7 @@ import { openLoginModal, setNavigation } from "@/redux/features/uiSlice";
 import Cookies from "js-cookie";
 import { getUser } from "@/lib/fetchUser";
 import { setProfile } from "@/redux/features/auth";
+import axios from "axios";
 
 const userMenuItems = [
   { label: "My Profile", icon: UserIcon, href: "/profile?tab=account" },
@@ -201,7 +202,7 @@ export default function Header({ navigationData }) {
 
   return (
     <>
-      <header className="w-full bg-white/90 backdrop-blur-xl z-[100] sticky top-0 left-0  shadow-sm">
+      <header className=" max-w-screen w-full bg-white/90 backdrop-blur-xl z-[100] sticky top-0 left-0  shadow-sm">
         {/* Top Bar */}
         <div
           className={`w-full  text-center bg-gradient-to-r from-amber-600 to-amber-500 text-white text-sm leading-3 py-2 transition-all duration-300 `}
@@ -391,9 +392,9 @@ export default function Header({ navigationData }) {
           {/* Mobile Search Bar (Conditionally Visible) */}
           <div
             id="mobile-search-bar"
-            className={` lg:hidden overflow-hidden transition-all duration-300 ${
+            className={`w-full lg:hidden  transition-all duration-300 ${
               isSearchOpen
-                ? "max-h-20 opacity-100 px-4 py-1 mt-3"
+                ? " opacity-100 px-4  mt-3"
                 : "max-h-0 opacity-0"
             }`}
           >
@@ -496,13 +497,62 @@ export default function Header({ navigationData }) {
 }
 
 const SearchBar = ({ className }) => {
+  const [suggestions, setSuggestions] = useState({});
+  const value = useSelector((state) => state.ui.searchValue);
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
   const router = useRouter();
   const handleSubmit = (e) => {
     e.preventDefault();
     const searchValue = e.target.elements.search.value;
     router.push(`/search?q=${searchValue}`);
   };
+  const suggestionVariants = {
+    open: {
+      opacity: 1,
+      height: "auto",
+      transition: {
+        duration: 0.3,
+        ease: "easeInOut",
+      },
+    },
+    closed: {
+      opacity: 0,
+      height: 0,
+      transition: {
+        duration: 0.2,
+        ease: "easeInOut",
+      },
+    },
+  };
 
+  useEffect(() => {
+    const fetch = async () => {
+      if (value.trim().length > 1) {
+        // Only fetch if more than 1 character
+        console.log(value);
+        try {
+          const res = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_URL}api/website/result/suggestion?search=${value}`
+          );
+          console.log(res.data._data);
+          setSuggestions(res.data._data);
+          setIsSuggestionsOpen(true);
+        } catch (error) {
+          setSuggestions({});
+          setIsSuggestionsOpen(false);
+        }
+      } else {
+        setIsSuggestionsOpen(false);
+      }
+    };
+
+    // Add a small debounce to prevent too many requests
+    const debounceTimer = setTimeout(() => {
+      fetch();
+    }, 300);
+
+    return () => clearTimeout(debounceTimer);
+  }, [value]);
   return (
     <div className={`relative ${className}`}>
       <PlaceholdersAndVanishInput
@@ -520,6 +570,74 @@ const SearchBar = ({ className }) => {
         size={20}
         className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 text-amber-600 pointer-events-none"
       />
+      {isSuggestionsOpen && (
+        <motion.div
+          initial="closed"
+          animate={isSuggestionsOpen ? "open" : "closed"}
+          variants={suggestionVariants}
+          className="absolute top-full left-0 right-0 h-auto w-full mt-1 bg-white rounded-lg shadow-lg z-[9999] border border-gray-200 overflow-hidden"
+        >
+          <div className="grid grid-cols-[30%_auto] divide-x divide-gray-200">
+            {/* Suggestions Column */}
+            {suggestions?.suggestions?.length > 0 ||
+            suggestions?.products?.length > 0 ? (
+              <>
+                <div className="p-4">
+                  <h3 className="text-sm font-medium text-gray-500 mb-2">
+                    Suggestions
+                  </h3>
+                  <div className="space-y-2">
+                    {suggestions?.suggestions?.map((suggestion, index) => (
+                      <button
+                        key={index}
+                        className="w-full text-left p-2 hover:bg-gray-50 rounded-md transition-colors text-sm"
+                        onClick={() => router.push(`/search?q=${suggestion}`)}
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Products Column */}
+                <div className="p-4">
+                  <h3 className="text-sm font-medium text-gray-500 mb-2">
+                    Products
+                  </h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 overflow-auto no-scrollbar">
+                    {suggestions?.products?.map((product) => (
+                      <Link
+                        key={product._id}
+                        href={`/product-details/${product.slug}`}
+                        className="group flex flex-col items-center p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                      >
+                        <div className="relative w-full aspect-square mb-2 bg-gray-100 rounded-md overflow-hidden">
+                          <Image
+                            src={product.image}
+                            alt={product.name}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform"
+                          />
+                        </div>
+                        <p className="text-sm font-medium  line-clamp-2">
+                          {product.name}
+                        </p>
+                        <p className="text-amber-600 font-medium mt-1">
+                          ₹{product.discount_price || product.price}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="p-4 col-span-2 text-center text-gray-500">
+                No suggestions found
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

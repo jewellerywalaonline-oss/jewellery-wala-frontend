@@ -6,16 +6,16 @@ import { cn } from "@/lib/utils";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
+import { setSearchValue } from "@/redux/features/uiSlice";
+import { useDispatch } from "react-redux";
 
 export function PlaceholdersAndVanishInput({
   placeholders,
   onChange,
+
   onSubmit,
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
-  const [suggestions, setSuggestions] = useState({});
-
-  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
 
   const intervalRef = useRef(null);
   const startAnimation = () => {
@@ -102,8 +102,11 @@ export function PlaceholdersAndVanishInput({
     }));
   }, [value]);
 
+  const dispatch = useDispatch();
   useEffect(() => {
     draw();
+
+    dispatch(setSearchValue(value));
   }, [value, draw]);
 
   const animate = (start) => {
@@ -176,51 +179,8 @@ export function PlaceholdersAndVanishInput({
     vanishAndSubmit();
     onSubmit && onSubmit(e);
   };
-  const suggestionVariants = {
-    open: {
-      opacity: 1,
-      height: "auto",
-      transition: {
-        duration: 0.3,
-        ease: "easeInOut",
-      },
-    },
-    closed: {
-      opacity: 0,
-      height: 0,
-      transition: {
-        duration: 0.2,
-        ease: "easeInOut",
-      },
-    },
-  };
 
-  useEffect(() => {
-    const fetch = async () => {
-      if (value.trim().length > 1) {
-        // Only fetch if more than 1 character
-        try {
-          const res = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}api/website/result/suggestion?search=${value}`
-          );
-          setSuggestions(res.data._data);
-          setIsSuggestionsOpen(true);
-        } catch (error) {
-          setSuggestions({});
-          setIsSuggestionsOpen(false);
-        }
-      } else {
-        setIsSuggestionsOpen(false);
-      }
-    };
 
-    // Add a small debounce to prevent too many requests
-    const debounceTimer = setTimeout(() => {
-      fetch();
-    }, 300);
-
-    return () => clearTimeout(debounceTimer);
-  }, [value]);
   return (
     <form
       className={cn(
@@ -318,79 +278,6 @@ export function PlaceholdersAndVanishInput({
           )}
         </AnimatePresence>
       </div>
-
-      {isSuggestionsOpen && (
-        <motion.div
-          initial="closed"
-          animate={isSuggestionsOpen ? "open" : "closed"}
-          variants={suggestionVariants}
-          className="fixed top-full left-0 w-full mt-1 bg-white rounded-lg shadow-lg z-[9999] border border-gray-200 overflow-hidden"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-[30%_auto] divide-x divide-gray-200">
-            {/* Suggestions Column */}
-            {suggestions?.suggestions?.length > 0 ||
-            suggestions?.products?.length > 0 ? (
-              <>
-                <div className="p-4">
-                  <h3 className="text-sm font-medium text-gray-500 mb-2">
-                    Suggestions
-                  </h3>
-                  <div className="space-y-2">
-                    {suggestions?.suggestions?.map((suggestion, index) => (
-                      <button
-                        key={index}
-                        className="w-full text-left p-2 hover:bg-gray-50 rounded-md transition-colors text-sm"
-                        onClick={() => {
-                          setValue(suggestion);
-                          // Optionally submit on click
-                          // handleSubmit(new Event('submit'));
-                        }}
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Products Column */}
-                <div className="p-4">
-                  <h3 className="text-sm font-medium text-gray-500 mb-2">
-                    Products
-                  </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 overflow-auto no-scrollbar">
-                    {suggestions?.products?.map((product) => (
-                      <Link
-                        key={product._id}
-                        href={`/product/${product.slug}`}
-                        className="group flex flex-col items-center p-3 hover:bg-gray-50 rounded-lg transition-colors"
-                      >
-                        <div className="relative w-full aspect-square mb-2 bg-gray-100 rounded-md overflow-hidden">
-                          <Image
-                            src={product.image}
-                            alt={product.name}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform"
-                          />
-                        </div>
-                        <p className="text-sm font-medium text-center line-clamp-2">
-                          {product.name}
-                        </p>
-                        <p className="text-amber-600 font-medium mt-1">
-                          ₹{product.discount_price || product.price}
-                        </p>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="p-4 col-span-2 text-center text-gray-500">
-                No suggestions found
-              </div>
-            )}
-          </div>
-        </motion.div>
-      )}
     </form>
   );
 }

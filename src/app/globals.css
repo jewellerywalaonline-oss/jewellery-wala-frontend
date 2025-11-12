@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+body[data-scroll-locked] {
+   
+    margin-right: 0px !important;
+}
 html {
   scroll-behavior: smooth;
 }
