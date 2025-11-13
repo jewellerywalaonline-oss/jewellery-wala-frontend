@@ -309,7 +309,8 @@ export default function Checkout() {
       toast.error(error.message || "Something Went Wrong");
     }
   };
-
+  console.log(orderData);
+  
   return (
     <>
       <LoadingUi hidden={loading} />
@@ -511,15 +512,15 @@ export default function Checkout() {
                   </label>
                   <Select
                     value={orderData.shippingAddress.state}
-                    onChange={(e) =>
+                    onValueChange={(value) => {
                       setOrderData({
                         ...orderData,
                         shippingAddress: {
                           ...orderData.shippingAddress,
-                          state: e.target.value,
+                          state: value,
                         },
-                      })
-                    }
+                      });
+                    }}
                     name="state"
                     required
                   >
