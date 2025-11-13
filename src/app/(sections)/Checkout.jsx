@@ -309,7 +309,6 @@ export default function Checkout() {
       toast.error(error.message || "Something Went Wrong");
     }
   };
-  console.log(orderData);
   
   return (
     <>

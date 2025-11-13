@@ -116,6 +116,7 @@ export default function AccountPage() {
     setAvatar(user._data.avatar);
     setLoading(false);
   };
+console.log(formData);
 
   useEffect(() => {
     if (data && data._id) {
@@ -583,7 +584,12 @@ export default function AccountPage() {
                               </Label>
                               <Select
                                 value={formData.state}
-                                onValueChange={formData.state}
+                                onValueChange={(value) => {
+                                  setFormData({
+                                    ...formData,
+                                    state: value
+                                  });
+                                }}
                                 name="state"
                                 required
                               >
