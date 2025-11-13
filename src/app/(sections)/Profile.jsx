@@ -583,7 +583,7 @@ export default function AccountPage() {
                               </Label>
                               <Select
                                 value={formData.state}
-                                onChange={formData.state}
+                                onValueChange={formData.state}
                                 name="state"
                                 required
                               >
