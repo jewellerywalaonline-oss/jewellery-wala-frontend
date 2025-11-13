@@ -1,5 +1,5 @@
 "use client";
-import { Heart, ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart, Eye, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { useState } from "react";
@@ -12,16 +12,7 @@ import { addToCart } from "../../redux/features/cart";
 import { useSelector } from "react-redux";
 import { addToWishlist, removeFromWishlist } from "@/redux/features/wishlist";
 
-export default function ProductCard({
-  slug,
-  subCategory,
-  name,
-  price,
-  image,
-  images,
-  id,
-  data,
-}) {
+export default function ProductCard({ data }) {
   const cartItem = useSelector((state) =>
     state?.cart?.cartItems?.find((item) => item.productId === data?._id)
   );
@@ -36,6 +27,7 @@ export default function ProductCard({
   const [loading, setLoading] = useState(false);
   const [src, setSrc] = useState(data?.image);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const isWishlisted = useSelector((state) =>
     state?.wishlist?.wishlistItems?.find((item) => item._id === data?._id)
   );
@@ -55,6 +47,7 @@ export default function ProductCard({
       : 0;
 
   const handleImageHover = (hovered) => {
+    setIsHovered(hovered);
     if (hovered && data?.images && data?.images.length > 0) {
       setSlideDirection(1);
       setSrc(data?.images[0]);
@@ -184,14 +177,7 @@ export default function ProductCard({
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.1,
-        ease: "easeOut",
-      },
-    },
-    hover: {
-      y: -8,
-      transition: {
-        duration: 0.1,
+        duration: 0.4,
         ease: "easeOut",
       },
     },
@@ -199,50 +185,36 @@ export default function ProductCard({
 
   const imageSlideVariants = {
     enter: (direction) => ({
-      x: direction > 0 ? 10 : -10,
+      x: direction > 0 ? 20 : -20,
       opacity: 0,
     }),
     center: {
       x: 0,
       opacity: 1,
       transition: {
-        x: { type: "tween", stiffness: 500, damping: 40, mass: 0.8 },
-        opacity: { duration: 0.1 },
+        x: { type: "spring", stiffness: 300, damping: 30 },
+        opacity: { duration: 0.3 },
       },
     },
     exit: (direction) => ({
-      x: direction > 0 ? -10 : 10,
-      opacity: 1,
+      x: direction > 0 ? -20 : 20,
+      opacity: 0,
       transition: {
-        x: { type: "tween", stiffness: 1000, damping: 40, mass: 0.8 },
+        x: { type: "spring", stiffness: 300, damping: 30 },
         opacity: { duration: 0.2 },
       },
     }),
   };
 
-  const buttonVariants = {
-    hover: { scale: 1.05 },
-    tap: { scale: 0.95 },
-  };
-
-  const heartVariants = {
-    hover: { scale: 1.1 },
-    tap: { scale: 0.9 },
-    liked: {
-      scale: [1, 1.3, 1],
-      transition: { duration: 0.3 },
-    },
-  };
-
   return (
     <motion.article
-      className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 relative group"
+      className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border border-slate-100 hover:border-amber-200"
       itemScope
       itemType="https://schema.org/Product"
       variants={cardVariants}
       initial="initial"
       animate="animate"
-      whileHover="hover"
+      whileHover={{ y: -8, transition: { duration: 0.3 } }}
       role="article"
       aria-label={`Product: ${data.name}`}
     >
@@ -269,30 +241,67 @@ export default function ProductCard({
         <meta itemProp="url" content={`/product-details/${data.slug}`} />
       </div>
 
-      {/* Discount Badge */}
-      <AnimatePresence>
-        {discountPercentage > 0 && (
-          <motion.div
-            className="absolute top-3 left-3 z-10 bg-red-500 text-white px-2 py-1 rounded-md text-xs font-bold shadow-md group-hover:animate-bounce"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ delay: 0.1, duration: 0.3 }}
-            role="status"
-            aria-label={`${discountPercentage} percent discount`}
-          >
-            {discountPercentage}% OFF
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Gradient Overlay on Hover */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/0 via-transparent to-transparent 
+                    group-hover:from-black/10 transition-all duration-500 pointer-events-none z-[1]"></div>
 
+      {/* Top Actions Bar */}
+      <div className="absolute top-3 left-3 right-3 z-20 flex justify-between items-start">
+        {/* Discount Badge */}
+        <AnimatePresence>
+          {discountPercentage > 0 && (
+            <motion.div
+              className="bg-gradient-to-br from-rose-500 to-red-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1"
+              initial={{ opacity: 0, scale: 0.8, x: -20 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.3 }}
+              role="status"
+              aria-label={`${discountPercentage} percent discount`}
+            >
+              <Sparkles className="w-3 h-3" />
+              {discountPercentage}% OFF
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Wishlist Button */}
+        <motion.button
+          disabled={wishlistLoading}
+          aria-label={
+            isWishlisted
+              ? `Remove ${data.name} from wishlist`
+              : `Add ${data.name} to wishlist`
+          }
+          aria-pressed={isWishlisted}
+          className={`w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm border border-slate-200 
+                   hover:bg-white hover:border-amber-400 flex items-center justify-center 
+                   transition-all duration-300 shadow-lg hover:shadow-xl
+                   ${wishlistLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+          onClick={handleWishlistToggle}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          type="button"
+        >
+          <Heart
+            size={18}
+            fill={isWishlisted ? "currentColor" : "none"}
+            className={`transition-colors ${
+              isWishlisted ? "text-rose-500" : "text-slate-600"
+            }`}
+            aria-hidden="true"
+          />
+        </motion.button>
+      </div>
+
+      {/* Image Container */}
       <Link
         href={`/product-details/${data.slug}`}
         aria-label={`View details for ${data.name}`}
         title={data.name}
       >
         <div
-          className="overflow-hidden relative h-56 bg-amber-50"
+          className="relative h-64 sm:h-72 bg-gradient-to-br from-amber-50 to-slate-50 overflow-hidden"
           onMouseEnter={() => handleImageHover(true)}
           onMouseLeave={() => handleImageHover(false)}
         >
@@ -311,67 +320,96 @@ export default function ProductCard({
                 height={500}
                 src={src}
                 alt={`${data.name} - Product image`}
-                className="w-full h-full object-cover cursor-pointer"
+                className="w-full h-full object-cover cursor-pointer group-hover:scale-110 transition-transform duration-700"
                 itemProp="image"
                 title={data.name}
               />
             </motion.div>
           </AnimatePresence>
+
+          {/* Quick View Overlay */}
+          <motion.div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+            style={{ pointerEvents: isHovered ? "auto" : "none" }}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: isHovered ? 1 : 0.8, opacity: isHovered ? 1 : 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white rounded-full px-6 py-3 flex items-center gap-2 shadow-xl"
+            >
+              <Eye className="w-5 h-5 text-amber-600" />
+              <span className="text-sm font-semibold text-slate-800">Quick View</span>
+            </motion.div>
+          </motion.div>
         </div>
       </Link>
 
-      <div className="p-4">
+      {/* Product Details */}
+      <div className="p-5">
+        {/* Category */}
         {data.subCategory && data.subCategory.length > 0 && (
           <motion.p
-            className="text-[11px] uppercase tracking-wide text-amber-700 font-medium mb-1"
+            className="text-[10px] uppercase tracking-wider text-amber-600 font-bold mb-2 flex items-center gap-1"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.15, duration: 0.3 }}
           >
+            <span className="w-1 h-1 bg-amber-600 rounded-full"></span>
             <span itemProp="category">
               {data.subCategory.map((cat) => cat.name).join(", ")}
             </span>
           </motion.p>
         )}
 
-        <motion.h3
-          className="text-base font-semibold text-gray-900 mb-2 line-clamp-2"
-          itemProp="name"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
-        >
-          {data.name}
-        </motion.h3>
+        {/* Product Name */}
+        <Link href={`/product-details/${data.slug}`}>
+          <motion.h3
+            className="text-base sm:text-lg font-semibold text-slate-900 mb-3 line-clamp-2 
+                     group-hover:text-amber-700 transition-colors cursor-pointer leading-tight"
+            itemProp="name"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.3 }}
+          >
+            {data.name}
+          </motion.h3>
+        </Link>
 
+        {/* Pricing */}
         <motion.div
-          className="flex items-center gap-2 mb-3"
+          className="mb-4"
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
+          transition={{ delay: 0.25, duration: 0.3 }}
           role="group"
           aria-label="Product pricing"
         >
-          {displayPrice && (
-            <span
-              className="text-xs text-red-500 line-through"
-              aria-label={`Original price: ${displayPrice} rupees`}
-            >
-              <span aria-hidden="true">₹{displayPrice}</span>
-            </span>
-          )}
-          {displayCurrentPrice && (
-            <span
-              className="text-lg font-bold text-amber-600"
-              itemProp="price"
-              aria-label={`Current price: ${displayCurrentPrice} rupees`}
-            >
-              <span aria-hidden="true">₹{displayCurrentPrice}</span>
-            </span>
-          )}
+          <div className="flex items-baseline gap-2 mb-1">
+            {displayCurrentPrice && (
+              <span
+                className="text-2xl font-bold text-slate-900"
+                itemProp="price"
+                aria-label={`Current price: ${displayCurrentPrice} rupees`}
+              >
+                ₹{displayCurrentPrice}
+              </span>
+            )}
+            {displayPrice && displayPrice !== displayCurrentPrice && (
+              <span
+                className="text-sm text-slate-400 line-through"
+                aria-label={`Original price: ${displayPrice} rupees`}
+              >
+                ₹{displayPrice}
+              </span>
+            )}
+          </div>
           {savings > 0 && (
             <span
-              className="text-xs text-green-600 font-semibold ml-auto"
+              className="inline-block text-xs text-emerald-600 font-semibold bg-emerald-50 px-2 py-1 rounded-md"
               aria-label={`You save: ${savings} rupees`}
             >
               Save ₹{savings}
@@ -379,64 +417,37 @@ export default function ProductCard({
           )}
         </motion.div>
 
+        {/* Add to Cart Button */}
         <motion.div
-          className="flex gap-2 items-center"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.3 }}
           role="group"
           aria-label="Product actions"
         >
-          <motion.div
-            variants={heartVariants}
-            whileHover="hover"
-            whileTap="tap"
-            animate={isWishlisted ? "liked" : "initial"}
+          <Button
+            disabled={loading || data.stock === 0}
+            className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 
+                     text-white py-6 rounded-xl text-sm font-semibold uppercase tracking-wider
+                     flex items-center justify-center gap-2 shadow-lg hover:shadow-xl
+                     hover:shadow-amber-500/30 transition-all duration-300 
+                     transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed
+                     group-hover:shadow-2xl"
+            onClick={handleAddToCart}
+            aria-label={`Add ${data.name} to cart`}
+            type="button"
           >
-            <Button
-              disabled={wishlistLoading}
-              aria-label={
-                isWishlisted
-                  ? `Remove ${data.name} from wishlist`
-                  : `Add ${data.name} to wishlist`
-              }
-              aria-pressed={isWishlisted}
-              className={`w-9 h-9 rounded-full border border-gray-300 hover:border-amber-500 hover:text-amber-500 flex items-center justify-center transition-colors bg-white hover:bg-amber-50 ${
-                loading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-              onClick={handleWishlistToggle}
-              type="button"
-            >
-              <Heart
-                size={16}
-                fill={isWishlisted ? "currentColor" : "none"}
-                className={isWishlisted ? "text-amber-500" : "text-black"}
-                aria-hidden="true"
-              />
-            </Button>
-          </motion.div>
-
-          <motion.div
-            className="flex-1"
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
-          >
-            <Button
-              disabled={loading || data.stock === 0}
-              className="w-full bg-gradient-to-r from-amber-800 to-amber-700 text-white py-2 rounded text-xs font-semibold uppercase flex items-center justify-center gap-1.5 "
-              onClick={handleAddToCart}
-              aria-label={`Add ${data.name} to cart`}
-              type="button"
-            >
-              <ShoppingCart size={14} aria-hidden="true" />
-              <span className="text-xs sm:text-sm ">
-                {loading ? "Adding..." : data.stock === 0 ? "Out of Stock" : "Add to Cart"}
-              </span>
-            </Button>
-          </motion.div>
+            <ShoppingCart size={16} aria-hidden="true" />
+            <span>
+              {loading ? "Adding..." : data.stock === 0 ? "Out of Stock" : "Add to Cart"}
+            </span>
+          </Button>
         </motion.div>
       </div>
+
+      {/* Bottom Shine Effect */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent 
+                    opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
     </motion.article>
   );
 }

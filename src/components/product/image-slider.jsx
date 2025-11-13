@@ -1,16 +1,19 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import ImageZoom from "./image-zoom"
+import { useState } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import ImageZoom from "./image-zoom";
 
-
-
-export default function ImageSlider({ images, productName, isNewArrival, isMobile }) {
-  const [currentImage, setCurrentImage] = useState(0)
-  const [direction, setDirection] = useState(0)
+export default function ImageSlider({
+  images,
+  productName,
+  isNewArrival,
+  isMobile,
+}) {
+  const [currentImage, setCurrentImage] = useState(0);
+  const [direction, setDirection] = useState(0);
 
   const slideVariants = {
     enter: (dir) => ({
@@ -27,23 +30,23 @@ export default function ImageSlider({ images, productName, isNewArrival, isMobil
       x: dir < 0 ? 10 : -10,
       opacity: 1,
     }),
-  }
+  };
 
   const paginate = (newDirection) => {
-    setDirection(newDirection)
+    setDirection(newDirection);
     setCurrentImage((prev) => {
-      const next = prev + newDirection
-      if (next < 0) return images.length - 1
-      if (next >= images.length) return 0
-      return next
-    })
-  }
+      const next = prev + newDirection;
+      if (next < 0) return images.length - 1;
+      if (next >= images.length) return 0;
+      return next;
+    });
+  };
 
   return (
     <div className="space-y-4">
       {/* Main Image */}
       <motion.div
-        className="relative bg-gradient-to-br from-amber-50/50 to-yellow-50/50 rounded-3xl overflow-hidden h-96 sm:h-[500px] shadow-2xl border border-amber-100/50 glass-effect"
+        className="relative bg-gradient-to-br from-amber-50/50 to-yellow-50/50  overflow-hidden h-96 sm:h-[500px] shadow-2xl border border-amber-100/50 glass-effect"
         whileHover={!isMobile ? { scale: 1.01 } : {}}
         transition={{ duration: 0.2 }}
       >
@@ -117,17 +120,17 @@ export default function ImageSlider({ images, productName, isNewArrival, isMobil
 
       {/* Thumbnail Slider */}
       {images.length > 1 && (
-        <div className="flex gap-3 overflow-x-auto overflow-y-hidden pb-2 scroll-smooth">
+        <div className="grid grid-cols-4 md:grid-cols-3 gap-3  pb-2 ">
           {images.map((img, index) => (
             <motion.button
               key={index}
               onClick={() => {
-                setDirection(index > currentImage ? 1 : -1)
-                setCurrentImage(index)
+                setDirection(index > currentImage ? 1 : -1);
+                setCurrentImage(index);
               }}
-              whileHover={{ scale: 1.1, y: -5 }}
+              whileHover={{ scale: 1, y: -5 }}
               whileTap={{ scale: 0.95 }}
-              className={`flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-3 transition-all ${
+              className={`flex-shrink-0  overflow-hidden border-3 transition-all ${
                 currentImage === index
                   ? "border-amber-500 shadow-lg ring-2 ring-amber-200"
                   : "border-amber-100 hover:border-amber-300"
@@ -145,5 +148,5 @@ export default function ImageSlider({ images, productName, isNewArrival, isMobil
         </div>
       )}
     </div>
-  )
+  );
 }

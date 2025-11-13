@@ -111,8 +111,8 @@ export default function About() {
             </div>
 
             {/* Our Story Button */}
-            <a
-              href="#story"
+            <Link
+              href="/story"
               className="liquid-glass rounded-2xl p-6 flex items-center justify-between group hover:scale-[1.02] transition-all duration-300 cursor-pointer"
             >
               <div className="flex items-center gap-4">
@@ -131,7 +131,7 @@ export default function About() {
               <div className="text-gray-400 group-hover:translate-x-2 transition-transform duration-300">
                 →
               </div>
-            </a>
+            </Link>
           </div>
 
           {/* Right Side - About Content */}

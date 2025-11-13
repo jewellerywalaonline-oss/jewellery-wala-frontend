@@ -65,9 +65,9 @@ export default function RoundCategorySlider() {
         {allSubCategories.length > 0 && (
           <Swiper
             modules={[Autoplay]}
-            spaceBetween={20}
-            slidesPerView={4}
-            loop={allSubCategories.length < 4}
+            spaceBetween={10}
+            slidesPerView={3}
+            loop={allSubCategories.length < 3}
             autoplay={{
               delay: 2500,
               disableOnInteraction: false,
@@ -76,19 +76,19 @@ export default function RoundCategorySlider() {
             speed={1000}
             breakpoints={{
               320: {
-                slidesPerView: 2,
+                slidesPerView: 1,
                 spaceBetween: 10,
               },
               480: {
-                slidesPerView: 2,
+                slidesPerView: 1.4,
                 spaceBetween: 15,
               },
               768: {
-                slidesPerView: 3,
+                slidesPerView: 2,
                 spaceBetween: 15,
               },
               1024: {
-                slidesPerView: 4,
+                slidesPerView: 3,
                 spaceBetween: 20,
               },
             }}
@@ -104,7 +104,7 @@ export default function RoundCategorySlider() {
                   >
                     {/* Image Container with fixed aspect ratio */}
                     <div
-                      className="relative w-full h-full overflow-hidden border-2 border-[rgb(192,149,120)] rounded-lg
+                      className="relative w-full h-full overflow-hidden border-2 border-[rgb(192,149,120)] 
                       flex items-center justify-center transition-all duration-300
                       group-hover:border-yellow-400 group-hover:scale-105 group-hover:shadow-xl"
                     >

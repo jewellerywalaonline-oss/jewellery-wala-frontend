@@ -13,6 +13,7 @@ import {
   MapPin,
   ShoppingCartIcon,
   Truck,
+  Sparkles,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
@@ -232,98 +233,102 @@ export default function Header({ navigationData }) {
 
   return (
     <>
-      <div
-        className={`w-full  text-center bg-gradient-to-r from-amber-600 to-amber-500 text-white text-sm leading-3 py-2 transition-all duration-300 `}
-      >
-        <span>
-          <Truck className="inline rotate-y-180" size={14} /> Free Shipping
-          above ₹1000 | Welcome to {process.env.NEXT_PUBLIC_APP_NAME}
+      <div className="w-full text-center bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-white text-sm py-2.5 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,.1)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%] animate-shimmer"></div>
+        <span className="relative z-10 flex items-center justify-center gap-2 font-medium">
+          <Truck className="inline rotate-y-180" size={16} />
+          Free Shipping above ₹1000 | Welcome to{" "}
+          {process.env.NEXT_PUBLIC_APP_NAME}
         </span>
       </div>
-      <header className=" max-w-screen w-full bg-white/90 backdrop-blur-xl z-[100] sticky top-0 left-0  shadow-sm">
-        {/* Top Bar */}
 
+      <header className="max-w-screen w-full bg-white/95 backdrop-blur-2xl z-[100] sticky top-0 left-0 shadow-lg border-b border-amber-100/50">
         {/* Main Header Bar */}
         <div
-          className={`w-full border-b  bg-white border-amber-200 transition-all duration-300 ${
-            isScrolled ? "py-2  left-0" : "py-4 " // Visual shrinking effect
+          className={`w-full border-b bg-white/95 backdrop-blur-xl border-amber-100/50 transition-all duration-500 ${
+            isScrolled ? "py-2 shadow-md" : "py-4"
           }`}
         >
           <div className="flex items-center justify-between px-4 md:px-6 w-full">
+            {/* Mobile Menu Button - Enhanced */}
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden hover:bg-amber-50 hover:text-amber-600 shrink-0"
+              className="md:hidden hover:bg-amber-50 hover:text-amber-600 shrink-0 rounded-xl transition-all duration-300"
               aria-label="Open navigation menu"
               onClick={() => setIsOffcanvasOpen(true)}
             >
               <Menu size={24} />
             </Button>
 
-            <Link href="/">
+            {/* Logo - Enhanced with subtle animation */}
+            <Link href="/" className="group">
               <Image
                 src={logo || "/images/logo.png"}
                 alt="Jewellery Wala"
                 width={100}
                 height={100}
-                className={`w-auto cursor-pointer h-12 object-cover
-                    ${isScrolled ? "h-8" : ""}`}
+                className={`w-auto cursor-pointer object-cover transition-all duration-500 group-hover:scale-105 ${
+                  isScrolled ? "h-8" : "h-12"
+                }`}
               />
             </Link>
 
-            {/* Desktop Search (Center) */}
+            {/* Desktop Search - Enhanced with premium shadow */}
             <div className="hidden lg:block flex-1 px-6">
-              <SearchBar className="w-full max-w-xl mx-auto group" />
+              <SearchBar className="w-full max-w-xl mx-auto" />
             </div>
 
-            {/* Icons (Right) */}
-            <div className="flex items-center space-x-2 md:space-x-4 shrink-0">
-              {/* Wishlist Icon */}
+            {/* Icons - Enhanced with better hover states */}
+            <div className="flex items-center space-x-2 md:space-x-3 shrink-0">
+              {/* Wishlist Icon - Premium style */}
               <Link href="/wishlist" className="flex">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="relative hover:bg-amber-50 hover:text-amber-600"
+                  className="relative hover:bg-gradient-to-br hover:from-amber-50 hover:to-orange-50 hover:text-amber-600 rounded-xl transition-all duration-300 hover:scale-105"
                   aria-label="View wishlist"
                 >
                   <Heart
-                    fill={wishlistCount > 0 ? "#f5a22f" : "#FFF"}
-                    size={24}
+                    fill={wishlistCount > 0 ? "#f59e0b" : "none"}
+                    size={22}
+                    className={wishlistCount > 0 ? "text-amber-600" : ""}
                   />
                   {wishlistCount > 0 && (
-                    <Badge className="absolute -top-2 -right-2 size-5 flex items-center justify-center p-0 bg-amber-600 hover:bg-amber-700 text-[16px] shadow-sm">
+                    <Badge className="absolute -top-1.5 -right-1.5 size-5 flex items-center justify-center p-0 bg-gradient-to-br from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-xs shadow-lg border-2 border-white">
                       {wishlistCount}
                     </Badge>
                   )}
                 </Button>
               </Link>
 
-              {/* Cart Icon */}
+              {/* Cart Icon - Premium style */}
               <Link href="/cart" className="hidden md:flex">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="relative hover:bg-amber-50 hover:text-amber-600"
+                  className="relative hover:bg-gradient-to-br hover:from-amber-50 hover:to-orange-50 hover:text-amber-600 rounded-xl transition-all duration-300 hover:scale-105"
                   aria-label="View shopping bag"
                 >
                   <ShoppingCartIcon
-                    fill={cartCount > 0 ? "#f5a22f" : "#FFF"}
-                    size={28}
+                    fill={cartCount > 0 ? "#f59e0b" : "none"}
+                    size={24}
+                    className={cartCount > 0 ? "text-amber-600" : ""}
                   />
                   {cartCount > 0 && (
-                    <Badge className="absolute -top-2 -right-2 w-5 h-5 flex items-center justify-center p-0 bg-amber-600 hover:bg-amber-700 text-[16px] shadow-sm">
+                    <Badge className="absolute -top-1.5 -right-1.5 w-5 h-5 flex items-center justify-center p-0 bg-gradient-to-br from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-xs shadow-lg border-2 border-white">
                       {cartCount}
                     </Badge>
                   )}
                 </Button>
               </Link>
 
-              {/* Mobile Search Toggle */}
+              {/* Mobile Search Toggle - Enhanced */}
               <Button
                 id="search-toggle-button"
                 variant="ghost"
                 size="icon"
-                className="lg:hidden hover:bg-amber-50 hover:text-amber-600"
+                className="lg:hidden hover:bg-gradient-to-br hover:from-amber-50 hover:to-orange-50 hover:text-amber-600 rounded-xl transition-all duration-300"
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
                 aria-expanded={isSearchOpen}
                 aria-controls="mobile-search-bar"
@@ -332,52 +337,55 @@ export default function Header({ navigationData }) {
                 <Search size={20} />
               </Button>
 
-              {/* User Dropdown */}
+              {/* User Dropdown - Enhanced */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="relative hover:bg-amber-50 hover:text-amber-600"
+                    className="relative hover:bg-gradient-to-br hover:from-amber-50 hover:to-orange-50 hover:text-amber-600 rounded-xl transition-all duration-300 hover:scale-105"
                     aria-label="User account menu"
                   >
                     {user?.avatar ? (
-                      <Image
-                        src={user.avatar}
-                        alt="User Avatar"
-                        width={20}
-                        height={20}
-                        className="rounded-full size-5 md:size-7"
-                      />
+                      <div className="relative">
+                        <Image
+                          src={user.avatar}
+                          alt="User Avatar"
+                          width={28}
+                          height={28}
+                          className="rounded-full size-6 md:size-7 border-2 border-amber-200"
+                        />
+                      </div>
                     ) : (
                       <UserIcon size={20} />
                     )}
                     {isLoggedIn && (
-                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse" />
+                      <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white shadow-sm">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      </span>
                     )}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className="w-64 bg-white/95 backdrop-blur-xl border-2 border-amber-200 shadow-xl"
+                  className="w-64 bg-white/98 backdrop-blur-xl border border-amber-200/50 shadow-2xl rounded-xl"
                   align="end"
                 >
-                  {/* ... (User Dropdown Content is fine, keeping it concise) ... */}
                   {isLoggedIn ? (
                     <>
-                      <DropdownMenuLabel className="bg-gradient-to-r from-amber-50 to-orange-50 py-3">
-                        <p className="text-sm font-semibold text-gray-800">
+                      <DropdownMenuLabel className="bg-gradient-to-br from-amber-50 to-orange-50 py-4 rounded-t-xl">
+                        <p className="text-sm font-semibold text-slate-800">
                           Welcome back! {user?.name}
                         </p>
-                        <p className="text-xs text-amber-600 mt-1 font-normal">
+                        <p className="text-xs text-amber-600 mt-1 font-medium">
                           {user?.email}
                         </p>
                       </DropdownMenuLabel>
-                      <DropdownMenuSeparator className="bg-amber-200" />
+                      <DropdownMenuSeparator className="bg-amber-100" />
                       {userMenuItems.map((item, idx) => (
                         <DropdownMenuItem
                           key={idx}
                           asChild
-                          className="cursor-pointer hover:bg-amber-50 hover:text-amber-600 py-3"
+                          className="cursor-pointer hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 hover:text-amber-700 py-3 transition-all duration-200"
                         >
                           <Link href={item.href} className="flex items-center">
                             <item.icon className="mr-3" size={18} />
@@ -385,29 +393,29 @@ export default function Header({ navigationData }) {
                           </Link>
                         </DropdownMenuItem>
                       ))}
-                      <DropdownMenuSeparator className="bg-amber-200" />
+                      <DropdownMenuSeparator className="bg-amber-100" />
                       <Link href="/profile?tab=settings&logout=true">
-                        <DropdownMenuItem className="cursor-pointer text-red-600 hover:bg-red-50 hover:text-red-700 py-3">
+                        <DropdownMenuItem className="cursor-pointer text-rose-600 hover:bg-rose-50 hover:text-rose-700 py-3 transition-all duration-200">
                           <LogOut className="mr-3" size={18} />
                           <span className="font-medium">Logout</span>
                         </DropdownMenuItem>
                       </Link>
                     </>
                   ) : (
-                    <div className="px-2 py-4">
-                      <p className="text-sm text-gray-600 mb-4 font-medium text-center">
+                    <div className="px-3 py-5">
+                      <p className="text-sm text-slate-600 mb-4 font-medium text-center">
                         Sign in to your account
                       </p>
-                      <div className="space-y-2 flex flex-col gap-1">
+                      <div className="space-y-2 flex flex-col gap-2">
                         <Link href="/login" className="cursor-pointer">
-                          <Button className="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 shadow-md">
+                          <Button className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 shadow-lg hover:shadow-xl transition-all duration-300">
                             Sign In
                           </Button>
                         </Link>
                         <Link className="cursor-pointer" href="/signup">
                           <Button
                             variant="outline"
-                            className="w-full border-2 border-amber-600 text-amber-600 hover:bg-amber-50"
+                            className="w-full border-2 border-amber-500 text-amber-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all duration-300"
                           >
                             Register
                           </Button>
@@ -420,80 +428,79 @@ export default function Header({ navigationData }) {
             </div>
           </div>
 
-          {/* Mobile Search Bar (Conditionally Visible) */}
+          {/* Mobile Search Bar - Enhanced */}
           <div
             ref={mobileSearchRef}
             id="mobile-search-bar"
-            className={`w-full lg:hidden  transition-all duration-300 ${
-              isSearchOpen ? " opacity-100 px-4  mt-3" : "max-h-0 opacity-0"
+            className={`w-full lg:hidden transition-all duration-300 ${
+              isSearchOpen
+                ? "opacity-100 px-4 mt-3 mb-2"
+                : "max-h-0 opacity-0 overflow-hidden"
             }`}
           >
             <SearchBar className="relative" />
           </div>
         </div>
 
-        <nav
-          className={`hidden md:flex flex-wrap justify-center  space-x-8 text-sm font-sans font-[500] py-3  bg-white/95 backdrop-blur-sm  `}
-        >
+        {/* Premium Navigation Bar */}
+        <nav className="hidden md:flex flex-wrap justify-center items-center space-x-8 text-sm font-medium py-3.5 bg-gradient-to-r from-white via-amber-50/30 to-white backdrop-blur-sm border-b border-amber-100/30">
           {navigationData._data?.map((cat, idx) => (
             <div key={idx}>
-              {/* Nav Link / Mega Menu Trigger */}
               {cat.subCategories?.length == 0 ? (
                 <Link
                   href={urlPrfix(cat.slug)}
-                  className="relative hover:text-amber-700 transition-colors text-[15px]  whitespace-nowrap pb-1.5 text-gray-700 group"
+                  className="relative hover:text-amber-700 transition-all duration-300 text-[15px] whitespace-nowrap pb-1.5 text-slate-700 group font-medium"
                 >
                   {cat.name}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-300 group-hover:w-full"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 transition-all duration-300 group-hover:w-full shadow-sm"></span>
                 </Link>
               ) : (
-                <div className="relative group ">
+                <div className="relative group">
                   <button
                     onClick={() => router.push("/category/" + cat.slug)}
-                    className="relative hover:text-amber-700 transition-colors text-[15px]  whitespace-nowrap pb-1.5 text-gray-700 flex items-center gap-1"
+                    className="relative hover:text-amber-700 transition-all duration-300 text-[15px] whitespace-nowrap pb-1.5 text-slate-700 flex items-center gap-1.5 font-medium"
                     aria-haspopup="menu"
                   >
                     {cat.name}
                     <ChevronDown className="w-3.5 h-3.5 transition-transform duration-300 group-hover:rotate-180" />
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-300 group-hover:w-full"></span>
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 transition-all duration-300 group-hover:w-full shadow-sm"></span>
                   </button>
-                  {/* Backdrop when mega menu open - using peer/group pattern */}
-                  {/* <div className="hidden group-hover:block fixed top-0 left-0 right-0 bottom-0 bg-white/10 w-full h-screen backdrop-blur-md z-[998] pointer-events-none" /> */}
 
-                  {/* Mega Menu Content - Shows on group hover */}
+                  {/* <div className="absolute top-full left-0 h-screen w-full max-w-[100%] bg-white-500 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 invisible opacity-0 duration-300 group-hover:visible group-hover:opacity-100 z-[98]"></div> */}
+
+                  {/* Premium Mega Menu */}
                   <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 [transform:_perspective(600px)_rotateX(-90deg)] duration-500 skew-x-10 group-hover:skew-x-0 origin-top group-hover:[transform:_perspective(1200px)_rotateX(0deg)] transition-all fixed left-1/2 -translate-x-1/2 top-full pt-1 z-[999] hover:visible hover:opacity-100">
-                    <Card className="w-[1150px] max-w-[98vw] bg-white/95 backdrop-blur-xl shadow-2xl rounded-xl p-5 border-2 border-amber-200 hover:border-amber-400">
+                    <Card className="w-[1150px] max-w-[98vw] bg-white/98 backdrop-blur-2xl shadow-2xl rounded-2xl p-6 border border-amber-200/50">
                       <div className="grid grid-cols-5 gap-5">
                         {cat.subCategories?.map((menu, i) => (
-                          <div key={i}>
+                          <div key={i} className="group/menu">
                             <Link
                               href={"/category/" + cat.slug + "/" + menu.slug}
                             >
-                              <h4 className="font-bold text-gray-800 mb-2 border-b-2 border-amber-400/50  text-lg hover:text-amber-600 transition-colors">
+                              <h4 className="font-bold text-slate-800 mb-2 pb-1 border-b border-amber-200/50 text-base hover:text-amber-700 transition-colors">
                                 <Badge
                                   variant="outline"
-                                  className="text-[15px] font-bold text-amber-600 border-amber-400 mb-1.5 bg-amber-50"
+                                  className="text-sm font-bold text-amber-700 border-amber-400 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 transition-all duration-300 px-3 py-1"
                                 >
                                   {menu.name}
                                 </Badge>
                               </h4>
                             </Link>
-                            <div className="space-y-3">
-                              {menu.subSubCategories &&
-                                menu?.subSubCategories?.map((subcat, j) => (
-                                  <div key={j}>
-                                    <ul className="space-y-1 text-gray-600 text-sm">
-                                      <li key={subcat._id}>
-                                        <Link
-                                          href={`/category/${cat.slug}/${menu.slug}/${subcat.slug}`}
-                                          className="block hover:text-amber-600 cursor-pointer transition-all duration-200 hover:translate-x-1"
-                                        >
-                                          {subcat.name}
-                                        </Link>
-                                      </li>
-                                    </ul>
-                                  </div>
-                                ))}
+                            <div className="space-y-2.5">
+                              {menu.subSubCategories?.map((subcat, j) => (
+                                <div key={j}>
+                                  <ul className="space-y-1.5 text-slate-600 text-sm">
+                                    <li key={subcat._id}>
+                                      <Link
+                                        href={`/category/${cat.slug}/${menu.slug}/${subcat.slug}`}
+                                        className="block hover:text-amber-600 cursor-pointer transition-all duration-200 hover:translate-x-1 hover:font-medium py-1"
+                                      >
+                                        {subcat.name}
+                                      </Link>
+                                    </li>
+                                  </ul>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         ))}
@@ -509,14 +516,14 @@ export default function Header({ navigationData }) {
 
       {/* Mobile Menu Button (Left) */}
       <Sheet open={isOffcanvasOpen} onOpenChange={setIsOffcanvasOpen}>
-        {/* Mobile Sheet Menu Content */}
         <SheetContent
           side="left"
-          className="w-[80vw] sm:w-80 bg-white p-0 z-[999]"
+          className="w-[80vw] sm:w-80 bg-white p-0 z-[999] border-r border-amber-200/50"
         >
-          <SheetHeader className="border-b p-4">
-            <SheetTitle className="text-lg font-semibold text-gray-900">
-              Jewellery Wala Menu
+          <SheetHeader className="border-b border-amber-100/50 p-5 bg-gradient-to-r from-amber-50 to-orange-50">
+            <SheetTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-amber-600" />
+              Menu
             </SheetTitle>
           </SheetHeader>
           {renderMobileNav()}

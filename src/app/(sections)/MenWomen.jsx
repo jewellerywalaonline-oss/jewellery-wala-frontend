@@ -62,7 +62,7 @@ export default function GenderCategorySection() {
       {result.map((category) => (
         <div
           key={category._id}
-          className="grid grid-cols-1 md:grid-cols-2 gap-2 h-[70vh] max-h-[600px]"
+          className="grid grid-cols-1 md:grid-cols-2 gap-2 h-[75vh] max-h-[600px]"
         >
           {category.subCategories.map((subCategory, index) => (
             <Link

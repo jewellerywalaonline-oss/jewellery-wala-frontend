@@ -16,47 +16,84 @@ const getWhyChooseUs = cache(async () => {
     return data._data;
   }
 });
+
 const iconMap = {
   Gem: Gem,
   ShieldCheck: ShieldCheck,
   Sparkles: Sparkles,
   Gift: Gift,
-  // Add more icons as needed
 };
 
 const WhyChooseUsItem = ({ item, index }) => {
   const IconComponent = iconMap[item.image] || Gem;
-  const colorMap = [
-    "from-amber-100 via-yellow-50 to-white",
-    "from-emerald-100 via-green-50 to-white",
-    "from-purple-100 via-violet-50 to-white",
-    "from-pink-100 via-rose-50 to-white",
+
+  const colorSchemes = [
+    {
+      bg: "bg-amber-50",
+      icon: "text-amber-600",
+      iconBg: "bg-amber-100",
+      ring: "group-hover:ring-amber-200",
+    },
+    {
+      bg: "bg-rose-50",
+      icon: "text-rose-600",
+      iconBg: "bg-rose-100",
+      ring: "group-hover:ring-rose-200",
+    },
+    {
+      bg: "bg-emerald-50",
+      icon: "text-emerald-600",
+      iconBg: "bg-emerald-100",
+      ring: "group-hover:ring-emerald-200",
+    },
+    {
+      bg: "bg-purple-50",
+      icon: "text-purple-600",
+      iconBg: "bg-purple-100",
+      ring: "group-hover:ring-purple-200",
+    },
   ];
+
+  const scheme = colorSchemes[index % 4];
 
   return (
     <article
-      className={`group relative flex flex-col items-center bg-gradient-to-br ${
-        colorMap[index] || "from-slate-100/50 via-amber-200/50 to-white/50"
-      } rounded-xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all duration-500 border border-slate-200 hover:border-transparent cursor-pointer overflow-hidden hover:-translate-y-1`}
+      className={`group relative flex flex-col items-center ${scheme.bg} rounded-2xl p-6 sm:p-8 transition-all duration-500 hover:-translate-y-2 hover:shadow-xl cursor-pointer border border-transparent ${scheme.ring} ring-0 hover:ring-4 ring-offset-2`}
     >
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-tr from-white/40 via-transparent to-transparent animate-pulse"></div>
+      {/* Animated Background Gradient */}
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-      <div className="mb-3 text-slate-700 transition-all duration-500 group-hover:text-amber-500">
+      {/* Icon Container */}
+      <div
+        className={`relative mb-5 ${scheme.iconBg} rounded-full p-4 transition-all duration-500 group-hover:scale-110 group-hover:rotate-6 shadow-sm`}
+      >
         <IconComponent
           size={32}
-          className="transition-transform duration-500 group-hover:scale-110"
+          className={`${scheme.icon} transition-all duration-500`}
+          strokeWidth={1.5}
         />
+
+        {/* Sparkle Effect on Hover */}
+        <div className="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-ping"></div>
       </div>
 
-      <h3 className="text-sm md:text-base font-semibold text-slate-900 mb-1 text-center">
+      {/* Title */}
+      <h3 className="text-base md:text-lg font-semibold text-slate-800 mb-2 text-center relative z-10">
         {item.title}
       </h3>
 
-      <p className="text-xs sm:text-sm text-slate-600 text-center leading-relaxed">
+      {/* Description */}
+      <p className="text-xs sm:text-sm text-slate-600 text-center leading-relaxed relative z-10 font-light">
         {item.description}
       </p>
 
-      <div className="mt-2 w-0 h-0.5 bg-gradient-to-r from-slate-400 to-slate-600 mx-auto rounded-full group-hover:w-10 transition-all duration-500"></div>
+      {/* Bottom Accent Line */}
+      <div
+        className={`mt-4 h-1 w-0 ${scheme.icon.replace(
+          "text-",
+          "bg-"
+        )} rounded-full transition-all duration-500 group-hover:w-16`}
+      ></div>
     </article>
   );
 };
@@ -66,7 +103,7 @@ const WhyChooseUsContent = async () => {
   const features = data;
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
       {features.map((item, index) => (
         <WhyChooseUsItem key={item._id} item={item} index={index} />
       ))}
@@ -76,34 +113,52 @@ const WhyChooseUsContent = async () => {
 
 const WhyChooseUs = () => {
   return (
-    <section className={`w-full bg-gradient-to-br from-amber-50/30 via-amber-100/20 to-white/30 `} aria-labelledby="why-choose-us">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mb-6"></div>
+    <section
+      className="w-full py-16 lg:py-20 bg-gradient-to-b from-white via-amber-50/20 to-white relative overflow-hidden"
+      aria-labelledby="why-choose-us"
+    >
+      {/* Decorative Elements */}
+      <div className="absolute top-10 left-10 w-32 h-32 bg-amber-100/30 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-10 right-10 w-40 h-40 bg-rose-100/30 rounded-full blur-3xl"></div>
 
-        <div className="text-center mb-8">
-          <h2
-            id="why-choose-us"
-            className="text-2xl md:text-3xl font-serif text-slate-800 mb-2 tracking-wide"
-          >
-            Why Choose Us
-          </h2>
-          <div className="w-20 h-0.5 bg-gradient-to-r from-slate-400 to-slate-600 mx-auto rounded-full"></div>
-          <p className="text-slate-600 mt-2 text-xs sm:text-sm md:text-base font-light max-w-md mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        {/* Section Header */}
+        <div className="text-center mb-12 lg:mb-16">
+          <div className="inline-flex items-center gap-2 mb-4">
+            <Sparkles className="w-5 h-5 text-amber-600 animate-pulse" />
+            <h2
+              id="why-choose-us"
+              className="text-3xl md:text-4xl lg:text-5xl font-serif text-slate-800 tracking-wide"
+            >
+              Why Choose Us
+            </h2>
+            <Sparkles className="w-5 h-5 text-amber-600 animate-pulse" />
+          </div>
+
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent to-amber-600"></div>
+            <div className="w-3 h-3 bg-amber-600 rounded-full"></div>
+            <div className="w-16 h-0.5 bg-gradient-to-l from-transparent to-amber-600"></div>
+          </div>
+
+          <p className="text-slate-600 text-sm sm:text-base lg:text-lg font-light max-w-2xl mx-auto leading-relaxed">
             Experience excellence in every aspect of your jewellery shopping
           </p>
         </div>
 
+        {/* Content Grid */}
         <Suspense
           fallback={
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
               {[...Array(4)].map((_, i) => (
                 <div
                   key={i}
-                  className="flex flex-col items-center space-y-3 p-4"
+                  className="flex flex-col items-center space-y-4 p-8 bg-slate-50 rounded-2xl"
                 >
-                  <Skeleton className="h-8 w-8 rounded-full" />
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-3 w-32" />
+                  <Skeleton className="h-16 w-16 rounded-full" />
+                  <Skeleton className="h-5 w-32" />
+                  <Skeleton className="h-4 w-40" />
+                  <Skeleton className="h-3 w-36" />
                 </div>
               ))}
             </div>
@@ -111,8 +166,6 @@ const WhyChooseUs = () => {
         >
           <WhyChooseUsContent />
         </Suspense>
-
-        <div className="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent mt-8"></div>
       </div>
     </section>
   );
