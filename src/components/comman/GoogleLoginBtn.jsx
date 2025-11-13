@@ -27,7 +27,6 @@ export default function GoogleLoginBtn() {
       // Redirect to Google
       window.location.href = googleAuthUrl;
     } catch (error) {
-      console.error("Google login error:", error);
       toast.error(error.message || "Something went wrong");
     }
   };

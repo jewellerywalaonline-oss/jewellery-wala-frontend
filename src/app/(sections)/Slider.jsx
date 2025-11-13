@@ -56,7 +56,7 @@ const Slider = ({ data, heading, bg }) => {
             centeredSlides={false}
             breakpoints={{
               320: {
-                slidesPerView: 1,
+                slidesPerView: 1.3,
                 spaceBetween: 20,
               },
               450: {

@@ -43,7 +43,6 @@ export default function OrderSuccess() {
         try {
           await audioRef.current.play();
         } catch (err) {
-          console.log("Audio playback failed:", err);
         }
       };
 
@@ -75,7 +74,6 @@ export default function OrderSuccess() {
       const response = await getOrderById(orderId);
       setOrder(response.order);
     } catch (error) {
-      console.error("Failed to load order:", error);
     }
   };
 

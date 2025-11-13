@@ -60,7 +60,6 @@ const SignUpPage = () => {
       dispatch(setProfile(data._data));
       router.push(returnTo || "/profile?tab=profile");
     } catch (err) {
-      console.error(err);
       return setError(
         err.message || "Failed to sign up. Please try again later."
       );

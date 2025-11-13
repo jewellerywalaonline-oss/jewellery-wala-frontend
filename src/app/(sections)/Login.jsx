@@ -98,7 +98,6 @@ const LoginPage = () => {
 
       router.push(returnTo || "/");
     } catch (error) {
-      console.error(error);
       return setApiError(error.message || "Failed to login. Please try again.");
     } finally {
       setFormState((prev) => ({ ...prev, isSubmitting: false }));

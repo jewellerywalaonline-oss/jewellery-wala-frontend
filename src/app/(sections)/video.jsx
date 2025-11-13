@@ -17,7 +17,6 @@ const FullVideoSection = () => {
         const data = await res.json();
         setImage(data?.[4]?.image);
       } catch (error) {
-        console.error("Error fetching banner:", error);
       }
     };
     fetchBanner();

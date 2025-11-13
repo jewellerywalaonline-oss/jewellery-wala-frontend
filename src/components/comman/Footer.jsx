@@ -37,7 +37,6 @@ export default function Footer() {
       const data = await res.json();
       setFeaturedProducts(data._data);
     } catch (err) {
-      console.error("Failed to fetch featured products:", err);
     }
   };
   const checkLogin = async () => {
@@ -63,7 +62,6 @@ export default function Footer() {
           Cookies.set("user", relogin.data._data.token);
         }
       } catch (error) {
-        // console.log(error);
       }
     }
   };

@@ -66,7 +66,7 @@ export default function RoundCategorySlider() {
           <Swiper
             modules={[Autoplay]}
             spaceBetween={10}
-            slidesPerView={3}
+            slidesPerView={5}
             loop={allSubCategories.length < 3}
             autoplay={{
               delay: 2500,
@@ -76,19 +76,19 @@ export default function RoundCategorySlider() {
             speed={1000}
             breakpoints={{
               320: {
-                slidesPerView: 1,
+                slidesPerView: 2,
                 spaceBetween: 10,
               },
               480: {
-                slidesPerView: 1.4,
+                slidesPerView: 2.4,
                 spaceBetween: 15,
               },
               768: {
-                slidesPerView: 2,
+                slidesPerView: 3,
                 spaceBetween: 15,
               },
               1024: {
-                slidesPerView: 3,
+                slidesPerView: 4,
                 spaceBetween: 20,
               },
             }}

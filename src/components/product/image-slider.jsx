@@ -120,7 +120,7 @@ export default function ImageSlider({
 
       {/* Thumbnail Slider */}
       {images.length > 1 && (
-        <div className="grid grid-cols-4 md:grid-cols-3 gap-3  pb-2 ">
+        <div className="grid grid-cols-4 md:grid-cols-4  gap-3  pb-2 ">
           {images.map((img, index) => (
             <motion.button
               key={index}

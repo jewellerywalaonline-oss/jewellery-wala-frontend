@@ -78,7 +78,6 @@ export default function VerifyEmailPage() {
         toast.error(data._message);
       }
     } catch (error) {
-      console.error("Verification error:", error);
       toast.error(error.message || "Failed to verify email. Please try again.");
     } finally {
       setIsLoading(false);
@@ -116,7 +115,6 @@ export default function VerifyEmailPage() {
         toast.success("Verification code resent successfully!");
       }
     } catch (error) {
-      console.error("Resend error:", error);
       toast.error(error.message || "Failed to resend OTP. Please try again.");
     } finally {
       setIsResending(false);

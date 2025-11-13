@@ -15,7 +15,7 @@ export default function TabProducts({ data }) {
       <div className="absolute top-20 right-10 w-64 h-64 bg-amber-100/20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-20 left-10 w-64 h-64 bg-rose-100/20 rounded-full blur-3xl"></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 relative z-10">
         <Tabs defaultValue="silver" className="w-full">
           {/* Tab Navigation */}
           <div className="flex flex-col items-center mb-12">
@@ -99,7 +99,7 @@ export default function TabProducts({ data }) {
             value="silver"
             className="m-0 animate-in fade-in-0 duration-700"
           >
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-6 lg:gap-8">
               {data?.silver?.map((p) => (
                 <div
                   key={p._id}

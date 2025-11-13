@@ -61,7 +61,6 @@ export async function fetchAndDispatchCart(dispatch) {
 
     return { cart: cartData };
   } catch (error) {
-    console.error("Error fetching cart or wishlist:", error);
     return { cart: null };
   }
 }
@@ -75,7 +74,6 @@ export async function fetchAndDispatchWishlist(dispatch) {
 
     return { totalWishlist: wishlistData };
   } catch (error) {
-    console.error("Error fetching wishlist:", error);
     return { totalWishlist: null };
   }
 }

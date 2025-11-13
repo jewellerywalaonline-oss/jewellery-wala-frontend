@@ -60,7 +60,6 @@ export default function MyOrders() {
       const response = await getUserOrders(params);
       setOrders(response.orders);
     } catch (error) {
-      console.error("Failed to load orders:", error);
     } finally {
       setLoading(false);
     }
@@ -71,7 +70,6 @@ export default function MyOrders() {
     setBtnLoading(true);
     try {
       const response = await cancelOrder(selectedOrderId, cancelReason);
-      console.log(response);
       if (response.success) {
         setCancelDialogOpen(false);
         setCancelReason("");
@@ -89,7 +87,6 @@ export default function MyOrders() {
       }
       setBtnLoading(false);
     } catch (error) {
-      console.error("Failed to cancel order:", error);
       toast.error(
         error?.response?.message || error?.message || "Failed to cancel order"
       );

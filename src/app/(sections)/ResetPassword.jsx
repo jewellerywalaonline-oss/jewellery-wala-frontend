@@ -67,7 +67,6 @@ export default function ResetPassword() {
         toast.success("Verification code sent to your email");
       }
     } catch (error) {
-      console.error("Reset request error:", error);
       toast.error(
         error.message || "Failed to send reset link. Please try again."
       );
@@ -111,7 +110,6 @@ export default function ResetPassword() {
         toast.success("OTP verified successfully");
       }
     } catch (error) {
-      console.error("OTP verification error:", error);
       toast.error(error.message || "Failed to verify OTP. Please try again.");
     } finally {
       setIsLoading(false);
@@ -166,7 +164,6 @@ export default function ResetPassword() {
         toast.error(data._message || "Something Went Wrong");
       }
     } catch (error) {
-      console.error("Reset password error:", error);
       toast.error(
         error.message || "Failed to reset password. Please try again."
       );

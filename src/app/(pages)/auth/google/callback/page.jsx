@@ -64,7 +64,6 @@ export default function Page() {
           router.push(returnTo || "/");
         }
       } catch (error) {
-        console.error("Callback error:", error);
         toast.error("Authentication failed");
         router.push(returnTo || "/");
       }

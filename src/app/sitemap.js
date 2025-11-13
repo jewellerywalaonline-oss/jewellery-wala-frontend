@@ -14,7 +14,6 @@ export default async function sitemap() {
     );
     if (productsRes.ok) {
       const data = await productsRes.json();
-      console.log(data._data.length);
 
       products =
         data?._data?.map((product) => ({
@@ -25,7 +24,6 @@ export default async function sitemap() {
         })) || [];
     }
   } catch (error) {
-    console.error("Error fetching products for sitemap:", error);
   }
 
   // Static routes
@@ -137,7 +135,6 @@ export default async function sitemap() {
     });
     categoryUrls = urls;
   } catch (error) {
-    console.error("Error generating sitemap:", error);
   }
 
   return [...staticRoutes, ...products, ...categoryUrls];

@@ -235,7 +235,6 @@ export default function Checkout() {
               });
             }
           } catch (error) {
-            console.error("Payment verification failed:", error);
             setAlert({
               title: "Payment verification failed. Please contact support.",
               open: true,
@@ -260,7 +259,6 @@ export default function Checkout() {
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
     } catch (error) {
-      console.error("Payment error:", error);
       setAlert({
         title: "Something went wrong. Please try again.",
         open: true,

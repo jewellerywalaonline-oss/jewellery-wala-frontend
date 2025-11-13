@@ -114,7 +114,6 @@ function PasswordFormSheet({ open, onOpenChange, type = "change" }) {
         setIsLoading(false);
       }
     } catch (error) {
-      console.error(error);
       toast.error(error.message || "Something went wrong. Please try again.");
       setIsLoading(false);
     }
@@ -227,7 +226,6 @@ export default function SettingsSection({ data }) {
           router.push(`/verify-email?email=${data.email}`);
         }
       } catch (error) {
-        console.error(error);
         toast.error(error.message || "Something went wrong. Please try again.");
       }
     } else if (type === "phone") {

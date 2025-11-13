@@ -78,7 +78,6 @@ export default function ProductReviews({ productId }) {
           setAverageRating(data._rating || 0);
         }
       } catch (error) {
-        console.error("Error fetching reviews:", error);
       } finally {
         setLoading(false);
       }
@@ -176,7 +175,6 @@ export default function ProductReviews({ productId }) {
       }
     } catch (error) {
       toast.error(error.response.data._message || "Failed to submit review");
-      console.error("Error submitting review:", error);
     } finally {
       setIsSubmitting(false);
     }

@@ -162,14 +162,12 @@ const getNavigation = cache(async () => {
 
   if (!response.ok) {
     // If there's an error, try to return from cache if available
-    console.error("Failed to fetch navigation data");
     return null;
   }
 
   const data = await response.json();
 
   if (!data?._status) {
-    console.error("Invalid navigation data format");
     return null;
   }
 
