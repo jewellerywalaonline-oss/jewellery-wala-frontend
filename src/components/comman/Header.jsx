@@ -242,10 +242,10 @@ export default function Header({ navigationData }) {
         </span>
       </div>
 
-      <header className="max-w-screen w-full bg-white/95 backdrop-blur-2xl z-[100] sticky top-0 left-0 shadow-lg border-b border-amber-100/50">
+      <header className="max-w-screen w-full bg-white/95 z-[200] sticky top-0 left-0 shadow-lg border-b  border-amber-100/50">
         {/* Main Header Bar */}
         <div
-          className={`w-full border-b bg-white/95 backdrop-blur-xl border-amber-100/50 transition-all duration-500 ${
+          className={`w-full border-b  z-[200] bg-white/95  border-amber-100/50 transition-all duration-500 ${
             isScrolled ? "py-2 shadow-md" : "py-4"
           }`}
         >
@@ -275,7 +275,7 @@ export default function Header({ navigationData }) {
             </Link>
 
             {/* Desktop Search - Enhanced with premium shadow */}
-            <div className="hidden lg:block flex-1 px-6">
+            <div className="hidden  lg:block flex-1 px-6">
               <SearchBar className="w-full max-w-xl mx-auto" />
             </div>
 
@@ -443,7 +443,7 @@ export default function Header({ navigationData }) {
         </div>
 
         {/* Premium Navigation Bar */}
-        <nav className="hidden md:flex flex-wrap justify-center items-center space-x-8 text-sm font-medium py-3.5 bg-gradient-to-r from-white via-amber-50/30 to-white backdrop-blur-sm border-b border-amber-100/30">
+        <nav className="hidden md:flex flex-wrap justify-center items-center space-x-8 text-sm font-medium py-3.5 z-10 bg-white  border-b border-amber-100/30">
           {navigationData._data?.map((cat, idx) => (
             <div key={idx}>
               {cat.subCategories?.length == 0 ? (
@@ -466,11 +466,9 @@ export default function Header({ navigationData }) {
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 transition-all duration-300 group-hover:w-full shadow-sm"></span>
                   </button>
 
-                  {/* <div className="absolute top-full left-0 h-screen w-full max-w-[100%] bg-white-500 rounded-md bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-20 border border-gray-100 invisible opacity-0 duration-300 group-hover:visible group-hover:opacity-100 z-[98]"></div> */}
-
                   {/* Premium Mega Menu */}
                   <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 [transform:_perspective(600px)_rotateX(-90deg)] duration-500 skew-x-10 group-hover:skew-x-0 origin-top group-hover:[transform:_perspective(1200px)_rotateX(0deg)] transition-all fixed left-1/2 -translate-x-1/2 top-full pt-1 z-[999] hover:visible hover:opacity-100">
-                    <Card className="w-[1150px] max-w-[98vw] bg-white/98 backdrop-blur-2xl shadow-2xl rounded-2xl p-6 border border-amber-200/50">
+                    <Card className="w-[1150px] max-w-[98vw] bg-white/98  shadow-2xl rounded-2xl p-6 border border-amber-200/50">
                       <div className="grid grid-cols-5 gap-5">
                         {cat.subCategories?.map((menu, i) => (
                           <div key={i} className="group/menu">
@@ -606,19 +604,19 @@ const SearchBar = ({ className }) => {
         size={20}
         className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 text-amber-600 pointer-events-none"
       />
-      <div
+      {/* <div
         onClick={() => setIsSuggestionsOpen(false)}
-        className={`fixed top-full left-0 right-0 h-screen w-screen max-w-[100%] mt-1 bg-black/70 z-[8999] overflow-hidden ${
-          isSuggestionsOpen ? "visible opacity-100" : "invisible opacity-0"
+        className={`fixed right-0 top-full h-screen w-screen max-w-[100%] bg-black/70 z-10 transition-opacity duration-300 ${
+          isSuggestionsOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
-      />
+      /> */}
 
       {isSuggestionsOpen && (
         <motion.div
           initial="closed"
           animate={isSuggestionsOpen ? "open" : "closed"}
           variants={suggestionVariants}
-          className="absolute top-full left-0 right-0 h-auto w-[78%] md:w-full mt-1 bg-white rounded-lg shadow-lg z-[9999] border border-gray-200 overflow-x-hidden overflow-y-auto no-scrollbar"
+          className="absolute top-full left-0 right-0 h-auto w-[78%] md:w-full mt-1 bg-white rounded-lg shadow-lg z-[200] border border-gray-200 overflow-x-hidden overflow-y-auto no-scrollbar"
         >
           <div className="grid grid-cols-[30%_auto] divide-x divide-gray-200">
             {/* Suggestions Column */}

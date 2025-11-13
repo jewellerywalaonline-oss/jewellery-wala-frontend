@@ -114,7 +114,7 @@ const WhyChooseUsContent = async () => {
 const WhyChooseUs = () => {
   return (
     <section
-      className="w-full py-16 lg:py-20 bg-gradient-to-b from-white via-amber-50/20 to-white relative overflow-hidden"
+      className="w-full py-2 lg:py-4 bg-gradient-to-b from-white via-amber-50/20 to-white relative overflow-hidden"
       aria-labelledby="why-choose-us"
     >
       {/* Decorative Elements */}
