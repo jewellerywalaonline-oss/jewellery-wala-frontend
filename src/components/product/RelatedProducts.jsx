@@ -50,10 +50,9 @@ export default function RelatedProducts({ id, subCategory, subSubCategory }) {
         ) : (
           <Swiper
             className="w-full max-w-[1200px] mx-auto !overflow-visible"
-            modules={[Autoplay, Pagination]}
+            modules={[Autoplay]}
             slidesPerView={4}
             spaceBetween={10}
-            pagination={{ clickable: true, dynamicBullets: true }}
             autoplay={{
               delay: 2500,
               disableOnInteraction: false,

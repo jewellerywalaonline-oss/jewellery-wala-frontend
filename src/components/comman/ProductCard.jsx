@@ -186,7 +186,7 @@ export default function ProductCard({ data }) {
   const imageSlideVariants = {
     enter: (direction) => ({
       x: direction > 0 ? 20 : -20,
-      opacity: 0,
+      opacity: 1,
     }),
     center: {
       x: 0,
@@ -198,10 +198,10 @@ export default function ProductCard({ data }) {
     },
     exit: (direction) => ({
       x: direction > 0 ? -20 : 20,
-      opacity: 0,
+      opacity: 1,
       transition: {
         x: { type: "spring", stiffness: 300, damping: 30 },
-        opacity: { duration: 0.2 },
+        opacity: { duration: 0.3 },
       },
     }),
   };
@@ -329,7 +329,7 @@ export default function ProductCard({ data }) {
 
           {/* Quick View Overlay */}
           <motion.div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center"
+            className="absolute inset-0 bg-black/10  flex items-center justify-center"
             initial={{ opacity: 0 }}
             animate={{ opacity: isHovered ? 1 : 0 }}
             transition={{ duration: 0.3 }}

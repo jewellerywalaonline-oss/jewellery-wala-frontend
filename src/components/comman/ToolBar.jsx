@@ -37,8 +37,8 @@ const ToolBar = () => {
       <div
         className={`transform transition-all duration-500 ${
           isExpanded
-            ? "translate-y-0 opacity-100"
-            : "translate-y-20 opacity-0 pointer-events-none"
+            ? "translate-y-0 opacity-100 visible"
+            : "translate-y-20 opacity-0 pointer-events-none invisible"
         }`}
       >
         <button
@@ -60,8 +60,8 @@ const ToolBar = () => {
       <div
         className={`transform transition-all duration-500 delay-75 ${
           isExpanded
-            ? "translate-y-0 opacity-100"
-            : "translate-y-20 opacity-0 pointer-events-none"
+            ? "translate-y-0 opacity-100 visible"
+            : "translate-y-20 opacity-0 pointer-events-none invisible"
         }`}
       >
         <button

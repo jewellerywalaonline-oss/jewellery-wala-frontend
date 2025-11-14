@@ -467,15 +467,19 @@ export default function Header({ navigationData }) {
                   </button>
 
                   {/* Premium Mega Menu */}
-                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 [transform:_perspective(600px)_rotateX(-90deg)] duration-500 skew-x-10 group-hover:skew-x-0 origin-top group-hover:[transform:_perspective(1200px)_rotateX(0deg)] transition-all absolute top-full left-0 right-0 -translate-x-[150%]  pt-1 z-[999] hover:visible hover:opacity-100 h-full">
-                    <Card className="w-[1150px] max-w-[98vw] h-screen bg-white/98  shadow-2xl rounded-2xl p-6 border border-amber-200/50">
-                      <div className="grid grid-cols-5 gap-5">
+                  <div
+                    className={`invisible opacity-0 group-hover:visible group-hover:opacity-100 [transform:_perspective(600px)_rotateX(-90deg)] duration-500 skew-x-10 group-hover:skew-x-0 origin-top group-hover:[transform:_perspective(1200px)_rotateX(0deg)] transition-all fixed left-1/2 -translate-x-1/2 ${
+                      isScrolled ? "top-[110px]" : "top-[175px]"
+                    } pt-1 z-[999] hover:visible hover:opacity-100`}
+                  >
+                    <Card className="w-[98vw] backdrop-blur-xl max-w-[98vw] h-auto bg-white/98  shadow-2xl rounded-2xl p-6 border border-amber-200/50">
+                      <div className="grid grid-cols-5 gap-6">
                         {cat.subCategories?.map((menu, i) => (
                           <div key={i} className="group/menu">
                             <Link
                               href={"/category/" + cat.slug + "/" + menu.slug}
                             >
-                              <h4 className="font-bold text-slate-800 mb-1 pb-1 border-b border-amber-200/50 text-base hover:text-amber-700 transition-colors">
+                              <h4 className="font-bold text-slate-800 mb-2 pb-1 border-b border-amber-200/50 text-base hover:text-amber-700 transition-colors">
                                 <Badge
                                   variant="outline"
                                   className="text-sm font-bold text-amber-700 border-amber-400 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 transition-all duration-300 px-3 py-1"
