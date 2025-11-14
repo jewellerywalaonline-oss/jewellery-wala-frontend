@@ -307,7 +307,6 @@ export default function ProductCard({ data }) {
         >
           <AnimatePresence initial={false} custom={slideDirection} mode="wait">
             <motion.div
-              key={src}
               custom={slideDirection}
               variants={imageSlideVariants}
               initial="enter"
