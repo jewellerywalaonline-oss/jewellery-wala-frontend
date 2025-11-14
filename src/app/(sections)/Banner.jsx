@@ -23,7 +23,7 @@ async function BannerContent() {
 // Main component wraps with Suspense
 export default function Banner() {
   return (
-    <div className="w-full h-[30vh] md:h-[50vh] lg:h-[70vh] overflow-hidden">
+    <div className="w-full z-0 h-[30vh] md:h-[50vh] lg:h-[70vh] overflow-hidden">
       <Suspense
         fallback={<Skeleton className="h-[30vh] md:h-[50vh] lg:h-[70vh]" />}
       >

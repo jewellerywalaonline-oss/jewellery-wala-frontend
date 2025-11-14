@@ -748,7 +748,7 @@ export default function Checkout() {
                     className="w-full py-3.5 px-6 rounded-xl font-semibold text-white transition-all"
                   />
 
-                  {purchaseType == "direct" && totalAmount < 1000 && (
+                  { (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button

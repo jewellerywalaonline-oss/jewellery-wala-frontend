@@ -357,7 +357,7 @@ export default function Cart({ cart }) {
                             className="bg-gradient-to-r from-amber-400 to-amber-600 h-full transition-all duration-500"
                             style={{
                               width: `${Math.min(
-                                (finalSubtotal / 1000) * 100,
+                                (finalSubtotal / 950) * 100,
                                 100
                               )}%`,
                             }}
@@ -461,7 +461,7 @@ export const LoadingUi = ({ hidden }) => {
     >
       <div className="text-center">
         <Loader2 className="w-12 h-12 animate-spin text-amber-600 mx-auto mb-3" />
-        <p className="text-slate-600 text-sm">Updating cart...</p>
+        <p className="text-slate-600 text-sm">Updating ...</p>
       </div>
     </div>
   );

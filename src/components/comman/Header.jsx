@@ -242,10 +242,10 @@ export default function Header({ navigationData }) {
         </span>
       </div>
 
-      <header className="max-w-screen w-full bg-white/95 z-[200] sticky top-0 left-0 shadow-lg border-b  border-amber-100/50">
+      <header className="max-w-screen w-full bg-white/95 z-[190] sticky top-0 left-0 shadow-lg border-b  border-amber-100/50">
         {/* Main Header Bar */}
         <div
-          className={`w-full border-b  z-[200] bg-white/95  border-amber-100/50 transition-all duration-500 ${
+          className={`w-full border-b   bg-white/95  border-amber-100/50 transition-all duration-500 ${
             isScrolled ? "py-2 shadow-md" : "py-4"
           }`}
         >
@@ -367,7 +367,7 @@ export default function Header({ navigationData }) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className="w-64 bg-white/98 backdrop-blur-xl border border-amber-200/50 shadow-2xl rounded-xl"
+                  className="w-64 bg-white/98  border border-amber-200/50 shadow-2xl rounded-xl"
                   align="end"
                 >
                   {isLoggedIn ? (
@@ -443,7 +443,7 @@ export default function Header({ navigationData }) {
         </div>
 
         {/* Premium Navigation Bar */}
-        <nav className="hidden md:flex flex-wrap justify-center items-center space-x-8 text-sm font-medium py-3.5 z-10 bg-white  border-b border-amber-100/30">
+        <nav className="hidden md:flex flex-wrap justify-center items-center space-x-8 text-sm font-medium py-3.5  bg-white   border-b border-amber-100/30">
           {navigationData._data?.map((cat, idx) => (
             <div key={idx}>
               {cat.subCategories?.length == 0 ? (
@@ -467,15 +467,15 @@ export default function Header({ navigationData }) {
                   </button>
 
                   {/* Premium Mega Menu */}
-                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 [transform:_perspective(600px)_rotateX(-90deg)] duration-500 skew-x-10 group-hover:skew-x-0 origin-top group-hover:[transform:_perspective(1200px)_rotateX(0deg)] transition-all fixed left-1/2 -translate-x-1/2 top-full pt-1 z-[999] hover:visible hover:opacity-100">
-                    <Card className="w-[1150px] max-w-[98vw] bg-white/98  shadow-2xl rounded-2xl p-6 border border-amber-200/50">
+                  <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 [transform:_perspective(600px)_rotateX(-90deg)] duration-500 skew-x-10 group-hover:skew-x-0 origin-top group-hover:[transform:_perspective(1200px)_rotateX(0deg)] transition-all absolute top-full left-0 right-0 -translate-x-[150%]  pt-1 z-[999] hover:visible hover:opacity-100 h-full">
+                    <Card className="w-[1150px] max-w-[98vw] h-screen bg-white/98  shadow-2xl rounded-2xl p-6 border border-amber-200/50">
                       <div className="grid grid-cols-5 gap-5">
                         {cat.subCategories?.map((menu, i) => (
                           <div key={i} className="group/menu">
                             <Link
                               href={"/category/" + cat.slug + "/" + menu.slug}
                             >
-                              <h4 className="font-bold text-slate-800 mb-2 pb-1 border-b border-amber-200/50 text-base hover:text-amber-700 transition-colors">
+                              <h4 className="font-bold text-slate-800 mb-1 pb-1 border-b border-amber-200/50 text-base hover:text-amber-700 transition-colors">
                                 <Badge
                                   variant="outline"
                                   className="text-sm font-bold text-amber-700 border-amber-400 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 transition-all duration-300 px-3 py-1"
@@ -487,11 +487,11 @@ export default function Header({ navigationData }) {
                             <div className="space-y-2.5">
                               {menu.subSubCategories?.map((subcat, j) => (
                                 <div key={j}>
-                                  <ul className="space-y-1.5 text-slate-600 text-sm">
+                                  <ul className="space-y-1 text-slate-600 text-sm">
                                     <li key={subcat._id}>
                                       <Link
                                         href={`/category/${cat.slug}/${menu.slug}/${subcat.slug}`}
-                                        className="block hover:text-amber-600 cursor-pointer transition-all duration-200 hover:translate-x-1 hover:font-medium py-1"
+                                        className="block hover:text-amber-600 cursor-pointer transition-all duration-200 hover:translate-x-1 hover:font-medium py-[2px]"
                                       >
                                         {subcat.name}
                                       </Link>
