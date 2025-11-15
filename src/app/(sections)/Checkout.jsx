@@ -197,9 +197,9 @@ export default function Checkout() {
         key: keyId,
         amount: amount * 100, // Amount in paise
         currency: currency,
-        name: "Your Jewelry Store",
+        name: "Jewellery walla",
         description: `Order #${orderId}`,
-        image: logo || "", // Your logo
+        image: logo || "/images/logo.png", // Your logo
         order_id: razorpayOrderId,
         prefill: {
           name: orderData.shippingAddress.fullName,
@@ -307,7 +307,7 @@ export default function Checkout() {
       toast.error(error.message || "Something Went Wrong");
     }
   };
-  
+
   return (
     <>
       <LoadingUi hidden={loading} />
@@ -748,7 +748,7 @@ export default function Checkout() {
                     className="w-full py-3.5 px-6 rounded-xl font-semibold text-white transition-all"
                   />
 
-                  { (
+                  {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
@@ -776,7 +776,7 @@ export default function Checkout() {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
-                  )}
+                  }
                   <div className="mt-4 flex items-center justify-center space-x-2">
                     <svg
                       className="w-8 h-8"

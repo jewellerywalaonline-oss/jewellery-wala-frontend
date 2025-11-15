@@ -209,9 +209,7 @@ async function getProducts(slug) {
     `${process.env.NEXT_PUBLIC_API_URL}api/website/product/details/${slug}`,
     {
       method: "post",
-      next: {
-        revalidate: 600,
-      },
+     
     }
   );
 
