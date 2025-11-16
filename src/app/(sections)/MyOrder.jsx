@@ -342,7 +342,7 @@ export default function MyOrders() {
       </motion.div>
 
       <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
-        <DialogContent className="h-screen w-screen max-w-screen md:max-w-md z-[1300] border-amber-200 bg-gradient-to-br from-white to-amber-50">
+        <DialogContent className="h-[95vh] w-screen max-w-screen md:max-w-md z-[1300] border-amber-200 bg-gradient-to-br from-white to-amber-50">
           <DialogHeader>
             <DialogTitle className="text-amber-900">Cancel Order</DialogTitle>
             <DialogDescription className="text-amber-700">
