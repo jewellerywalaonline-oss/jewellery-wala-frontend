@@ -89,7 +89,6 @@ export default function OrderTracking() {
     if (status === "delivered") return "100%";
     return "0%";
   };
-  console.log(orderDetails);
 
   if (loading) {
     return <LoadingUi hidden={loading} />;
@@ -410,7 +409,7 @@ export default function OrderTracking() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 * index }}
-                    className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                    className="flex items-center gap-4 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
                   >
                     <Link href={`/product-details/${item.productId.slug}`}>
                       <div className="w-24 h-24 bg-white rounded-lg overflow-hidden shadow-sm flex-shrink-0">
@@ -435,6 +434,20 @@ export default function OrderTracking() {
                           ₹{item.priceAtPurchase.toLocaleString("en-IN")}
                         </span>
                       </div>
+                      <p className="text-sm text-gray-600 mt-2 flex items-center gap-1">
+                        <span className="">Color :</span>{" "}
+                        <span
+                          style={{
+                            backgroundColor: `${item?.colorId?.code}`,
+                            width: "20px",
+                            height: "20px",
+                            borderRadius: "50%",
+                            display: "inline-block",
+                            marginRight: "5px",
+                          }}
+                        ></span>{" "}
+                        {item?.colorId?.name}
+                      </p>
                       {item.isPersonalized && item.personalizedName && (
                         <p className="text-sm text-gray-600 mt-2 bg-orange-50 px-2 py-1 rounded inline-block">
                           <span className="font-medium">Personalized:</span>{" "}
@@ -514,12 +527,14 @@ export default function OrderTracking() {
                           "Not specified"}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Cancelled By:</span>
-                      <span className="font-medium capitalize">
-                        {orderDetails.order.cancellation.cancelledBy}
-                      </span>
-                    </div>
+                    {/* {orderDetails.order.cancellation.cancelledBy !== "customer" && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Cancelled By:</span>
+                        <span className="font-medium capitalize">
+                          {orderDetails.order.cancellation.cancelledBy}
+                        </span>
+                      </div>
+                    )} */}
                     <div className="flex justify-between">
                       <span className="text-gray-500">Cancelled On:</span>
                       <span className="font-medium">
@@ -553,15 +568,6 @@ export default function OrderTracking() {
                               )}
                           </span>
                         </div>
-
-                        {orderDetails.order.cancellation.refundId && (
-                          <div className="flex justify-between">
-                            <span className="text-gray-500">Refund ID:</span>
-                            <span className="font-medium">
-                              {orderDetails.order.cancellation.refundId}
-                            </span>
-                          </div>
-                        )}
 
                         {orderDetails.order.cancellation.refundAmount > 0 && (
                           <div className="flex justify-between">

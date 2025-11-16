@@ -53,10 +53,10 @@ export default function FAQPage({ data }) {
           Still have questions?
         </p>
         <a
-          href="mailto:support@jewellerywala.com"
+          href={`mailto:${process.env.NEXT_PUBLIC_BUSINESS_EMAIL}`}
           className="text-yellow-700 font-semibold hover:underline hover:text-yellow-800 transition-colors"
         >
-          Contact us at jewellerywalaonline@gmail.com
+          Contact us at {process.env.NEXT_PUBLIC_BUSINESS_EMAIL}
         </a>
       </div>
     </section>
