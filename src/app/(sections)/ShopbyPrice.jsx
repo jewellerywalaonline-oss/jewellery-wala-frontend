@@ -63,7 +63,7 @@ const ShopByPrice = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className="w-full bg-gradient-to-br from-slate-50 via-amber-50/30 to-slate-50 py-16 overflow-hidden">
+    <div className="w-full bg-gradient-to-br from-slate-50 via-amber-50/30 to-slate-50 py-6 md:py-10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4">
         {/* Enhanced Heading */}
         <div className="text-center mb-12 relative">

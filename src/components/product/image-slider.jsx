@@ -120,7 +120,7 @@ export default function ImageSlider({
 
       {/* Thumbnail Slider */}
       {images.length > 1 && (
-        <div className="grid grid-cols-4 md:grid-cols-4  gap-3  pb-2 ">
+        <div className="flex   gap-3  pb-2 ">
           {images.map((img, index) => (
             <motion.button
               key={index}
@@ -130,8 +130,8 @@ export default function ImageSlider({
               }}
               whileHover={{ scale: 1, y: -5 }}
               whileTap={{ scale: 0.95 }}
-              className={`flex-shrink-0  overflow-hidden border-3 transition-all ${
-                currentImage === index
+              className={`flex-shrink-0  size-20 md:size-28 overflow-hidden border-3 transition-all ${
+                currentImage === index 
                   ? "border-amber-500 shadow-lg ring-2 ring-amber-200"
                   : "border-amber-100 hover:border-amber-300"
               }`}

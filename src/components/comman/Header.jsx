@@ -472,7 +472,7 @@ export default function Header({ navigationData }) {
                       isScrolled ? "top-[110px]" : "top-[175px]"
                     } pt-1 z-[999] hover:visible hover:opacity-100`}
                   >
-                    <Card className="w-[98vw] backdrop-blur-xl max-w-[98vw] h-auto bg-white/98  shadow-2xl rounded-2xl p-6 border border-amber-200/50">
+                    <Card className="w-[1150px] backdrop-blur-xl max-w-[98vw] h-auto bg-white/98  shadow-2xl rounded-2xl p-6 border border-amber-200/50">
                       <div className="grid grid-cols-5 gap-6">
                         {cat.subCategories?.map((menu, i) => (
                           <div key={i} className="group/menu">

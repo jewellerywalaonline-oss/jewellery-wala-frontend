@@ -43,7 +43,7 @@ export default function ProductListing() {
 
   // SCROLL EFFECT
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 100);
+    const handleScroll = () => setIsScrolled(window.scrollY > 350);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -201,7 +201,7 @@ export default function ProductListing() {
       <div className="lg:flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-3">
         <div>
           <h2 className="text-2xl font-serif text-[#8B4513]">
-            All Found Products
+            All Products
           </h2>
           <p className="text-gray-500 text-sm">
             {totalProducts || filteredProducts?.length} product
@@ -213,7 +213,7 @@ export default function ProductListing() {
             variant="outline"
             className={`lg:hidden ${
               isScrolled && !isOpen
-                ? "block animate-slide-in fixed top-[18%] z-[500] left-[10px]"
+                ? "block animate-slide-in fixed top-[12%] z-[500] left-[10px]"
                 : "hidden animate-slide-out"
             }`}
             onClick={toggle}

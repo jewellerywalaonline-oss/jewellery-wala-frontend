@@ -8,6 +8,9 @@ import {
   ShoppingBag,
   AlertCircle,
   Package,
+  Check,
+  Gem,
+  Award,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -309,8 +312,7 @@ export default function ProductDetailsPage({ details }) {
           </motion.div>
 
           {/* Product Info */}
-          <motion.div variants={itemVariants}>
-            {/* Breadcrumb */}
+          <div className="flex flex-col p-2">
             <Breadcrumb
               items={[
                 {
@@ -330,365 +332,228 @@ export default function ProductDetailsPage({ details }) {
               ]}
             />
 
+            {/* Product Title */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-amber-900 to-orange-800 bg-clip-text text-transparent mb-4 leading-tight"
+              className="text-4xl lg:text-5xl font-light text-gray-900 mb-6 leading-tight tracking-tight"
             >
               {product.name}
             </motion.h1>
 
-            {product.rating ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="flex items-center gap-3 mb-6"
-                role="group"
-                aria-label="Product rating"
-              >
-                <div
-                  className="flex items-center gap-1"
-                  role="img"
-                  aria-label={`Rated ${product.rating} out of 5 stars`}
-                >
-                  {renderStars(product.rating)}
-                </div>
-                <span className="text-sm text-gray-600 font-medium">
-                  ({product.reviewCount || 0} Reviews)
-                </span>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="flex items-center "
-                role="group"
-                aria-label="Product rating"
-              >
-                <span className="text-sm text-gray-600 font-medium">
-                  No Rating Available
-                </span>
-              </motion.div>
-            )}
-
+            {/* Rating */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              className="mb-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="flex items-center gap-4 mb-8"
             >
-              <div
-                className="flex items-baseline gap-4"
-                role="group"
-                aria-label="Product pricing"
-              >
+              <div className="flex items-center gap-1">
+                {renderStars(product.rating)}
+              </div>
+              <div className="h-4 w-px bg-gray-300" />
+              <span className="text-sm text-gray-500 font-light">
+                {product.reviewCount} Reviews
+              </span>
+            </motion.div>
+
+            {/* Pricing */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="mb-10"
+            >
+              <div className="flex items-baseline gap-4 mb-3">
                 {product.discount_price ? (
                   <>
-                    <span
-                      className="text-4xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent"
-                      aria-label={`Sale price: ${product.discount_price} rupees`}
-                    >
-                      <span aria-hidden="true">
-                        ₹{product.discount_price.toLocaleString()}
-                      </span>
+                    <span className="text-5xl font-light text-gray-900 tracking-tight">
+                      ₹{product.discount_price.toLocaleString()}
                     </span>
-                    <span
-                      className="text-gray-400 text-2xl line-through"
-                      aria-label={`Original price: ${product.price} rupees`}
-                    >
-                      <span aria-hidden="true">
-                        ₹{product.price.toLocaleString()}
-                      </span>
+                    <span className="text-gray-400 text-2xl line-through font-light">
+                      ₹{product.price.toLocaleString()}
                     </span>
-                    <motion.span
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.6, type: "spring" }}
-                      className="px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-bold rounded-full shadow-md"
-                      role="status"
-                      aria-label={`${Math.round(
-                        ((product.price - product.discount_price) /
-                          product.price) *
-                          100
-                      )} percent discount`}
-                    >
-                      {Math.round(
-                        ((product.price - product.discount_price) /
-                          product.price) *
-                          100
-                      )}
-                      % OFF
-                    </motion.span>
                   </>
                 ) : (
-                  <span
-                    className="text-4xl font-bold text-gray-900"
-                    aria-label={`Price: ${product.price} rupees`}
-                  >
-                    <span aria-hidden="true">
-                      ₹{product.price?.toLocaleString() || "N/A"}
-                    </span>
+                  <span className="text-5xl font-light text-gray-900">
+                    ₹{product.price?.toLocaleString() || "N/A"}
                   </span>
                 )}
               </div>
             </motion.div>
 
+            {/* Divider */}
+            <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-10" />
+
+            {/* Specifications */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="pt-6 mb-6 border-t border-amber-200"
+              className="mb-10"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-base uppercase tracking-widest text-gray-500 mb-6 font-light">
                 Specifications
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                 {product.material?.length > 0 && (
-                  <div className="flex items-start gap-2 p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-amber-100/50">
-                    <Package
-                      className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"
-                      aria-hidden="true"
-                    />
-                    <div>
-                      <span className="text-gray-500 block text-xs">
-                        Material
-                      </span>
-                      <span className="font-semibold text-gray-900">
-                        {product.material.map((m) => m.name).join(", ")}
-                      </span>
+                  <div>
+                    <div className="text-base text-gray-500 mb-1 font-light">
+                      Material
+                    </div>
+                    <div className="text-base text-gray-900 font-light">
+                      {product.material.map((m) => m.name).join(", ")}
                     </div>
                   </div>
                 )}
                 {product.purity && (
-                  <div className="flex items-start gap-2 p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-amber-100/50">
-                    <Package
-                      className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"
-                      aria-hidden="true"
-                    />
-                    <div>
-                      <span className="text-gray-500 block text-xs">
-                        Purity
-                      </span>
-                      <span className="font-semibold text-gray-900">
-                        {product.purity}
-                      </span>
+                  <div>
+                    <div className="text-base text-gray-500 mb-1 font-light">
+                      Purity
                     </div>
-                  </div>
-                )}
-                {product.weight && (
-                  <div className="flex items-start gap-2 p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-amber-100/50">
-                    <Package
-                      className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"
-                      aria-hidden="true"
-                    />
-                    <div>
-                      <span className="text-gray-500 block text-xs">
-                        Weight
-                      </span>
-                      <span className="font-semibold text-gray-900">
-                        {product.weight}
-                      </span>
-                    </div>
-                  </div>
-                )}
-                {product.stone && (
-                  <div className="flex items-start gap-2 p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-amber-100/50">
-                    <Package
-                      className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"
-                      aria-hidden="true"
-                    />
-                    <div>
-                      <span className="text-gray-500 block text-xs">Stone</span>
-                      <span className="font-semibold text-gray-900">
-                        {product.stone}
-                      </span>
-                    </div>
-                  </div>
-                )}
-                {product.estimated_delivery_time && (
-                  <div className="flex items-start gap-2 p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-amber-100/50">
-                    <Truck
-                      className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0"
-                      aria-hidden="true"
-                    />
-                    <div>
-                      <span className="text-gray-500 block text-xs">
-                        Delivery
-                      </span>
-                      <span className="font-semibold text-gray-900">
-                        {product.estimated_delivery_time}
-                      </span>
+                    <div className="text-base text-gray-900 font-light">
+                      {product.purity}
                     </div>
                   </div>
                 )}
               </div>
             </motion.div>
 
-            {/* Quantity & Color */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="space-y-4 mb-6"
-            >
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">
-                  Quantity
+            {/* Color Selection */}
+            {product.colors?.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="mb-10"
+              >
+                <h3 className="text-base uppercase tracking-widest text-gray-500 mb-5 font-light">
+                  Color
                 </h3>
-                <div
-                  className="flex items-center"
-                  role="group"
-                  aria-label="Product quantity"
-                >
-                  <motion.button
-                    type="button"
-                    onClick={handleDecrement}
-                    disabled={quantity <= 1}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    aria-label="Decrease quantity"
-                    className="w-10 h-10 flex items-center justify-center border-2 border-amber-300 rounded-l-lg text-amber-600 hover:bg-amber-50 hover:border-amber-400 disabled:opacity-50 disabled:cursor-not-allowed font-bold transition-colors"
-                  >
-                    -
-                  </motion.button>
-                  <div
-                    className="w-16 h-10 flex items-center justify-center border-t-2 border-b-2 border-amber-300 text-gray-900 font-semibold bg-white/60"
-                    role="status"
-                    aria-live="polite"
-                    aria-label={`Quantity: ${quantity}`}
-                  >
-                    {quantity}
-                  </div>
-                  <motion.button
-                    type="button"
-                    onClick={handleIncrement}
-                    disabled={quantity >= (product.stock || 10)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    aria-label="Increase quantity"
-                    className="w-10 h-10 flex items-center justify-center border-2 border-amber-300 rounded-r-lg text-amber-600 hover:bg-amber-50 hover:border-amber-400 disabled:opacity-50 disabled:cursor-not-allowed font-bold transition-colors"
-                  >
-                    +
-                  </motion.button>
-                </div>
-              </div>
-
-              {product.colors?.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3">
-                    Color
-                  </h3>
-                  <div
-                    className="flex gap-3"
-                    role="group"
-                    aria-label="Color options"
-                  >
-                    {product.colors.map((color) => (
+                <div className="flex gap-3">
+                  {product.colors.map((color) => (
+                    <motion.button
+                      key={color._id}
+                      type="button"
+                      onClick={() => setSelectedColor(color._id)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`relative w-12 h-12 rounded-full transition-all ${
+                        selectedColor === color._id
+                          ? "ring-2 ring-amber-600 ring-offset-2"
+                          : "ring-1 ring-gray-200"
+                      }`}
+                    >
                       <div
-                        key={color._id}
-                        className="flex flex-col items-center"
-                      >
-                        <motion.button
-                          key={color._id}
-                          type="button"
-                          onClick={() => setSelectedColor(color._id)}
-                          whileHover={{ scale: 1.15, rotate: 360 }}
-                          whileTap={{ scale: 0.9 }}
-                          transition={{ duration: 0.3 }}
-                          aria-label={`Select ${color.name || "color"}`}
-                          aria-pressed={selectedColor === color._id}
-                          className={`w-10 h-10 flex items-center justify-center rounded-full border-3 ${
-                            selectedColor === color._id
-                              ? "border-amber-600 shadow-lg ring-2 ring-amber-200"
-                              : "border-amber-200 hover:border-amber-400"
-                          }`}
+                        className="w-full h-full rounded-full"
+                        style={{ backgroundColor: color.code }}
+                      />
+                      {selectedColor === color._id && (
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="absolute inset-0 flex items-center justify-center"
                         >
-                          <span
-                            className="w-7 h-7 rounded-full shadow-inner"
-                            style={{ backgroundColor: color.code }}
-                            aria-hidden="true"
-                          />
-                        </motion.button>
-                        <span className="text-xs font-semibold">
-                          {color.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                          <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center">
+                            <Check size={12} className="text-amber-600" />
+                          </div>
+                        </motion.div>
+                      )}
+                    </motion.button>
+                  ))}
                 </div>
-              )}
+              </motion.div>
+            )}
+
+            {/* Quantity */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+              className="mb-10"
+            >
+              <h3 className="text-base uppercase tracking-widest text-gray-500 mb-5 font-light">
+                Quantity
+              </h3>
+              <div className="inline-flex items-center border border-gray-200 rounded-full overflow-hidden">
+                <motion.button
+                  type="button"
+                  onClick={handleDecrement}
+                  disabled={quantity <= 1}
+                  whileHover={{ backgroundColor: "rgba(251, 191, 36, 0.05)" }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-10 h-10 flex items-center justify-center text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  −
+                </motion.button>
+                <div className="w-12 h-10 flex items-center justify-center text-gray-900 font-light border-x border-gray-200">
+                  {quantity}
+                </div>
+                <motion.button
+                  type="button"
+                  onClick={handleIncrement}
+                  disabled={quantity >= (product.stock || 10)}
+                  whileHover={{ backgroundColor: "rgba(251, 191, 36, 0.05)" }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-10 h-10 flex items-center justify-center text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  +
+                </motion.button>
+              </div>
             </motion.div>
 
             {/* Action Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="space-y-3"
+              transition={{ delay: 0.9 }}
+              className="space-y-3 mt-auto"
             >
               <div className="flex gap-3">
                 <motion.button
                   type="button"
                   onClick={handleAddToCart}
                   disabled={!product.stock || loading}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ y: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  aria-label={product.stock ? "Add to cart" : "Out of stock"}
-                  aria-disabled={!product.stock || loading}
-                  className="flex-1 bg-white border-2 border-amber-600 text-amber-600 py-3 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-amber-50 transition-all shadow-md hover:shadow-lg"
+                  className="flex-1 bg-white border border-gray-300 text-gray-900 py-4 px-6 rounded-full font-light flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed hover:border-gray-400 transition-all text-sm uppercase tracking-wider"
                 >
                   {loading ? (
                     <motion.div
                       animate={{ rotate: 360 }}
                       transition={{
                         duration: 1,
-                        repeat: Number.POSITIVE_INFINITY,
+                        repeat: Infinity,
                         ease: "linear",
                       }}
-                      aria-label="Adding to cart"
                     >
-                      <ShoppingCart size={18} aria-hidden="true" />
+                      <ShoppingCart size={18} />
                     </motion.div>
                   ) : (
                     <>
-                      <ShoppingBag size={18} aria-hidden="true" />
-                      <span>
-                        {product.stock ? "Add to Cart" : "Out of Stock"}
-                      </span>
+                      <ShoppingBag size={18} />
+                      <span>Add to Cart</span>
                     </>
                   )}
                 </motion.button>
+
                 <motion.button
                   type="button"
                   disabled={wishlistLoading}
                   onClick={handleWishlist}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  aria-label={
-                    isWishlisted
-                      ? `Remove ${product.name} from wishlist`
-                      : `Add ${product.name} to wishlist`
-                  }
-                  aria-pressed={isWishlisted}
-                  className={`w-12 h-12 flex items-center justify-center rounded-xl border-2 transition-all shadow-md hover:shadow-lg ${
+                  whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`w-14 h-14 flex items-center justify-center rounded-full border transition-all ${
                     isWishlisted
                       ? "text-red-500 border-red-300 bg-red-50"
-                      : "border-amber-300 hover:bg-amber-50 hover:border-amber-400"
+                      : "border-gray-300 hover:border-gray-400 text-gray-600"
                   }`}
                 >
-                  <motion.div
-                    animate={isWishlisted ? { scale: [1, 1.3, 1] } : {}}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Heart
-                      size={20}
-                      fill={isWishlisted ? "currentColor" : "none"}
-                      aria-hidden="true"
-                    />
-                  </motion.div>
+                  <Heart
+                    size={20}
+                    fill={isWishlisted ? "currentColor" : "none"}
+                  />
                 </motion.button>
               </div>
 
@@ -696,38 +561,83 @@ export default function ProductDetailsPage({ details }) {
                 type="button"
                 onClick={handleBuyNow}
                 disabled={!product.stock}
-                whileHover={{
-                  scale: 1.02,
-                  boxShadow: "0 20px 25px -5px rgba(217, 119, 6, 0.3)",
-                }}
+                whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                aria-label="Buy now"
-                aria-disabled={!product.stock}
-                className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white py-3 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+                className="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-white py-4 px-6 rounded-full font-light flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl text-sm uppercase tracking-wider"
               >
                 <span>Buy Now</span>
-                <ShoppingCart size={18} aria-hidden="true" />
+                <ShoppingCart size={18} />
               </motion.button>
             </motion.div>
-          </motion.div>
+
+            {/* Delivery Info */}
+            {product.estimated_delivery_time && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+                className="mt-8 flex items-center gap-3 text-base text-gray-500 font-light"
+              >
+                <Truck size={16} className="text-amber-600" />
+                <span>
+                  Expected delivery in {product.estimated_delivery_time}
+                </span>
+              </motion.div>
+            )}
+          </div>
         </div>
 
         {/* Personalized Item Section */}
         {product?.isPersonalized && <Personalized />}
 
-        {/* Description Section - Full Width */}
+        {/* Subtle decorative element */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.2 }}
           className="mb-12"
         >
-          <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-xl p-8 border border-amber-100/50 glass-effect">
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent mb-4">
-              Product Description
-            </h2>
-            <div className="text-gray-700 leading-relaxed whitespace-pre-line">
-              {product.description}
+          {/* Minimalist elegant version */}
+          <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 md:p-12 border border-white/80 relative overflow-hidden">
+            <motion.div
+              animate={{
+                rotate: [0, 360],
+                scale: [1, 1.05, 1],
+              }}
+              transition={{
+                rotate: { duration: 25, repeat: Infinity, ease: "linear" },
+                scale: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+              }}
+              className="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-amber-100/20 to-orange-100/20 rounded-full blur-3xl"
+            />
+
+            <div className="relative z-10">
+              {/* Header with icon */}
+              <div className="flex items-center gap-3 mb-4">
+                <motion.div
+                  animate={{ rotate: [0, 5, -5, 0] }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <Gem size={24} className="text-amber-600" strokeWidth={1.5} />
+                </motion.div>
+                <h2 className="text-3xl font-light text-gray-900 tracking-tight">
+                  Description For The Product
+                </h2>
+              </div>
+
+              {/* Divider */}
+              <div className="h-px bg-gradient-to-r from-amber-200/50 via-amber-300/50 to-transparent mb-2" />
+
+              {/* Description text */}
+              <div className="text-gray-800 leading-loose text-base font-[350] whitespace-pre-line">
+                {product.description}
+              </div>
+
+           
             </div>
           </div>
         </motion.div>

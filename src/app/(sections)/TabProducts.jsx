@@ -8,7 +8,7 @@ import { Sparkles, ArrowRight } from "lucide-react";
 export default function TabProducts({ data }) {
   return (
     <section
-      className="py-16 lg:py-20 bg-gradient-to-b from-white via-amber-50/10 to-white relative overflow-hidden"
+      className="py-5 lg:py-1- bg-gradient-to-b from-white via-amber-50/10 to-white relative overflow-hidden"
       id="Products For You"
     >
       {/* Decorative Background Elements */}
@@ -99,7 +99,7 @@ export default function TabProducts({ data }) {
             value="silver"
             className="m-0 animate-in fade-in-0 duration-700"
           >
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
               {data?.silver?.map((p) => (
                 <div
                   key={p._id}
@@ -116,7 +116,7 @@ export default function TabProducts({ data }) {
             value="gold"
             className="m-0 animate-in fade-in-0 duration-700"
           >
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-4">
               {data?.gold?.map((p) => (
                 <div
                   key={p._id}
@@ -133,7 +133,7 @@ export default function TabProducts({ data }) {
             value="gift"
             className="m-0 animate-in fade-in-0 duration-700"
           >
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-4">
               {data?.gift?.map((p) => (
                 <div
                   key={p._id}

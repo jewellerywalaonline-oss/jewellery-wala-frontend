@@ -2,8 +2,7 @@
 @import "tw-animate-css";
 
 body[data-scroll-locked] {
-   
-    margin-right: 0px !important;
+  margin-right: 0px !important;
 }
 html {
   scroll-behavior: smooth;
@@ -134,6 +133,54 @@ html {
   }
 }
 
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(5deg);
+  }
+}
+@keyframes floatAlt {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(15px) rotate(-5deg);
+  }
+}
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes expandLine {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+.animate-floatAlt {
+  animation: floatAlt 8s ease-in-out infinite;
+}
+.animate-scaleIn {
+  animation: scaleIn 0.5s ease-out forwards;
+}
+.animate-expandLine {
+  animation: expandLine 0.8s ease-out 0.6s forwards;
+  transform-origin: center;
+}
 @keyframes fadeIn {
   from {
     opacity: 0;

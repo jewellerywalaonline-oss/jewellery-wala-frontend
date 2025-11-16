@@ -9,7 +9,7 @@ import { Sparkles } from "lucide-react";
 
 const Slider = ({ data, heading, bg }) => {
   return (
-    <section className={`relative py-16 ${bg} overflow-hidden`} id={heading}>
+    <section className={`relative py-10 ${bg} overflow-hidden`} id={heading}>
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-10 left-10 w-32 h-32 border-2 border-[#8B4513] rounded-full animate-pulse"></div>

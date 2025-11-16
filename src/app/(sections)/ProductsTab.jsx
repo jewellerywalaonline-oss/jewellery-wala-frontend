@@ -1,11 +1,11 @@
-import React from "react";
+import React, { cache } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProductCard from "@/components/comman/ProductCard";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Sparkles, ArrowRight } from "lucide-react";
 
-const getProducts = async (q) => {
+const getProducts = cache(async (q) => {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}api/website/product/get-by-search?search=${q}&limit=8`,
     {
@@ -16,7 +16,7 @@ const getProducts = async (q) => {
   const data = await response.json();
   if (!response.ok || !data._status) return [];
   return data._data;
-};
+});
 
 export default async function ProductsTab() {
   const [payalData, necklaceData, braceletData] = await Promise.all([
@@ -71,7 +71,7 @@ export default async function ProductsTab() {
 
         <Tabs defaultValue={tabItems[0].value} className="w-full">
           {/* Tab Navigation */}
-          <div className="flex justify-center mb-10 lg:mb-14">
+          <div className="flex justify-center mb-6 lg:mb-10">
             <TabsList className="inline-flex bg-white/90 backdrop-blur-sm rounded-full p-1.5 shadow-xl border border-amber-100/50 gap-1">
               {tabItems.map((tab) => (
                 <TabsTrigger
@@ -96,7 +96,7 @@ export default async function ProductsTab() {
               >
                 {tab.data && tab.data.length > 0 ? (
                   <>
-                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
                       {tab.data.map((product, index) => (
                         <div
                           key={product._id}

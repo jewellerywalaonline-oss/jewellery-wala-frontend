@@ -4,7 +4,7 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { IndianRupee, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   toggleCategory,
   toggleColor,
@@ -15,9 +15,11 @@ import {
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { closeSidebar } from "@/redux/features/uiSlice";
+import { usePathname } from "next/navigation";
 
 export default function FilterSidebar({ color, material }) {
   const dispatch = useDispatch();
+  const pathName = usePathname();
   const filters = useSelector((state) => state.filters);
   const debounceTimerRef = useRef(null);
   const realData = useSelector((state) => state?.ui?.navigation._data);
@@ -82,6 +84,9 @@ export default function FilterSidebar({ color, material }) {
   };
 
   //
+  useEffect(() => {
+    clearFilters();
+  }, [pathName]);
 
   return (
     <>
