@@ -89,6 +89,7 @@ export default function OrderTracking() {
     if (status === "delivered") return "100%";
     return "0%";
   };
+  console.log(orderDetails);
 
   if (loading) {
     return <LoadingUi hidden={loading} />;
@@ -468,6 +469,138 @@ export default function OrderTracking() {
                 </motion.div>
               )}
             </motion.div>
+            {/* payment method */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="p-6 border-b bg-gray-50"
+            >
+              <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
+              <div className="space-y-3">
+                <div className="flex justify-between text-gray-700">
+                  <span>Payment Details</span>
+                  <span className="font-medium">
+                    {orderDetails?.order?.payment?.method}
+                  </span>
+                </div>
+                <div className="flex justify-between text-gray-700">
+                  <span>Payment Status</span>
+                  <span className="font-medium">
+                    {orderDetails?.order?.payment?.status}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+            {/* Refund Status */}
+            {orderDetails?.order?.status === "cancelled" &&
+              orderDetails?.order?.cancellation && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6"
+                >
+                  <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                    <XCircle className="h-5 w-5 text-red-500 mr-2" />
+                    Order Cancellation Details
+                  </h3>
+                  <div className="space-y-3 text-sm text-gray-700">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">
+                        Cancellation Reason:
+                      </span>
+                      <span className="font-medium">
+                        {orderDetails.order.cancellation.reason ||
+                          "Not specified"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Cancelled By:</span>
+                      <span className="font-medium capitalize">
+                        {orderDetails.order.cancellation.cancelledBy}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Cancelled On:</span>
+                      <span className="font-medium">
+                        {new Date(
+                          orderDetails.order.cancellation.cancelledAt
+                        ).toLocaleDateString()}
+                      </span>
+                    </div>
+
+                    {orderDetails.order.cancellation.refundStatus && (
+                      <>
+                        <div className="border-t border-gray-100 my-3"></div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-500">Refund Status:</span>
+                          <span
+                            className={`font-medium ${
+                              orderDetails.order.cancellation.refundStatus ===
+                              "completed"
+                                ? "text-green-600"
+                                : orderDetails.order.cancellation
+                                    .refundStatus === "failed"
+                                ? "text-red-600"
+                                : "text-amber-600"
+                            }`}
+                          >
+                            {orderDetails.order.cancellation.refundStatus
+                              .charAt(0)
+                              .toUpperCase() +
+                              orderDetails.order.cancellation.refundStatus.slice(
+                                1
+                              )}
+                          </span>
+                        </div>
+
+                        {orderDetails.order.cancellation.refundId && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">Refund ID:</span>
+                            <span className="font-medium">
+                              {orderDetails.order.cancellation.refundId}
+                            </span>
+                          </div>
+                        )}
+
+                        {orderDetails.order.cancellation.refundAmount > 0 && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">
+                              Refund Amount:
+                            </span>
+                            <span className="font-medium">
+                              ₹
+                              {orderDetails.order.cancellation.refundAmount.toLocaleString(
+                                "en-IN"
+                              )}
+                            </span>
+                          </div>
+                        )}
+
+                        {orderDetails.order.cancellation.refundedAt && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-500">
+                              Refund Processed On:
+                            </span>
+                            <span className="font-medium">
+                              {new Date(
+                                orderDetails.order.cancellation.refundedAt
+                              ).toLocaleString()}
+                            </span>
+                          </div>
+                        )}
+
+                        {orderDetails.order.cancellation.refundError && (
+                          <div className="mt-2 p-2 bg-red-50 text-red-700 text-sm rounded">
+                            <span className="font-medium">Refund Error:</span>{" "}
+                            {orderDetails.order.cancellation.refundError}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </motion.div>
+              )}
 
             {/* Order Summary */}
             <motion.div
