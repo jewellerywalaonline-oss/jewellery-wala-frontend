@@ -203,6 +203,9 @@ export default function AccountPage() {
     if (formData.name !== data?.name) {
       formDataToSend.append("name", formData.name);
     }
+    if (formData.mobile !== data?.mobile) {
+      formDataToSend.append("mobile", formData.mobile);
+    }
     if (formData.gender && formData.gender !== data?.gender) {
       formDataToSend.append("gender", formData.gender);
     }
@@ -586,7 +589,7 @@ export default function AccountPage() {
                                 onValueChange={(value) => {
                                   setFormData({
                                     ...formData,
-                                    state: value
+                                    state: value,
                                   });
                                 }}
                                 name="state"
