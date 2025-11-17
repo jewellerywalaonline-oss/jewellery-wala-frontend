@@ -337,7 +337,7 @@ export default function ProductDetailsPage({ details }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-4xl lg:text-5xl font-light text-gray-900 mb-6 leading-tight tracking-tight"
+              className="text-4xl lg:text-5xl font-[350] text-gray-900 mb-6 leading-tight tracking-tight"
             >
               {product.name}
             </motion.h1>
@@ -353,7 +353,7 @@ export default function ProductDetailsPage({ details }) {
                 {renderStars(product.rating)}
               </div>
               <div className="h-4 w-px bg-gray-300" />
-              <span className="text-sm text-gray-500 font-light">
+              <span className="text-sm text-gray-500 font-[350]">
                 {product.reviewCount} Reviews
               </span>
             </motion.div>
@@ -365,10 +365,10 @@ export default function ProductDetailsPage({ details }) {
               transition={{ delay: 0.4 }}
               className="mb-10"
             >
-              <div className="flex items-baseline gap-4 mb-3">
+              <div className="flex items-baseline gap-4 mb-1">
                 {product.discount_price ? (
                   <>
-                    <span className="text-5xl font-light text-gray-900 tracking-tight">
+                    <span className="text-5xl font-[350] text-gray-900 tracking-tight">
                       ₹{product.discount_price.toLocaleString()}
                     </span>
                     <span className="text-gray-400 text-2xl line-through font-light">
@@ -384,35 +384,35 @@ export default function ProductDetailsPage({ details }) {
             </motion.div>
 
             {/* Divider */}
-            <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-10" />
+            <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-5" />
 
             {/* Specifications */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="mb-10"
+              className="mb-7"
             >
-              <h3 className="text-base uppercase tracking-widest text-gray-500 mb-6 font-light">
+              <h3 className="text-base uppercase tracking-widest text-gray-800 mb-3 font-[450]">
                 Specifications
               </h3>
               <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                 {product.material?.length > 0 && (
                   <div>
-                    <div className="text-base text-gray-500 mb-1 font-light">
-                      Material
+                    <div className="text-base text-gray-800 mb-1 font-[350]">
+                      Material -
                     </div>
-                    <div className="text-base text-gray-900 font-light">
+                    <div className="text-base text-gray-900 font-[350]">
                       {product.material.map((m) => m.name).join(", ")}
                     </div>
                   </div>
                 )}
                 {product.purity && (
                   <div>
-                    <div className="text-base text-gray-500 mb-1 font-light">
-                      Purity
+                    <div className="text-base text-gray-800 mb-1 font-[350]">
+                      Purity -
                     </div>
-                    <div className="text-base text-gray-900 font-light">
+                    <div className="text-base text-gray-900 font-[350]">
                       {product.purity}
                     </div>
                   </div>
@@ -428,7 +428,7 @@ export default function ProductDetailsPage({ details }) {
                 transition={{ delay: 0.7 }}
                 className="mb-10"
               >
-                <h3 className="text-base uppercase tracking-widest text-gray-500 mb-5 font-light">
+                <h3 className="text-base uppercase tracking-widest text-gray-800 mb-3 font-[450]">
                   Color
                 </h3>
                 <div className="flex gap-3">
@@ -471,9 +471,9 @@ export default function ProductDetailsPage({ details }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="mb-10"
+              className="mb-7"
             >
-              <h3 className="text-base uppercase tracking-widest text-gray-500 mb-5 font-light">
+              <h3 className="text-base uppercase tracking-widest text-gray-800 mb-5 font-[350]">
                 Quantity
               </h3>
               <div className="inline-flex items-center border border-gray-200 rounded-full overflow-hidden">
@@ -598,7 +598,7 @@ export default function ProductDetailsPage({ details }) {
           className="mb-12"
         >
           {/* Minimalist elegant version */}
-          <div className="bg-white/60 backdrop-blur-xl rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 md:p-12 border border-white/80 relative overflow-hidden">
+          <div className="bg-white/60 backdrop-blur-xl  shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 md:p-12 border border-white/80 relative overflow-hidden">
             <motion.div
               animate={{
                 rotate: [0, 360],
