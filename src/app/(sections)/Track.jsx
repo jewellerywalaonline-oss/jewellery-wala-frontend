@@ -94,7 +94,7 @@ export default function OrderTracking() {
     return <LoadingUi hidden={loading} />;
   }
 
-  const isCancelled = orderDetails?.order?.status === "cancelled";
+  const isCancelled = orderDetails?.order?.status === "cancelled" || "refunded";
   const isDelivered = orderDetails?.order?.status === "delivered";
 
   return (

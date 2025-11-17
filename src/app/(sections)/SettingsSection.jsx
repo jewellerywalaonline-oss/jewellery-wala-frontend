@@ -35,6 +35,7 @@ import Cookies from "js-cookie";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { LoadingUi } from "./Cart";
 
 // Password Change Options Dialog
 function PasswordOptionsDialog({ open, onOpenChange, onOptionSelect }) {
@@ -190,11 +191,13 @@ export default function SettingsSection({ data }) {
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [showPasswordOptions, setShowPasswordOptions] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [loading , setLoading] = useState(false)
   const dispatch = useDispatch();
 
   // Handle verify email/phone
   const handleVerifyClick = async (type) => {
     if (type === "email") {
+      setLoading(true)
       try {
         const token = Cookies.get("user");
         const response = await fetch(
@@ -224,9 +227,12 @@ export default function SettingsSection({ data }) {
             expires: new Date(Date.now() + 10 * 60 * 1000),
           });
           router.push(`/verify-email?email=${data.email}`);
+          setLoading(false)
         }
       } catch (error) {
         toast.error(error.message || "Something went wrong. Please try again.");
+      }finally{
+        setLoading(false)
       }
     } else if (type === "phone") {
       // Handle phone verification
@@ -240,8 +246,11 @@ export default function SettingsSection({ data }) {
     router.push("/");
   };
 
+
+
   return (
     <div className="space-y-6">
+      <LoadingUi hidden={loading} />
       {/* Security Section */}
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-gray-700 mb-3">Security</h3>

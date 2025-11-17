@@ -117,7 +117,7 @@ export default function Cart({ cart }) {
           </div>
 
           <button
-            onClick={() => router.push("/category/all")}
+            onClick={() => router.push("/category/new-arrival")}
             className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-600 to-amber-700 
                      hover:from-amber-700 hover:to-amber-800 text-white font-medium py-3 px-8 
                      rounded-full transition-all duration-300 shadow-lg hover:shadow-xl 

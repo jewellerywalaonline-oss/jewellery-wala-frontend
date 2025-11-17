@@ -23,6 +23,7 @@ export default function VerifyEmailPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
+  const verifyToken = Cookies.get("verify");
   const [otp, setOtp] = useState("");
   const [isOtpComplete, setIsOtpComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,10 +31,11 @@ export default function VerifyEmailPage() {
   const [countdown, setCountdown] = useState(30);
 
   useEffect(() => {
-    if (!email) {
+    if (!email || !verifyToken) {
       router.push("/profile");
       return;
     }
+
 
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
@@ -67,15 +69,16 @@ export default function VerifyEmailPage() {
       );
 
       if (!response.ok) {
-        throw new Error("Verification failed. Please try again.");
+       return toast.error("Verification failed. Please try again.");
       }
 
       const data = await response.json();
       if (data._status === true) {
-        toast.success(data._message);
+        toast.success(data._message || "Your Email Will BE Verified Soon");
         router.push("/profile");
+        Cookies.remove("verify");
       } else {
-        toast.error(data._message);
+        toast.error(data._message || "Failed to verify email. Please try again.");
       }
     } catch (error) {
       toast.error(error.message || "Failed to verify email. Please try again.");
@@ -103,7 +106,7 @@ export default function VerifyEmailPage() {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to resend OTP. Please try again.");
+        return toast.error("Failed to resend OTP. Please try again.");
       }
 
       const data = await response.json();
