@@ -39,7 +39,7 @@ export default function ProductListing() {
   );
 
   const PRODUCTS_PER_PAGE = 15;
-  const MAX_PRODUCTS = 35; // Maximum number of products to load
+  const MAX_PRODUCTS = 200; // Maximum number of products to load
 
   // SCROLL EFFECT
   useEffect(() => {

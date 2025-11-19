@@ -652,6 +652,7 @@ const SearchBar = ({ className }) => {
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 overflow-auto no-scrollbar">
                     {suggestions?.products?.map((product) => (
                       <Link
+                        onClick={() => setIsSuggestionsOpen(false)}
                         key={product._id}
                         href={`/product-details/${product.slug}`}
                         className="group flex flex-col items-center p-3 hover:bg-gray-50 rounded-lg transition-colors"
