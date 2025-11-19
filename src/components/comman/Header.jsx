@@ -14,7 +14,7 @@ import {
   ShoppingCartIcon,
   Truck,
   Sparkles,
-  Cross,
+  X,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
@@ -653,7 +653,7 @@ const SearchBar = ({ className }) => {
                       onClick={() => setIsSuggestionsOpen(false)}
                       className="cursor-pointer"
                     >
-                      <Cross size={16} />
+                      <X size={16} />
                     </span>
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 overflow-auto no-scrollbar">
