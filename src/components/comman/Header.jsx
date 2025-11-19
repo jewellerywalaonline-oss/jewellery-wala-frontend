@@ -14,6 +14,7 @@ import {
   ShoppingCartIcon,
   Truck,
   Sparkles,
+  Cross,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
@@ -628,8 +629,8 @@ const SearchBar = ({ className }) => {
             suggestions?.products?.length > 0 ? (
               <>
                 <div className="p-4">
-                  <h3 className="text-sm font-medium text-gray-500 mb-2">
-                    Suggestions
+                  <h3 className="text-sm font-medium text-gray-500 mb-2 ">
+                    <span>Suggestions</span>
                   </h3>
                   <div className="space-y-2">
                     {suggestions?.suggestions?.map((suggestion, index) => (
@@ -646,8 +647,14 @@ const SearchBar = ({ className }) => {
 
                 {/* Products Column */}
                 <div className="p-4">
-                  <h3 className="text-sm font-medium text-gray-500 mb-2">
-                    Products
+                  <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center justify-between">
+                    <span>Products</span>
+                    <span
+                      onClick={() => setIsSuggestionsOpen(false)}
+                      className="cursor-pointer"
+                    >
+                      <Cross size={16} />
+                    </span>
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 overflow-auto no-scrollbar">
                     {suggestions?.products?.map((product) => (
