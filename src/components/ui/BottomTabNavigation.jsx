@@ -5,28 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, usePathname } from "next/navigation";
 import { Home, User, Settings, ShoppingCartIcon } from "lucide-react";
 import { useSelector } from "react-redux";
-const tabs = [
-  { id: "home", url: "/", label: "Home", icon: <Home size={24} /> },
-
-  {
-    id: "cart",
-    url: "/cart",
-    label: "Cart",
-    icon: <ShoppingCartIcon size={24} />,
-  },
-  {
-    id: "profile",
-    url: "/profile",
-    label: "Profile",
-    icon: <User size={24} />,
-  },
-  {
-    id: "settings",
-    url: "/profile?tab=settings",
-    label: "Settings",
-    icon: <Settings size={24} />,
-  },
-];
 
 export function BottomTabNavigation() {
   const router = useRouter();
@@ -34,6 +12,29 @@ export function BottomTabNavigation() {
   const [activeTab, setActiveTab] = useState("home");
   const [scroll, setScroll] = useState(false);
   const cartCount = useSelector((state) => state.cart.totalQuantity);
+  const isLogin = useSelector((state) => state.auth.isLogin);
+  const tabs = [
+    { id: "home", url: "/", label: "Home", icon: <Home size={24} /> },
+
+    {
+      id: "cart",
+      url: isLogin ? "/cart" : "/login",
+      label: "Cart",
+      icon: <ShoppingCartIcon size={24} />,
+    },
+    {
+      id: "profile",
+      url: isLogin ? "/profile" : "/login",
+      label: "Profile",
+      icon: <User size={24} />,
+    },
+    {
+      id: "settings",
+      url: isLogin ? "/profile?tab=settings" : "/login",
+      label: "Settings",
+      icon: <Settings size={24} />,
+    },
+  ];
 
   useEffect(() => {
     const currentTab = tabs.find(
@@ -120,7 +121,7 @@ export function BottomTabNavigation() {
                     })}
                     {tab.id === "cart" && cartCount > 0 && (
                       <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                        {cartCount > 9 ? '9+' : cartCount}
+                        {cartCount > 9 ? "9+" : cartCount}
                       </span>
                     )}
                   </div>
