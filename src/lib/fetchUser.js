@@ -1,18 +1,17 @@
 import { logout } from "@/redux/features/auth";
 import Cookies from "js-cookie";
 
-export const getUser = async (dispatch, BackUpToken) => {
+export const getUser = async () => {
   const token = Cookies.get("user");
 
-  if (!token && BackUpToken == null) {
-    
+  if (!token) {
     return null;
   }
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}api/website/user/profile`,
     {
       headers: {
-        Authorization: `Bearer ${token ? token : BackUpToken}`,
+        Authorization: `Bearer ${token}`,
       },
       method: "post",
     }
