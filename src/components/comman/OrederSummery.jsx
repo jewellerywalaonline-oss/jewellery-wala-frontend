@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function OrederSummery({ cartItems, type, orderData }) {
+export default function OrederSummery({ cartItems, type, orderData, coupon }) {
   if (type === "direct" || type === "cart") {
     const [personalizedName, setPersonalizedName] = useState("");
 
@@ -26,6 +26,35 @@ export default function OrederSummery({ cartItems, type, orderData }) {
     const handleNameChange = (e) => {
       setPersonalizedName(e.target.value);
     };
+
+    const subtotal = cartItems.reduce(
+      (sum, item) =>
+        sum +
+        (item?.product?.discount_price || item?.product?.price) *
+          item?.quantity,
+      0
+    );
+
+    const giftWrapCharge = orderData.giftWrap ? 50 : 0;
+    const shippingCharge = subtotal > 1000 ? 0 : 50;
+
+    let couponDiscount = 0;
+
+    // coupon has: discountPercentage, minAmount, maxAmount (max discount value)
+    if (coupon && coupon.discountPercentage) {
+      const isEligible = subtotal >= (coupon.minAmount || 0);
+
+      if (isEligible) {
+        const percentageDiscount = (subtotal * coupon.discountPercentage) / 100;
+        // Cap discount amount by coupon.maxAmount, e.g. upto 200
+        couponDiscount = Math.min(
+          percentageDiscount,
+          coupon.maxAmount || percentageDiscount
+        );
+      }
+    }
+
+    const total = subtotal + giftWrapCharge + shippingCharge - couponDiscount;
 
     return (
       <div>
@@ -125,29 +154,18 @@ export default function OrederSummery({ cartItems, type, orderData }) {
             </div>
           )}
 
+          {couponDiscount > 0 && (
+            <p className="mt-1 text-xs text-emerald-600">
+              Coupon applied: -₹{Math.round(couponDiscount)}
+            </p>
+          )}
+
           <div className="border-t border-gray-200 pt-3 mt-2">
             <div className="flex justify-between font-medium text-gray-900">
               <span>Total</span>
               <span className="text-lg">
                 ₹
-                {cartItems.reduce(
-                  (sum, item) =>
-                    sum +
-                    (item?.product?.discount_price || item?.product?.price) *
-                      item?.quantity,
-                  0
-                ) +
-                  (orderData.giftWrap ? 50 : 0) -
-                  (orderData.couponCode ? 100 : 0) +
-                  (cartItems.reduce(
-                    (sum, item) =>
-                      sum +
-                      (item?.product?.discount_price || item?.product?.price) *
-                        item?.quantity,
-                    0
-                  ) > 1000
-                    ? 0
-                    : 50)}
+                {total}
               </span>
             </div>
             <p className="text-xs text-gray-500 mt-1">Inclusive of all taxes</p>

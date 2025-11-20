@@ -94,8 +94,11 @@ export default function OrderTracking() {
     return <LoadingUi hidden={loading} />;
   }
 
-  const isCancelled = orderDetails?.order?.status === "cancelled" || "refunded";
+  const isCancelled =
+    orderDetails?.order?.status === "cancelled" ||
+    orderDetails?.order?.status === "refunded";
   const isDelivered = orderDetails?.order?.status === "delivered";
+ 
 
   return (
     <div className="min-h-[50vh] p-4 md:p-10">
@@ -195,7 +198,7 @@ export default function OrderTracking() {
           {/* Main Content */}
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             {/* Order Status Timeline */}
-            {!isCancelled && (
+            { !isCancelled && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -333,7 +336,7 @@ export default function OrderTracking() {
             )}
 
             {/* Cancelled Status */}
-            {isCancelled && (
+            { isCancelled && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

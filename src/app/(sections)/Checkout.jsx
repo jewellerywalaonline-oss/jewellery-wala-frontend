@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { cache, useEffect, useState } from "react";
 import {
   createOrder,
   createRazorpayOrder,
@@ -32,7 +32,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-
+import Cookies from "js-cookie";
 const INDIAN_STATES = [
   "Andhra Pradesh",
   "Arunachal Pradesh",
@@ -78,10 +78,33 @@ export default function Checkout() {
     title: "",
     open: false,
   });
+  const [couponCode, setCouponCode] = useState(null);
+  const [coupens, setCoupens] = useState([]);
   const logo = useSelector((state) => state.logo.logo);
   const purchaseType = searchParams.get("type") || "cart";
   const buyNowItem = useSelector((state) => state.cart.buyNowItem);
   const cartItemsState = useSelector((state) => state.cart.cartItems);
+
+  const findCoupen = cache(async () => {
+    try {
+      const res = await fetch(
+        process.env.NEXT_PUBLIC_API_URL + "api/website/coupen/find",
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("user")}`,
+          },
+        }
+      );
+      const data = await res.json();
+      if (data.success) {
+        setCoupens(data.coupen);
+      }
+    } catch (error) {}
+  });
+
+  useEffect(() => {
+    findCoupen();
+  }, []);
 
   const cartItems =
     purchaseType === "direct"
@@ -121,7 +144,7 @@ export default function Checkout() {
     isGift: false,
     giftMessage: "",
     giftWrap: false,
-    couponCode: "",
+    couponCode: couponCode || "",
     isPersonalizedName:
       purchaseType == "direct"
         ? sessionStorage.getItem("personalizedName") || ""
@@ -666,39 +689,64 @@ export default function Checkout() {
 
               <div className="space-y-4">
                 {/* Coupon Code */}
-                <div>
-                  <label
-                    htmlFor="coupon"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Coupon Code (Optional)
-                  </label>
-                  <div className="flex space-x-2">
-                    <input
-                      id="coupon"
-                      type="text"
-                      placeholder="Enter coupon code"
-                      value={orderData.couponCode}
-                      onChange={(e) =>
-                        setOrderData({
-                          ...orderData,
-                          couponCode: e.target.value,
-                        })
-                      }
-                      className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all"
-                    />
-                    <button
-                      type="button"
-                      className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-                      onClick={() => {
-                        // Handle coupon application
-                        toast.success("Coupon code applied successfully!");
-                      }}
-                    >
-                      Apply
-                    </button>
+                {coupens?.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    <p className="text-xs font-medium text-gray-600">
+                      Available coupons for you
+                    </p>
+
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {coupens.map((coupen) => (
+                        <div
+                          key={coupen._id}
+                          className="flex items-center justify-between rounded-lg border border-dashed border-amber-300 px-3 py-2 text-xs"
+                        >
+                          <div className="space-y-0.5">
+                            <p className="font-semibold text-gray-800">
+                              {coupen.name}{" "}
+                              <span className="ml-1 text-amber-600">
+                                ({coupen.discountPercentage}% OFF)
+                              </span>
+                            </p>
+                            {coupen.description && (
+                              <p className="text-[11px] text-gray-500">
+                                {coupen.description}
+                              </p>
+                            )}
+                            <p className="text-[11px] text-gray-500">
+                              Min: ₹{coupen.minAmount} • Max: ₹
+                              {coupen.maxAmount}
+                            </p>
+                            {coupen.expiryDate && (
+                              <p className="text-[11px] text-red-500">
+                                Expires on:{" "}
+                                {new Date(
+                                  coupen.expiryDate
+                                ).toLocaleDateString()}
+                              </p>
+                            )}
+                          </div>
+
+                          <button
+                          disabled={couponCode?._id === coupen._id}
+                            type="button"
+                            className="ml-3 whitespace-nowrap rounded-md bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-600 transition-colors"
+                            onClick={() => {
+                              setOrderData({
+                                ...orderData,
+                                couponCode: coupen.code,
+                              });
+                              setCouponCode(coupen)
+                              toast.success(`Coupon ${coupen.code} applied`);
+                            }}
+                          >
+                           {couponCode?._id === coupen._id ? "Applied" : "Apply"}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Order Notes */}
                 <div>
@@ -735,6 +783,7 @@ export default function Checkout() {
                   cartItems={cartItems}
                   type={purchaseType}
                   orderData={orderData}
+                  coupon={couponCode}
                 />
 
                 {/* Payment Button */}

@@ -46,7 +46,7 @@ export default async function page() {
           </div>
         }
       >
-        <Wishlist wishlist={wishlist._data} />
+        <Wishlist wishlist={wishlist?._data} />
       </Suspense>
     </div>
   );

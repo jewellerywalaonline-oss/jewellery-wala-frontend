@@ -48,6 +48,7 @@ export default function Wishlist({ wishlist }) {
   };
 
   useEffect(() => {
+    if (!wishlist || wishlist == null) return;
     setItems(wishlist?.items || wishlist);
     dispatch(setWishlist(wishlist));
   }, [wishlist, dispatch]);

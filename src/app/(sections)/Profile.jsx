@@ -99,7 +99,7 @@ export default function AccountPage() {
 
   const fetchUser = async () => {
     setLoading(true);
-    const user = await getUser();
+    const user = await getUser(dispatch);
     dispatch(setProfile(user._data));
     setFormData({
       name: user._data.name,

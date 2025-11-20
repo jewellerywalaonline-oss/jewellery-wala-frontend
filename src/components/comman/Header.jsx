@@ -52,7 +52,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { openLoginModal, setNavigation } from "@/redux/features/uiSlice";
 import Cookies from "js-cookie";
 import { getUser } from "@/lib/fetchUser";
-import { setProfile } from "@/redux/features/auth";
+import { logout, setProfile } from "@/redux/features/auth";
 import axios from "axios";
 
 const userMenuItems = [
@@ -78,16 +78,21 @@ export default function Header({ navigationData }) {
   const router = useRouter();
   const isLoggedIn = useSelector((state) => state.auth.isLogin);
   const user = useSelector((state) => state.auth.details);
+  const backUpToken =useSelector((state) => state.auth.user);
   const logo = useSelector((state) => state.logo.logo);
 
   const dispatch = useDispatch();
 
   const fetchUser = async () => {
+    if(!isLoggedIn){
+      dispatch(logout());
+      return;
+    }
     if (user && user._id) {
       return;
     }
-    const userData = await getUser();
-    dispatch(setProfile(userData._data));
+    const userData = await getUser(dispatch, backUpToken);
+    dispatch(setProfile(userData?._data));
   };
 
   useEffect(() => {

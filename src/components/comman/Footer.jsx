@@ -16,8 +16,7 @@ import {
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { InstagramIcon, FacebookIcon, WhatsAppIcon } from "../icons";
-import axios from "axios";
-import Cookies from "js-cookie";
+
 
 export default function Footer() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -29,7 +28,7 @@ export default function Footer() {
           "api/website/product/featured-for-footer",
         {
           next: {
-            revalidate: 3600,
+            revalidate: 600,
             tags: ["featured-products"],
           },
         }
@@ -39,35 +38,9 @@ export default function Footer() {
     } catch (err) {
     }
   };
-  const checkLogin = async () => {
-    const expires = Cookies.get("expires");
-    const token = Cookies.get("user");
-    const expiryTime = parseInt(expires, 10);
-    const now = Date.now();
-    if (!expires || !token) return;
 
-    if (now > expiryTime) {
-      try {
-        const relogin = await axios.post(
-          process.env.NEXT_PUBLIC_API_URL + "api/website/user/re-login",
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (relogin.data._status) {
-          Cookies.set("expires", Date.now() + 1000 * 60 * 60 * 24 * 7);
-          Cookies.set("user", relogin.data._data.token);
-        }
-      } catch (error) {
-      }
-    }
-  };
   useEffect(() => {
     fetchFeaturedProducts();
-    checkLogin();
   }, []);
   const categories = useSelector((state) => state?.ui?.navigation?._data);
 
