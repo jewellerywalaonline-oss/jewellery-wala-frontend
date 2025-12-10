@@ -89,6 +89,7 @@ export default function OrderTracking() {
     if (status === "delivered") return "100%";
     return "0%";
   };
+  console.log(orderDetails);
 
   if (loading) {
     return <LoadingUi hidden={loading} />;
@@ -98,7 +99,6 @@ export default function OrderTracking() {
     orderDetails?.order?.status === "cancelled" ||
     orderDetails?.order?.status === "refunded";
   const isDelivered = orderDetails?.order?.status === "delivered";
- 
 
   return (
     <div className="min-h-[50vh] p-4 md:p-10">
@@ -198,7 +198,7 @@ export default function OrderTracking() {
           {/* Main Content */}
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             {/* Order Status Timeline */}
-            { !isCancelled && (
+            {!isCancelled && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -336,7 +336,7 @@ export default function OrderTracking() {
             )}
 
             {/* Cancelled Status */}
-            { isCancelled && (
+            {isCancelled && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -506,6 +506,14 @@ export default function OrderTracking() {
                     {orderDetails?.order?.payment?.status}
                   </span>
                 </div>
+                {orderDetails?.order?.payment?.codAdvance && (
+                  <div className="flex justify-between text-gray-700">
+                    <span>Payment In Advane</span>
+                    <span className="font-medium">
+                     ₹{orderDetails?.order?.pricing?.advance}
+                    </span>
+                  </div>
+                )}
               </div>
             </motion.div>
             {/* Refund Status */}
@@ -646,6 +654,16 @@ export default function OrderTracking() {
                       {orderDetails?.order?.pricing?.discount?.amount?.toLocaleString(
                         "en-IN"
                       )}
+                    </span>
+                  </div>
+                )}
+                {orderDetails?.order?.payment?.codAdvance && (
+                  <div className="flex justify-between text-gray-700">
+                    <span>Amount Left</span>
+                    <span className="font-medium">
+                      ₹
+                      {orderDetails?.order?.pricing.total -
+                        orderDetails?.order?.pricing.advance}
                     </span>
                   </div>
                 )}

@@ -163,12 +163,25 @@ export default function OrederSummery({ cartItems, type, orderData, coupon }) {
           <div className="border-t border-gray-200 pt-3 mt-2">
             <div className="flex justify-between font-medium text-gray-900">
               <span>Total</span>
-              <span className="text-lg">
-                ₹
-                {total}
-              </span>
+              <span className="text-lg">₹{total}</span>
             </div>
             <p className="text-xs text-gray-500 mt-1">Inclusive of all taxes</p>
+          </div>
+
+          {/* Payment Info Cards */}
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+              <span className="text-green-600 text-lg">✓</span>
+              <span className="text-sm font-medium text-green-700">
+                5% Discount on ONLINE Purchase
+              </span>
+            </div>
+            <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+             <span className="text-amber-600 text-lg">✓</span>
+              <span className="text-sm text-amber-700">
+                ₹100 Charge on COD Orders to Prevent Spam
+              </span>
+            </div>
           </div>
         </div>
       </div>

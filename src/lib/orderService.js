@@ -31,8 +31,8 @@ export const createOrder = async (orderData) => {
 };
 
 // 2. Create Razorpay Order
-export const createRazorpayOrder = async (orderId) => {
-  const response = await api.post("/orders/create-razorpay-order", { orderId });
+export const createRazorpayOrder = async (orderId ,isCodAdvance = false) => {
+  const response = await api.post("/orders/create-razorpay-order", { orderId , isCodAdvance });
   return response.data;
 };
 
