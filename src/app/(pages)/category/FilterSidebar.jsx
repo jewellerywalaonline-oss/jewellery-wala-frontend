@@ -118,7 +118,7 @@ export default function FilterSidebar({ color, material }) {
 
       {/* Mobile Overlay */}
       <div
-        className={`lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[150] transition-opacity duration-300 ${
+        className={`lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[1500] transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={handleOverlayClick}
@@ -133,7 +133,7 @@ export default function FilterSidebar({ color, material }) {
           transition-transform duration-300 ease-in-out md:rounded-2xl
           ${
             isOpen
-              ? "translate-x-0 z-[151]"
+              ? "translate-x-0 z-[1501]"
               : "-translate-x-full lg:translate-x-0"
           }
         `}

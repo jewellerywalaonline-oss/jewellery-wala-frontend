@@ -245,7 +245,7 @@ export default function Footer() {
                 </a>
               </li>
               <li className="flex items-start gap-2">
-                <Mail className="w-4 h-4 mt-0.5 flex-shrink-0 text-yellow-600" />
+                <WhatsAppIcon className="w-4 h-4 mt-0.5 flex-shrink-0 text-yellow-600" />
                 <a
                   href={"mailto:" + process.env.NEXT_PUBLIC_BUSINESS_EMAIL}
                   className="hover:text-yellow-600 transition-colors break-all"
