@@ -148,7 +148,7 @@ export default function TabProducts({ data }) {
 
           {/* View More Button */}
           <div className="flex justify-center mt-12 lg:mt-16">
-            <Link href="/category/personalized-jewellery">
+            <Link href="/category/new-arrivals">
               <Button className="group relative bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white px-10 py-6 rounded-full font-semibold text-sm uppercase tracking-wider shadow-lg hover:shadow-2xl hover:shadow-amber-500/40 transition-all duration-500 transform hover:scale-105 overflow-hidden">
                 <span className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-500"></span>
                 <span className="relative flex items-center gap-3">
