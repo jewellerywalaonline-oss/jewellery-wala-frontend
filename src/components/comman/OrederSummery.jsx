@@ -82,12 +82,36 @@ export default function OrederSummery({ cartItems, type, orderData, coupon }) {
                 </h3>
                 <p className="text-sm text-gray-500">
                   Qty: {item?.quantity}{" "}
-                  {type == "cart" && (
-                    <span className="text-xs text-amber-500  font-medium">
-                      ({item?.color?.name})
+                  {type == "cart" && item?.color && (
+                    <span className="text-xs text-amber-500 font-medium inline-flex items-center gap-1">
+                      <span
+                        style={{ backgroundColor: item.color.code }}
+                        className="w-3 h-3 rounded-full border border-gray-300 inline-block"
+                      />
+                      {item.color.name}
+                    </span>
+                  )}
+                  {type == "direct" && item?.colorCode && (
+                    <span className="text-xs text-amber-500 font-medium inline-flex items-center gap-1">
+                      <span
+                        style={{ backgroundColor: item.colorCode }}
+                        className="w-3 h-3 rounded-full border border-gray-300 inline-block"
+                      />
+                      {item.colorName}
                     </span>
                   )}
                 </p>
+                {/* Size display */}
+                {type == "cart" && item?.size?.name && (
+                  <p className="text-xs text-gray-500">
+                    Size: <span className="font-medium">{item.size.name}</span>
+                  </p>
+                )}
+                {type == "direct" && item?.sizeName && (
+                  <p className="text-xs text-gray-500">
+                    Size: <span className="font-medium">{item.sizeName}</span>
+                  </p>
+                )}
 
                 <p className="text-sm font-medium text-gray-900 mt-1">
                   ₹{item?.product?.discount_price}
@@ -177,7 +201,7 @@ export default function OrederSummery({ cartItems, type, orderData, coupon }) {
               </span>
             </div>
             <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-             <span className="text-amber-600 text-lg">✓</span>
+              <span className="text-amber-600 text-lg">✓</span>
               <span className="text-sm text-amber-700">
                 ₹50 Advance And Rest In COD
               </span>

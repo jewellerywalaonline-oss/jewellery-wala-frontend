@@ -3,8 +3,9 @@ import ProductListing from "../ProductListing";
 import React, { cache } from "react";
 import { siteConfig } from "@/lib/utils";
 import FilterSidebar from "../FilterSidebar";
-import { motion } from "framer-motion";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+
+
 export const metadata = {
   title: `Shop Jewellery Online - ${siteConfig.name} | Gold, Silver & Diamond Collection`,
   description: `Browse our extensive collection of premium jewellery in Jodhpur. Shop rings, necklaces, earrings, bracelets, bangles, and more. Gold, silver, and diamond jewellery with traditional Rajasthani craftsmanship.`,

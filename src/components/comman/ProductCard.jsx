@@ -22,6 +22,7 @@ export default function ProductCard({ data }) {
     quantity:
       cartItem && typeof cartItem.quantity === "number" ? cartItem.quantity : 1,
     colorId: data?.colors[0]?._id,
+    sizeId: data?.sizes?.[0]?._id || null,
   };
 
   const [loading, setLoading] = useState(false);
@@ -242,8 +243,10 @@ export default function ProductCard({ data }) {
       </div>
 
       {/* Gradient Overlay on Hover */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/0 via-transparent to-transparent 
-                    group-hover:from-black/10 transition-all duration-500 pointer-events-none z-[1]"></div>
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-black/0 via-transparent to-transparent 
+                    group-hover:from-black/10 transition-all duration-500 pointer-events-none z-[1]"
+      ></div>
 
       {/* Top Actions Bar */}
       <div className="absolute top-3 left-3 right-3 z-20 flex justify-between items-start">
@@ -336,12 +339,17 @@ export default function ProductCard({ data }) {
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: isHovered ? 1 : 0.8, opacity: isHovered ? 1 : 0 }}
+              animate={{
+                scale: isHovered ? 1 : 0.8,
+                opacity: isHovered ? 1 : 0,
+              }}
               transition={{ duration: 0.3 }}
               className="bg-white rounded-full px-6 py-3 flex items-center gap-2 shadow-xl"
             >
               <Eye className="w-5 h-5 text-amber-600" />
-              <span className="text-sm font-semibold text-slate-800">Quick View</span>
+              <span className="text-sm font-semibold text-slate-800">
+                Quick View
+              </span>
             </motion.div>
           </motion.div>
         </div>
@@ -438,15 +446,21 @@ export default function ProductCard({ data }) {
           >
             <ShoppingCart size={16} aria-hidden="true" />
             <span>
-              {loading ? "Adding..." : data.stock === 0 ? "Out of Stock" : "Add to Cart"}
+              {loading
+                ? "Adding..."
+                : data.stock === 0
+                ? "Out of Stock"
+                : "Add to Cart"}
             </span>
           </Button>
         </motion.div>
       </div>
 
       {/* Bottom Shine Effect */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent 
-                    opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+      <div
+        className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent 
+                    opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+      ></div>
     </motion.article>
   );
 }

@@ -451,6 +451,11 @@ export default function OrderTracking() {
                         ></span>{" "}
                         {item?.colorId?.name}
                       </p>
+                      {item?.sizeId && (
+                        <p className="text-sm text-gray-600 mt-1">
+                          <span className="">Size :</span> {item?.sizeId?.name}
+                        </p>
+                      )}
                       {item.isPersonalized && item.personalizedName && (
                         <p className="text-sm text-gray-600 mt-2 bg-orange-50 px-2 py-1 rounded inline-block">
                           <span className="font-medium">Personalized:</span>{" "}
@@ -510,7 +515,7 @@ export default function OrderTracking() {
                   <div className="flex justify-between text-gray-700">
                     <span>Payment In Advane</span>
                     <span className="font-medium">
-                     ₹{orderDetails?.order?.pricing?.advance}
+                      ₹{orderDetails?.order?.pricing?.advance}
                     </span>
                   </div>
                 )}

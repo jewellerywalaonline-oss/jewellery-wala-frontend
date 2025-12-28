@@ -44,6 +44,7 @@ export default function MyOrders() {
   const [btnLoading, setBtnLoading] = useState(false);
 
   const router = useRouter();
+console.log(orders);
 
   useEffect(() => {
     loadOrders();
@@ -259,6 +260,25 @@ export default function MyOrders() {
                                 <p className="text-sm text-amber-600">
                                   Quantity: {item.quantity}
                                 </p>
+                                {/* Color display */}
+                                {item.color && (
+                                  <p className="text-sm text-amber-600 flex items-center gap-1">
+                                    Color:{" "}
+                                    <span
+                                      style={{
+                                        backgroundColor: item.color.code,
+                                      }}
+                                      className="w-3 h-3 rounded-full border border-amber-300 inline-block"
+                                    />
+                                    <span>{item.color.name}</span>
+                                  </p>
+                                )}
+                                {/* Size display */}
+                                {item.sizeId && (
+                                  <p className="text-sm text-amber-600">
+                                    Size: {item.sizeId.name}
+                                  </p>
+                                )}
                                 {item.isPersonalized && (
                                   <p className="text-sm text-orange-600 font-medium">
                                     ✨ Personalized Name :{" "}

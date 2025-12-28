@@ -230,6 +230,18 @@ export default function Cart({ cart }) {
                               </div>
                             </div>
 
+                            {/* Size */}
+                            {item.size && (
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="text-sm text-slate-600">
+                                  Size:
+                                </span>
+                                <span className="text-sm font-medium text-slate-700">
+                                  {item.size.name}
+                                </span>
+                              </div>
+                            )}
+
                             {/* Price */}
                             <p className="text-xl sm:text-2xl font-bold text-amber-600">
                               ₹

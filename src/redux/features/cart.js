@@ -10,6 +10,7 @@ const initialState = {
     product: null,
     quantity: 1,
     colorId: null,
+    sizeId: null,
   },
 };
 
@@ -18,9 +19,12 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action) => {
-      const { productId, quantity = 1, colorId } = action.payload;
+      const { productId, quantity = 1, colorId, sizeId } = action.payload;
       const existingItem = state.cartItems.find(
-        (item) => item.productId === productId && item.colorId === colorId
+        (item) =>
+          item.productId === productId &&
+          item.colorId === colorId &&
+          item.sizeId === sizeId
       );
 
       if (existingItem) {
@@ -43,9 +47,14 @@ export const cartSlice = createSlice({
       );
     },
     removeFromCart: (state, action) => {
-      const { productId, colorId } = action.payload;
+      const { productId, colorId, sizeId } = action.payload;
       state.cartItems = state.cartItems.filter(
-        (item) => !(item.productId === productId && item.colorId === colorId)
+        (item) =>
+          !(
+            item.productId === productId &&
+            item.colorId === colorId &&
+            item.sizeId === sizeId
+          )
       );
       state.totalQuantity = state.cartItems.reduce(
         (total, item) => total + item.quantity,
@@ -53,9 +62,12 @@ export const cartSlice = createSlice({
       );
     },
     updateQuantity: (state, action) => {
-      const { productId, quantity, colorId } = action.payload;
+      const { productId, quantity, colorId, sizeId } = action.payload;
       const item = state.cartItems.find(
-        (item) => item.productId === productId && item.colorId === colorId
+        (item) =>
+          item.productId === productId &&
+          item.colorId === colorId &&
+          item.sizeId === sizeId
       );
 
       if (item) {
@@ -65,7 +77,12 @@ export const cartSlice = createSlice({
         }
         if (quantity < 1) {
           state.cartItems = state.cartItems.filter(
-            (i) => !(i.productId === productId && i.colorId === colorId)
+            (i) =>
+              !(
+                i.productId === productId &&
+                i.colorId === colorId &&
+                i.sizeId === sizeId
+              )
           );
           // toast.success("Item removed from cart");
         } else {

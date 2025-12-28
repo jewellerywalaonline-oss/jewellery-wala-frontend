@@ -39,6 +39,9 @@ export default function ProductDetailsPage({ details }) {
   const [selectedColor, setSelectedColor] = useState(
     details?.colors?.[0]?._id || ""
   );
+  const [selectedSize, setSelectedSize] = useState(
+    details?.sizes?.[0]?._id || null
+  );
   const isMobile = useIsMobile();
 
   const user = useSelector((state) => state.auth.details);
@@ -195,10 +198,22 @@ export default function ProductDetailsPage({ details }) {
       } else if (!user?.address) {
         dispatch(openRequirementModal());
       } else {
+        // Find selected color and size names for display in checkout
+        const selectedColorObj = product.colors?.find(
+          (c) => c._id === selectedColor
+        );
+        const selectedSizeObj = product.sizes?.find(
+          (s) => s._id === selectedSize
+        );
+
         const buyNowItem = {
           productId: product._id,
           quantity: quantity,
           colorId: selectedColor,
+          sizeId: selectedSize,
+          colorCode: selectedColorObj?.code || null,
+          colorName: selectedColorObj?.name || null,
+          sizeName: selectedSizeObj?.name || null,
           product: product,
         };
         dispatch(setBuyNowItem(buyNowItem));
@@ -256,6 +271,7 @@ export default function ProductDetailsPage({ details }) {
     productId: product._id,
     quantity: quantity,
     colorId: selectedColor,
+    sizeId: selectedSize,
   };
 
   const handleAddToCart = async (e) => {
@@ -466,6 +482,47 @@ export default function ProductDetailsPage({ details }) {
               </motion.div>
             )}
 
+            {/* Size Selection */}
+            {product.sizes?.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.75 }}
+                className="mb-10"
+              >
+                <h3 className="text-base uppercase tracking-widest text-gray-800 mb-3 font-[450]">
+                  Size
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {product.sizes.map((size) => (
+                    <motion.button
+                      key={size._id}
+                      type="button"
+                      onClick={() => setSelectedSize(size._id)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`px-4 py-2 rounded-full border font-light text-sm transition-all ${
+                        selectedSize === size._id
+                          ? "border-amber-600 bg-amber-50 text-amber-700"
+                          : "border-gray-200 text-gray-700 hover:border-gray-400"
+                      }`}
+                    >
+                      {size.name}
+                      {selectedSize === size._id && (
+                        <motion.span
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="ml-2 inline-flex"
+                        >
+                          <Check size={14} className="text-amber-600" />
+                        </motion.span>
+                      )}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
             {/* Quantity */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -636,8 +693,6 @@ export default function ProductDetailsPage({ details }) {
               <div className="text-gray-800 leading-loose text-base font-[350] whitespace-pre-line">
                 {product.description}
               </div>
-
-           
             </div>
           </div>
         </motion.div>
