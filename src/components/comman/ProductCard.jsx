@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../../redux/features/cart";
 import { useSelector } from "react-redux";
 import { addToWishlist, removeFromWishlist } from "@/redux/features/wishlist";
+import { openLoginModal } from "@/redux/features/uiSlice";
 
 export default function ProductCard({ data }) {
   const cartItem = useSelector((state) =>
@@ -59,81 +60,108 @@ export default function ProductCard({ data }) {
   };
 
   const handleWishlistToggle = async () => {
-    if (!Cookies.get("user")) {
-      toast.error("Please login to add to wishlist");
-      return;
-    }
+    const isLoggedIn = !!Cookies.get("user");
+
     setWishlistLoading(true);
+
     if (isWishlisted) {
-      try {
-        const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL +
-            "api/website/wishlist/remove/" +
-            data?._id,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookies.get("user")}`,
-            },
-            body: JSON.stringify({
-              productId: data?._id,
-            }),
-          }
-        );
-        const responseData = await response.json();
-        if (response.ok || responseData._status) {
-          dispatch(
-            removeFromWishlist({
-              _id: data?._id,
-              name: data?.name,
-              image: data?.image,
-              price: data?.price,
-              discount_price: data?.discount_price,
-            })
+      // Remove from wishlist
+      if (isLoggedIn) {
+        try {
+          const response = await fetch(
+            process.env.NEXT_PUBLIC_API_URL +
+              "api/website/wishlist/remove/" +
+              data?._id,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${Cookies.get("user")}`,
+              },
+              body: JSON.stringify({
+                productId: data?._id,
+              }),
+            }
           );
-          return toast.success(responseData._message);
-        } else {
-          return toast.error(responseData._message);
+          const responseData = await response.json();
+          if (response.ok || responseData._status) {
+            dispatch(
+              removeFromWishlist({
+                _id: data?._id,
+              })
+            );
+            toast.success(responseData._message);
+          } else {
+            toast.error(responseData._message);
+          }
+        } catch (error) {
+          toast.error(error.message);
+        } finally {
+          setWishlistLoading(false);
         }
-      } catch (error) {
-        toast.error(error.message);
-      } finally {
+      } else {
+        // Guest user - remove from local state
+        dispatch(
+          removeFromWishlist({
+            _id: data?._id,
+            isGuest: true,
+          })
+        );
+        toast.success("Removed from wishlist");
         setWishlistLoading(false);
       }
     } else {
-      try {
-        const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL + "api/website/wishlist/add",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookies.get("user")}`,
-            },
-            body: JSON.stringify({
-              productId: data?._id,
-            }),
-          }
-        );
-        const responseData = await response.json();
-        if (response.ok || responseData._status) {
-          dispatch(
-            addToWishlist({
-              _id: data?._id,
-              name: data?.name,
-              image: data?.image,
-              price: data?.price,
-              discount_price: data?.discount_price,
-            })
+      // Add to wishlist
+      if (isLoggedIn) {
+        try {
+          const response = await fetch(
+            process.env.NEXT_PUBLIC_API_URL + "api/website/wishlist/add",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${Cookies.get("user")}`,
+              },
+              body: JSON.stringify({
+                productId: data?._id,
+              }),
+            }
           );
-          return toast.success(responseData._message);
-        } else {
-          return toast.error(responseData._message);
+          const responseData = await response.json();
+          if (response.ok || responseData._status) {
+            dispatch(
+              addToWishlist({
+                _id: data?._id,
+                name: data?.name,
+                image: data?.image,
+                price: data?.price,
+                discount_price: data?.discount_price,
+                slug: data?.slug,
+              })
+            );
+            toast.success(responseData._message);
+          } else {
+            toast.error(responseData._message);
+          }
+        } catch (error) {
+          toast.error(error.message);
+        } finally {
+          setWishlistLoading(false);
         }
-      } catch (error) {
-        toast.error(error.message);
-      } finally {
+      } else {
+        // Guest user - add to local state
+        dispatch(
+          addToWishlist({
+            _id: data?._id,
+            name: data?.name,
+            image: data?.image,
+            price: data?.price,
+            discount_price: data?.discount_price,
+            slug: data?.slug,
+            isGuest: true,
+          })
+        );
+        toast.success("Added to wishlist");
         setWishlistLoading(false);
       }
     }
@@ -141,33 +169,40 @@ export default function ProductCard({ data }) {
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
-    if (!Cookies.get("user")) {
-      toast.error("Please login to add to cart");
-      return;
-    }
-    try {
-      setLoading(true);
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + "api/website/cart/add",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("user")}`,
-          },
-          body: JSON.stringify(cartObj),
+    const isLoggedIn = !!Cookies.get("user");
+
+    setLoading(true);
+
+    if (isLoggedIn) {
+      // Logged in user - call API
+      try {
+        const response = await fetch(
+          process.env.NEXT_PUBLIC_API_URL + "api/website/cart/add",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("user")}`,
+            },
+            body: JSON.stringify(cartObj),
+          }
+        );
+        const responseData = await response.json();
+        if (response.ok || responseData._status) {
+          dispatch(addToCart(cartObj));
+          toast.success(responseData._message);
+        } else {
+          toast.error(responseData._message);
         }
-      );
-      const data = await response.json();
-      if (response.ok || data._status) {
-        dispatch(addToCart(cartObj));
-        return toast.success(data._message);
-      } else {
-        return toast.error(data._message);
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      toast.error(error.message);
-    } finally {
+    } else {
+      // Guest user - add to local state only
+      dispatch(addToCart({ ...cartObj, isGuest: true }));
+      toast.success("Added to cart");
       setLoading(false);
     }
   };

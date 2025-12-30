@@ -7,6 +7,7 @@ const initialState = {
   priceFrom: 0,
   priceTo: 100000,
   sortBy: "featured",
+  quickFilter: null, // "bestSeller", "featured", "newArrival", "topRated"
 };
 
 export const filtersSlice = createSlice({
@@ -54,6 +55,11 @@ export const filtersSlice = createSlice({
     setFiltersFromURL: (state, action) => {
       Object.assign(state, action.payload);
     },
+    setQuickFilter: (state, action) => {
+      // Toggle off if same filter is selected
+      state.quickFilter =
+        state.quickFilter === action.payload ? null : action.payload;
+    },
   },
 });
 
@@ -68,6 +74,7 @@ export const {
   setSortBy,
   resetFilters,
   setFiltersFromURL,
+  setQuickFilter,
 } = filtersSlice.actions;
 
 export const selectFilters = (state) => state.filters;

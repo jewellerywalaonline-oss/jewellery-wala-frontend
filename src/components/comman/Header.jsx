@@ -283,7 +283,7 @@ export default function Header({ navigationData }) {
             {/* Icons - Enhanced with better hover states */}
             <div className="flex items-center space-x-2 md:space-x-3 shrink-0">
               {/* Wishlist Icon - Premium style */}
-              <Link href="/wishlist" className="flex">
+              <Link href="/wishlist">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -304,25 +304,30 @@ export default function Header({ navigationData }) {
               </Link>
 
               {/* Cart Icon - Premium style */}
-              <Link href="/cart" className="hidden md:flex">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative hover:bg-gradient-to-br hover:from-amber-50 hover:to-orange-50 hover:text-amber-600 rounded-xl transition-all duration-300 hover:scale-105"
-                  aria-label="View shopping bag"
-                >
-                  <ShoppingCartIcon
-                    fill={cartCount > 0 ? "#f59e0b" : "none"}
-                    size={24}
-                    className={cartCount > 0 ? "text-amber-600" : ""}
-                  />
-                  {cartCount > 0 && (
-                    <Badge className="absolute -top-1.5 -right-1.5 w-5 h-5 flex items-center justify-center p-0 bg-gradient-to-br from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-xs shadow-lg border-2 border-white">
-                      {cartCount}
-                    </Badge>
-                  )}
-                </Button>
-              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative hidden md:flex hover:bg-gradient-to-br hover:from-amber-50 hover:to-orange-50 hover:text-amber-600 rounded-xl transition-all duration-300 hover:scale-105"
+                aria-label="View shopping bag"
+                onClick={() => {
+                  if (isLoggedIn) {
+                    router.push("/cart");
+                  } else {
+                    dispatch(openLoginModal(true));
+                  }
+                }}
+              >
+                <ShoppingCartIcon
+                  fill={cartCount > 0 ? "#f59e0b" : "none"}
+                  size={24}
+                  className={cartCount > 0 ? "text-amber-600" : ""}
+                />
+                {cartCount > 0 && (
+                  <Badge className="absolute -top-1.5 -right-1.5 w-5 h-5 flex items-center justify-center p-0 bg-gradient-to-br from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-xs shadow-lg border-2 border-white">
+                    {cartCount}
+                  </Badge>
+                )}
+              </Button>
 
               {/* Mobile Search Toggle - Enhanced */}
               <Button
@@ -541,6 +546,13 @@ const SearchBar = ({ className }) => {
   const value = useSelector((state) => state.ui.searchValue);
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+
+  // Close suggestions when route changes
+  useEffect(() => {
+    setIsSuggestionsOpen(false);
+  }, [pathname]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const searchValue = e.target.elements.search.value;
@@ -653,7 +665,7 @@ const SearchBar = ({ className }) => {
                       onClick={() => setIsSuggestionsOpen(false)}
                       className="cursor-pointer"
                     >
-                      <X size={16} />
+                      <X size={20} />
                     </span>
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 overflow-auto no-scrollbar">
@@ -685,7 +697,15 @@ const SearchBar = ({ className }) => {
               </>
             ) : (
               <div className="p-4 col-span-2 text-center text-gray-500">
-                No suggestions found
+                <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center justify-between">
+                  <span>No suggestions found</span>
+                  <span
+                    onClick={() => setIsSuggestionsOpen(false)}
+                    className="cursor-pointer"
+                  >
+                    <X size={20} />
+                  </span>
+                </h3>
               </div>
             )}
           </div>

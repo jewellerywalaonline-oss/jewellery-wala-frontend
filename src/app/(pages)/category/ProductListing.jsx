@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { openSidebar, toggleSidebar } from "@/redux/features/uiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
-import { Loader } from "lucide-react";
+import { Loader, LayoutGrid, List } from "lucide-react";
 
 export default function ProductListing() {
   const searchParams = useParams();
@@ -30,13 +30,13 @@ export default function ProductListing() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [gridLayout, setGridLayout] = useState("normal"); // "normal" or "single"
 
   const observerTarget = useRef(null);
   const isOpen = useSelector((state) => state.ui.isSidebarOpen);
   const dispatch = useDispatch();
-  const { category, color, material, priceFrom, priceTo } = useSelector(
-    (state) => state.filters
-  );
+  const { category, color, material, priceFrom, priceTo, quickFilter } =
+    useSelector((state) => state.filters);
 
   const PRODUCTS_PER_PAGE = 15;
   const MAX_PRODUCTS = 200; // Maximum number of products to load
@@ -85,6 +85,11 @@ export default function ProductListing() {
         priceTo,
         page,
         limit: PRODUCTS_PER_PAGE,
+        // Quick filter params
+        isFeatured: quickFilter === "featured" ? true : undefined,
+        isNewArrival: quickFilter === "newArrival" ? true : undefined,
+        isBestSeller: quickFilter === "bestSeller" ? true : undefined,
+        isTopRated: quickFilter === "topRated" ? true : undefined,
       };
 
       const response = await fetch(
@@ -94,7 +99,7 @@ export default function ProductListing() {
           headers: {
             "Content-Type": "application/json",
           },
-          
+
           body: JSON.stringify(requestBody),
         }
       );
@@ -126,8 +131,10 @@ export default function ProductListing() {
         setHasMore(hasMoreProducts);
       } else {
         // Check if we've reached the maximum number of products or the end of the list
-        const hasReachedMax = filteredProducts.length + newProducts.length >= MAX_PRODUCTS;
-        const hasMoreProducts = !hasReachedMax && newProducts.length === PRODUCTS_PER_PAGE;
+        const hasReachedMax =
+          filteredProducts.length + newProducts.length >= MAX_PRODUCTS;
+        const hasMoreProducts =
+          !hasReachedMax && newProducts.length === PRODUCTS_PER_PAGE;
 
         setHasMore(hasMoreProducts);
       }
@@ -154,6 +161,7 @@ export default function ProductListing() {
     priceFrom,
     priceTo,
     category,
+    quickFilter,
   ]);
 
   // Intersection Observer for infinite scroll
@@ -200,13 +208,37 @@ export default function ProductListing() {
       {/* Top bar */}
       <div className="lg:flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-3">
         <div>
-          <h2 className="text-2xl font-serif text-[#8B4513]">
-            All Products
-          </h2>
+          <h2 className="text-2xl font-serif text-[#8B4513]">All Products</h2>
           <p className="text-gray-500 text-sm">
             {totalProducts || filteredProducts?.length} product
             {(totalProducts || filteredProducts?.length) !== 1 ? "s" : ""}
           </p>
+        </div>
+        <div className="flex items-center gap-2 my-3 md:my-0">
+          <div className="flex items-center border rounded-lg overflow-hidden">
+            <button
+              onClick={() => setGridLayout("normal")}
+              className={`p-2 transition-colors ${
+                gridLayout === "normal"
+                  ? "bg-amber-100 text-amber-700"
+                  : "hover:bg-gray-100 text-gray-500"
+              }`}
+              title="Grid view"
+            >
+              <LayoutGrid size={18} />
+            </button>
+            <button
+              onClick={() => setGridLayout("single")}
+              className={`p-2 transition-colors ${
+                gridLayout === "single"
+                  ? "bg-amber-100 text-amber-700"
+                  : "hover:bg-gray-100 text-gray-500"
+              }`}
+              title="List view"
+            >
+              <List size={18} />
+            </button>
+          </div>
         </div>
         <div className={`flex items-center gap-3`}>
           <Button
@@ -245,7 +277,13 @@ export default function ProductListing() {
       {/* Product Grid */}
       {filteredProducts?.length > 0 ? (
         <div className="">
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-3 lg:gap-5 animate-fade-in duration-100 sm:px-0">
+          <div
+            className={`grid gap-2 sm:gap-3 md:gap-3 lg:gap-5 animate-fade-in duration-100 sm:px-0 ${
+              gridLayout === "single"
+                ? "grid-cols-1 max-w-md mx-auto"
+                : "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3"
+            }`}
+          >
             {filteredProducts.map((p, index) => (
               <ProductCard data={p} key={`${p._id}-${index}`} {...p} />
             ))}

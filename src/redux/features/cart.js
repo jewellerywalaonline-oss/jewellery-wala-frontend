@@ -1,5 +1,31 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "sonner";
+import { logout } from "./auth";
+import {
+  getGuestCartFromStorage,
+  saveGuestCartToStorage,
+  clearGuestCartStorage,
+} from "@/lib/syncGuestData";
+
+// Load initial state from localStorage for guest users
+const loadInitialState = () => {
+  const guestCart = getGuestCartFromStorage();
+  return {
+    cartItems: guestCart,
+    totalPrice: 0,
+    totalQuantity: guestCart.reduce(
+      (total, item) => total + (item.quantity || 1),
+      0
+    ),
+    buyNowItem: {
+      productId: null,
+      product: null,
+      quantity: 1,
+      colorId: null,
+      sizeId: null,
+    },
+  };
+};
 
 const initialState = {
   cartItems: [],
@@ -18,8 +44,25 @@ export const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    // Initialize cart from localStorage (call on app mount)
+    initializeGuestCart: (state) => {
+      const guestCart = getGuestCartFromStorage();
+      if (guestCart.length > 0) {
+        state.cartItems = guestCart;
+        state.totalQuantity = guestCart.reduce(
+          (total, item) => total + (item.quantity || 1),
+          0
+        );
+      }
+    },
     addToCart: (state, action) => {
-      const { productId, quantity = 1, colorId, sizeId } = action.payload;
+      const {
+        productId,
+        quantity = 1,
+        colorId,
+        sizeId,
+        isGuest = false,
+      } = action.payload;
       const existingItem = state.cartItems.find(
         (item) =>
           item.productId === productId &&
@@ -33,18 +76,21 @@ export const cartSlice = createSlice({
           return;
         }
         existingItem.quantity += quantity;
-        // toast.success("Item quantity updated");
       } else {
         state.cartItems.push({
           ...action.payload,
           quantity: quantity,
         });
-        // toast.success("Item added to cart");
       }
       state.totalQuantity = state.cartItems.reduce(
         (total, item) => total + item.quantity,
         0
       );
+
+      // Persist to localStorage for guest users
+      if (isGuest) {
+        saveGuestCartToStorage(state.cartItems);
+      }
     },
     removeFromCart: (state, action) => {
       const { productId, colorId, sizeId } = action.payload;
@@ -103,6 +149,24 @@ export const cartSlice = createSlice({
       state.buyNowItem = action.payload;
       sessionStorage.setItem("buyNowProduct", JSON.stringify(action.payload));
     },
+    // Clear guest cart from localStorage (call after syncing to server)
+    clearGuestCart: () => {
+      clearGuestCartStorage();
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(logout, (state) => {
+      state.cartItems = [];
+      state.totalPrice = 0;
+      state.totalQuantity = 0;
+      state.buyNowItem = {
+        productId: null,
+        product: null,
+        quantity: 1,
+        colorId: null,
+        sizeId: null,
+      };
+    });
   },
 });
 
@@ -113,5 +177,7 @@ export const {
   updateQuantity,
   updateFullCart,
   setBuyNowItem,
+  initializeGuestCart,
+  clearGuestCart,
 } = cartSlice.actions;
 export default cartSlice.reducer;

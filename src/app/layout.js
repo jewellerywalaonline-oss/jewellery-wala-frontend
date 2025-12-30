@@ -9,6 +9,7 @@ import { cache } from "react";
 import ScrollToTop from "@/components/ui/scroll-to-top";
 import RequirementModal from "@/components/comman/RequirementModal";
 import LoginModal from "@/components/comman/LoginModal";
+import PhoneNumberModal from "@/components/comman/PhoneNumberModal";
 import { BottomTabNavigation } from "@/components/ui/BottomTabNavigation";
 import ToolBar from "@/components/comman/ToolBar";
 
@@ -213,6 +214,7 @@ export default async function RootLayout({ children }) {
           <Toaster richColors closeButton position="top-right" />
           <LoginModal />
           <RequirementModal />
+          <PhoneNumberModal />
           <BottomTabNavigation />
           <ToolBar />
         </Client>

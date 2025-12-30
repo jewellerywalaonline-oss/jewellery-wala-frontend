@@ -1,4 +1,5 @@
 import Wishlist from "@/app/(sections)/Wishlist";
+import GuestWishlist from "@/app/(sections)/GuestWishlist";
 import React, { Suspense } from "react";
 import { siteConfig } from "@/lib/utils";
 import { cookies } from "next/headers";
@@ -13,11 +14,9 @@ export const metadata = {
   },
 };
 
-async function getWishlist() {
-  const cookie = await cookies();
-  const token = cookie.get("user");
-
+async function getWishlist(token) {
   if (!token) return null;
+
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}api/website/wishlist/view`,
     {
@@ -36,7 +35,15 @@ async function getWishlist() {
 }
 
 export default async function page() {
-  const wishlist = await getWishlist();
+  const cookie = await cookies();
+  const token = cookie.get("user");
+
+  // If no token, show guest wishlist (which reads from Redux/localStorage)
+  if (!token) {
+    return <GuestWishlist />;
+  }
+
+  const wishlist = await getWishlist(token);
   return (
     <div>
       <Suspense

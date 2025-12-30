@@ -9,6 +9,18 @@ export default function GoogleLoginBtn() {
 
   const handleGoogleLogin = async () => {
     try {
+      // Store the current path in localStorage for redirect after login
+      const currentPath = window.location.pathname + window.location.search;
+      
+
+      const isAuthPage = ["/login", "/register"].includes(
+        window.location.pathname
+      );
+
+      if (!isAuthPage) {
+        localStorage.setItem("googleLoginReturnTo", currentPath);
+      }
+
       // Redirect to Google's full OAuth page
       const redirectUri = `${window.location.origin}/auth/google/callback`;
 

@@ -7,7 +7,7 @@ import {
   verifyPayment,
 } from "@/lib/orderService";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import OrederSummery from "@/components/comman/OrederSummery";
 import { toast } from "sonner";
 import {
@@ -33,6 +33,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import Cookies from "js-cookie";
+import { openLoginModal } from "@/redux/features/uiSlice";
 
 const INDIAN_STATES = [
   "Andhra Pradesh",
@@ -94,12 +95,14 @@ export default function Checkout() {
       : cartItemsState;
 
   const router = useRouter();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.auth.details);
+  const isLoggedIn = useSelector((state) => state.auth.isLogin);
 
   useEffect(() => {
     if (!purchaseType) {
-      router.push("/");
+      router.push("/checkout?type=cart");
     }
   }, [purchaseType]);
 
@@ -108,48 +111,140 @@ export default function Checkout() {
     0
   );
 
-  const [orderData, setOrderData] = useState({
-    shippingAddress: {
-      fullName: user?.name,
-      phone: user?.mobile || "",
-      email: user?.email || "",
-      street: user?.address?.street || "",
-      area: user?.address?.area || "",
-      city: user?.address?.city || "",
-      state: user?.address?.state || "",
-      pincode: user?.address?.pincode || "",
-      instructions: user?.address?.instructions || "",
-    },
-    notes: "",
-    isGift: false,
-    giftMessage: "",
-    giftWrap: false,
-    couponCode: "",
-    isPersonalizedName:
-      purchaseType == "direct"
-        ? sessionStorage.getItem("personalizedName") || ""
-        : "",
-  });
-
-  useEffect(() => {
-    if (user) {
-      setOrderData({
-        ...orderData,
-        shippingAddress: {
-          ...orderData.shippingAddress,
-          fullName: user.name,
-          phone: user.mobile || "",
-          email: user.email || "",
-          street: user.address?.street || "",
-          area: user.address?.area || "",
-          city: user.address?.city || "",
-          state: user.address?.state || "",
-          pincode: user.address?.pincode || "",
-          instructions: user.address?.instructions || "",
-        },
-      });
+  // Load saved shipping data from sessionStorage (for guests only)
+  const getInitialOrderData = () => {
+    // For guests, try to load from sessionStorage
+    if (typeof window !== "undefined" && !Cookies.get("user")) {
+      const savedData = sessionStorage.getItem("checkoutOrderData");
+      if (savedData) {
+        try {
+          return JSON.parse(savedData);
+        } catch (e) {
+          // Invalid JSON, ignore
+        }
+      }
     }
-  }, [user]);
+    return {
+      shippingAddress: {
+        fullName: user?.name || "",
+        phone: user?.mobile || "",
+        email: user?.email || "",
+        street: user?.address?.street || "",
+        area: user?.address?.area || "",
+        city: user?.address?.city || "",
+        state: user?.address?.state || "",
+        pincode: user?.address?.pincode || "",
+        instructions: user?.address?.instructions || "",
+      },
+      notes: "",
+      isGift: false,
+      giftMessage: "",
+      giftWrap: false,
+      couponCode: "",
+      isPersonalizedName:
+        purchaseType == "direct"
+          ? sessionStorage.getItem("personalizedName") || ""
+          : "",
+    };
+  };
+
+  const [orderData, setOrderData] = useState(getInitialOrderData);
+
+  // Save orderData to sessionStorage whenever it changes (for guests only)
+  useEffect(() => {
+    if (typeof window !== "undefined" && !Cookies.get("user")) {
+      sessionStorage.setItem("checkoutOrderData", JSON.stringify(orderData));
+    }
+  }, [orderData]);
+
+  const [showAddressPrompt, setShowAddressPrompt] = useState(false);
+
+  // Helper to load address from profile
+  const loadProfileAddress = () => {
+    if (!user) return;
+    setOrderData((prev) => ({
+      ...prev,
+      shippingAddress: {
+        ...prev.shippingAddress,
+        fullName: user.name || "",
+        phone: user.mobile || "",
+        email: user.email || "",
+        street: user.address?.street || "",
+        area: user.address?.area || "",
+        city: user.address?.city || "",
+        state: user.address?.state || "",
+        pincode: user.address?.pincode || "",
+        instructions: user.address?.instructions || "",
+      },
+    }));
+    setShowAddressPrompt(false);
+  };
+
+  // Update from user data when user logs in
+  useEffect(() => {
+    if (user && isLoggedIn) {
+      // Clear guest session data when user logs in
+      sessionStorage.removeItem("checkoutOrderData");
+
+      const hasSavedAddress =
+        user.address &&
+        (user.address.street || user.address.city || user.address.pincode);
+      const currentAddress = orderData.shippingAddress;
+      // Check if critical address fields are filled in the form
+      const formHasData =
+        currentAddress.street || currentAddress.city || currentAddress.pincode;
+
+      if (hasSavedAddress && formHasData) {
+        setShowAddressPrompt(true);
+        // Ensure email is set even if we don't overwrite address
+        setOrderData((prev) => ({
+          ...prev,
+          shippingAddress: {
+            ...prev.shippingAddress,
+            email: prev.shippingAddress.email || user.email || "",
+          },
+        }));
+      } else {
+        // Auto-fill everything if no conflict
+        setOrderData((prev) => ({
+          ...prev,
+          shippingAddress: {
+            fullName: prev.shippingAddress.fullName || user.name || "",
+            phone: prev.shippingAddress.phone || user.mobile || "",
+            email: user.email || "",
+            street: prev.shippingAddress.street || user.address?.street || "",
+            area: prev.shippingAddress.area || user.address?.area || "",
+            city: prev.shippingAddress.city || user.address?.city || "",
+            state: prev.shippingAddress.state || user.address?.state || "",
+            pincode:
+              prev.shippingAddress.pincode || user.address?.pincode || "",
+            instructions:
+              prev.shippingAddress.instructions ||
+              user.address?.instructions ||
+              "",
+          },
+        }));
+      }
+    }
+  }, [user, isLoggedIn]);
+
+  // Handle guest checkout - open login modal and store mobile for callback
+  const handleGuestCheckout = () => {
+    // Save current order data to sessionStorage before navigating
+    sessionStorage.setItem("checkoutOrderData", JSON.stringify(orderData));
+
+    // Store mobile number in localStorage for google callback to use
+    if (orderData.shippingAddress.phone) {
+      localStorage.setItem("checkoutMobile", orderData.shippingAddress.phone);
+    }
+    // Store return URL to come back after login
+    localStorage.setItem(
+      "googleLoginReturnTo",
+      `/checkout?type=${purchaseType}`
+    );
+    // Open login modal
+    dispatch(openLoginModal(true));
+  };
 
   // Load Razorpay script
   const loadRazorpayScript = () => {
@@ -165,13 +260,22 @@ export default function Checkout() {
   // Handle payment
   const handlePayment = async (isCodAdvance = false) => {
     try {
-      if (testError(orderData)) {
+      const isGuest = !isLoggedIn && !Cookies.get("user");
+
+      if (testError(orderData, isGuest)) {
         setAlert({
-          title: `Please Fill ${testError(orderData)}`,
+          title: `Please Fill ${testError(orderData, isGuest)}`,
           open: true,
         });
         return;
       }
+
+      // Check if user is logged in, if not, open login modal
+      if (isGuest) {
+        handleGuestCheckout();
+        return; // User will be redirected back after login
+      }
+
       setLoading(true);
 
       const orderPayload = {
@@ -294,6 +398,35 @@ export default function Checkout() {
                   Shipping Information
                 </h2>
               </div>
+
+              {/* Saved Address Prompt */}
+              {showAddressPrompt && (
+                <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="text-sm text-amber-900">
+                    <p className="font-medium">Saved address found</p>
+                    <p>
+                      Would you like to use the address saved in your profile?
+                    </p>
+                  </div>
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowAddressPrompt(false)}
+                      className="flex-1 sm:flex-none border-amber-300 hover:bg-amber-100"
+                    >
+                      Keep Current
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={loadProfileAddress}
+                      className="flex-1 sm:flex-none bg-amber-600 hover:bg-amber-700 text-white"
+                    >
+                      Use Profile Address
+                    </Button>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Full Name */}
@@ -856,18 +989,30 @@ export default function Checkout() {
   );
 }
 
-const testError = (orderData) => {
+const testError = (orderData, isGuest = false) => {
   const { shippingAddress } = orderData;
-  const requiredFields = {
-    fullName: "Full Name",
-    phone: "Phone Number",
-    email: "Email Address",
-    street: "Street Address",
-    area: "Area/Locality",
-    city: "City",
-    state: "State",
-    pincode: "Pincode",
-  };
+
+  // For guest checkout, email is not required as it comes from Google Sign-In
+  const requiredFields = isGuest
+    ? {
+        fullName: "Full Name",
+        phone: "Phone Number",
+        street: "Street Address",
+        area: "Area/Locality",
+        city: "City",
+        state: "State",
+        pincode: "Pincode",
+      }
+    : {
+        fullName: "Full Name",
+        phone: "Phone Number",
+        email: "Email Address",
+        street: "Street Address",
+        area: "Area/Locality",
+        city: "City",
+        state: "State",
+        pincode: "Pincode",
+      };
 
   for (const [field, fieldName] of Object.entries(requiredFields)) {
     const value = shippingAddress[field];
@@ -877,11 +1022,13 @@ const testError = (orderData) => {
     }
   }
 
-  // Validate email format
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(shippingAddress.email)) {
-    toast.error("Please enter a valid Email Address");
-    return "email";
+  // Validate email format (only if provided or not guest)
+  if (shippingAddress.email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(shippingAddress.email)) {
+      toast.error("Please enter a valid Email Address");
+      return "email";
+    }
   }
 
   // Validate Indian phone number (10 digits, optionally starting with +91 or 91)

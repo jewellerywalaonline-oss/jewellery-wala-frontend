@@ -20,13 +20,13 @@ const getProducts = cache(async (q) => {
 
 export default async function ProductsTab() {
   const [payalData, necklaceData, braceletData] = await Promise.all([
-    getProducts("payal"),
+    getProducts("earrings"),
     getProducts("necklace"),
     getProducts("bracelet"),
   ]);
 
   const tabItems = [
-    { value: "payal", label: "Payal", data: payalData, icon: "✦" },
+    { value: "earrings", label: "EarRings", data: payalData, icon: "✦" },
     { value: "necklace", label: "Necklaces", data: necklaceData, icon: "◆" },
     { value: "bracelet", label: "Bracelets", data: braceletData, icon: "○" },
   ];

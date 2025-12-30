@@ -17,6 +17,7 @@ async function getCart() {
   const token = cookie.get("user");
 
   if (!token) return null;
+
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}api/website/cart/view`,
     {

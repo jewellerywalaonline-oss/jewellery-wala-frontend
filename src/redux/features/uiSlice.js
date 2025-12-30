@@ -7,6 +7,7 @@ const uiSlice = createSlice({
     isSidebarOpen: false,
     isRequirementModalOpen: false,
     isLoginModalOpen: false,
+    isPhoneModalOpen: false,
     searchValue: "",
   },
   reducers: {
@@ -43,6 +44,12 @@ const uiSlice = createSlice({
     setSearchValue: (state, action) => {
       state.searchValue = action.payload;
     },
+    openPhoneModal: (state) => {
+      state.isPhoneModalOpen = true;
+    },
+    closePhoneModal: (state) => {
+      state.isPhoneModalOpen = false;
+    },
   },
 });
 
@@ -58,6 +65,8 @@ export const {
   openLoginModal,
   closeLoginModal,
   setSearchValue,
+  openPhoneModal,
+  closePhoneModal,
 } = uiSlice.actions;
 export const selectSidebarOpen = (state) => state.ui.isSidebarOpen;
 export default uiSlice.reducer;

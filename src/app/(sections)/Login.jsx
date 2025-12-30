@@ -2,6 +2,18 @@
 import GoogleLoginBtn from "@/components/comman/GoogleLoginBtn";
 import InputPassword from "@/components/ui/input-password";
 import { login, setProfile } from "@/redux/features/auth";
+import { clearGuestCart } from "@/redux/features/cart";
+import { clearGuestWishlist } from "@/redux/features/wishlist";
+import {
+  syncGuestCartToServer,
+  syncGuestWishlistToServer,
+  getGuestCartFromStorage,
+  getGuestWishlistFromStorage,
+} from "@/lib/syncGuestData";
+import {
+  fetchAndDispatchCart,
+  fetchAndDispatchWishlist,
+} from "@/lib/fetchCartWislist";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -95,6 +107,28 @@ const LoginPage = () => {
 
       dispatch(login(data._token));
       dispatch(setProfile(data._data));
+
+      // Sync guest cart and wishlist to server
+      const guestCart = getGuestCartFromStorage();
+      const guestWishlist = getGuestWishlistFromStorage();
+
+      if (guestCart.length > 0 || guestWishlist.length > 0) {
+        // Sync guest data to server
+        await Promise.all([
+          syncGuestCartToServer(data._token, guestCart),
+          syncGuestWishlistToServer(data._token, guestWishlist),
+        ]);
+
+        // Clear guest data from localStorage
+        dispatch(clearGuestCart());
+        dispatch(clearGuestWishlist());
+
+        // Fetch updated cart and wishlist from server
+        await Promise.all([
+          fetchAndDispatchCart(dispatch),
+          fetchAndDispatchWishlist(dispatch),
+        ]);
+      }
 
       router.push(returnTo || "/");
     } catch (error) {

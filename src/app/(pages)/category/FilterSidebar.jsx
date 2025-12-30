@@ -2,7 +2,7 @@
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { IndianRupee, X } from "lucide-react";
+import { IndianRupee, X, Flame, Star, Trophy } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef } from "react";
 import {
@@ -11,6 +11,7 @@ import {
   toggleMaterial,
   setPriceRange,
   resetFilters,
+  setQuickFilter,
 } from "@/redux/features/filters";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -155,6 +156,34 @@ export default function FilterSidebar({ color, material }) {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
+          {/* Quick Filters */}
+          <div className="space-y-3">
+            <Label className="text-base font-semibold text-amber-900">
+              Quick Filters
+            </Label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { key: "bestSeller", label: "Best Sellers", icon: Flame },
+                { key: "featured", label: "Featured", icon: Star },
+                // { key: "newArrival", label: "New Arrivals", icon: Sparkles },
+                { key: "topRated", label: "Top Rated", icon: Trophy },
+              ].map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => dispatch(setQuickFilter(item.key))}
+                  className={`px-3 py-2 text-xs font-medium rounded-lg border transition-all duration-200 flex items-center gap-1.5 ${
+                    filters.quickFilter === item.key
+                      ? "bg-amber-100 border-amber-400 text-amber-800"
+                      : "bg-white border-gray-200 text-gray-600 hover:bg-amber-50 hover:border-amber-300"
+                  }`}
+                >
+                  <item.icon size={14} />
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Category Filter */}
           <div className="space-y-3">
             <Label className="text-base font-semibold text-amber-900">

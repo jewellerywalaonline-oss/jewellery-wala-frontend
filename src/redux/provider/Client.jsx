@@ -5,6 +5,7 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import { makeStore } from "../store/store";
 import Image from "next/image";
+import GuestDataInitializer from "@/components/providers/GuestDataInitializer";
 
 // You can add a loading component here if needed
 const Loading = () => (
@@ -16,7 +17,6 @@ const Loading = () => (
       width={100}
       height={100}
     />
-   
   </div>
 );
 
@@ -26,7 +26,7 @@ export function Client({ children }) {
   return (
     <Provider store={store}>
       <PersistGate loading={<Loading />} persistor={persistor}>
-        {children}
+        <GuestDataInitializer>{children}</GuestDataInitializer>
       </PersistGate>
     </Provider>
   );
