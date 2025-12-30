@@ -263,10 +263,12 @@ export default function Checkout() {
       const isGuest = !isLoggedIn && !Cookies.get("user");
 
       if (testError(orderData, isGuest)) {
-        setAlert({
-          title: `Please Fill ${testError(orderData, isGuest)}`,
-          open: true,
-        });
+        setTimeout(() => {
+          setAlert({
+            title: `Please Fill ${testError(orderData, isGuest)}`,
+            open: true,
+          });
+        }, 300);
         return;
       }
 
