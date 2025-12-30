@@ -242,8 +242,10 @@ export default function Checkout() {
       "googleLoginReturnTo",
       `/checkout?type=${purchaseType}`
     );
-    // Open login modal
-    dispatch(openLoginModal(true));
+    // Open login modal with delay to prevent dialog conflict (if coming from COD dialog)
+    setTimeout(() => {
+      dispatch(openLoginModal(true));
+    }, 300);
   };
 
   // Load Razorpay script
