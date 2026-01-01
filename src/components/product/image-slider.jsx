@@ -5,6 +5,10 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ImageZoom from "./image-zoom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
 
 export default function ImageSlider({
   images,
@@ -120,31 +124,50 @@ export default function ImageSlider({
 
       {/* Thumbnail Slider */}
       {images.length > 1 && (
-        <div className="flex   gap-3  pb-2 ">
-          {images.map((img, index) => (
-            <motion.button
-              key={index}
-              onClick={() => {
-                setDirection(index > currentImage ? 1 : -1);
-                setCurrentImage(index);
-              }}
-              whileHover={{ scale: 1, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-              className={`flex-shrink-0  size-20 md:size-28 overflow-hidden border-3 transition-all ${
-                currentImage === index 
-                  ? "border-amber-500 shadow-lg ring-2 ring-amber-200"
-                  : "border-amber-100 hover:border-amber-300"
-              }`}
-            >
-              <Image
-                src={img || "/placeholder.svg"}
-                alt={`${productName} - ${index + 1}`}
-                width={80}
-                height={80}
-                className="w-full h-full object-cover"
-              />
-            </motion.button>
-          ))}
+        <div className="relative group mt-4 px-2">
+          <div className="swiper-button-prev-custom absolute left-0 top-1/2 -translate-y-1/2 z-10 cursor-pointer p-2 bg-white/80 rounded-full shadow-md text-amber-600 hover:bg-white transition-all border border-amber-100 disabled:opacity-50 disabled:cursor-not-allowed">
+            <ChevronLeft className="w-5 h-5" />
+          </div>
+          <div className="swiper-button-next-custom absolute right-0 top-1/2 -translate-y-1/2 z-10 cursor-pointer p-2 bg-white/80 rounded-full shadow-md text-amber-600 hover:bg-white transition-all border border-amber-100 disabled:opacity-50 disabled:cursor-not-allowed">
+            <ChevronRight className="w-5 h-5" />
+          </div>
+
+          <Swiper
+            modules={[Navigation]}
+            navigation={{
+              prevEl: ".swiper-button-prev-custom",
+              nextEl: ".swiper-button-next-custom",
+            }}
+            spaceBetween={12}
+            slidesPerView="auto"
+            className="w-[90%] mx-auto px-8 py-2"
+          >
+            {images.map((img, index) => (
+              <SwiperSlide key={index} className="!w-auto">
+                <motion.button
+                  onClick={() => {
+                    setDirection(index > currentImage ? 1 : -1);
+                    setCurrentImage(index);
+                  }}
+                  whileHover={{ scale: 1, y: -5 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`flex-shrink-0 size-20 md:size-28 overflow-hidden border-3 transition-all rounded-md ${
+                    currentImage === index
+                      ? "border-amber-500 shadow-lg ring-2 ring-amber-200"
+                      : "border-amber-100 hover:border-amber-300"
+                  }`}
+                >
+                  <Image
+                    src={img || "/placeholder.svg"}
+                    alt={`${productName} - ${index + 1}`}
+                    width={80}
+                    height={80}
+                    className="w-full h-full object-cover"
+                  />
+                </motion.button>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       )}
     </div>
