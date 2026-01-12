@@ -556,7 +556,7 @@ const SearchBar = ({ className }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const searchValue = e.target.elements.search.value;
-    router.push(`/search?q=${searchValue}`);
+    router.push(`/category/shop-by-category?q=${searchValue}`);
   };
   const suggestionVariants = {
     open: {
@@ -649,7 +649,7 @@ const SearchBar = ({ className }) => {
                       <button
                         key={index}
                         className="w-full text-left p-2 hover:bg-gray-50 rounded-md transition-colors text-sm"
-                        onClick={() => router.push(`/search?q=${suggestion}`)}
+                        onClick={() => router.push(`/category/shop-by-category?q=${suggestion}`)}
                       >
                         {suggestion}
                       </button>

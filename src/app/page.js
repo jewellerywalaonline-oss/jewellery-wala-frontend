@@ -133,6 +133,7 @@ const GetTestimonials = cache(async () => {
       },
     }
   );
+ 
   const data = await response.json();
 
   return data._data;
@@ -147,6 +148,9 @@ const getTabsData = cache(async () => {
       },
     }
   );
+   if(!response.ok ){
+    return []
+  }
   const data = await response.json();
   return data._data;
 });
@@ -165,6 +169,18 @@ const getNewArrivals = cache(async () => {
   return data._data;
 });
 
+const getBestSellers = cache(async () => {
+  const response = await fetch(
+    process.env.NEXT_PUBLIC_API_URL + "api/website/product/best-sellers",
+    {
+      next: {
+        revalidate: 3600,
+      },
+    }
+  );
+  const data = await response.json();
+  return data._data;
+});
 // get trending products
 const getTrendingProducts = cache(async () => {
   const response = await fetch(
@@ -181,12 +197,13 @@ const getTrendingProducts = cache(async () => {
 });
 
 export default async function Home() {
-  const [testimonials, tabsData, newArrivals, trendingProducts] =
+  const [testimonials, tabsData, newArrivals, trendingProducts , bestSellersProducts] =
     await Promise.all([
       GetTestimonials(),
       getTabsData(),
       getNewArrivals(),
       getTrendingProducts(),
+      getBestSellers()
     ]);
 
   return (
@@ -206,7 +223,7 @@ export default async function Home() {
       <WhyChooseUs bg="bg-[#f8f8f8]" />
       <Slider data={newArrivals} heading="New Arrivals" />
       <FullVideoSection />
-      <Slider data={newArrivals} heading="Perfect Gift Items" />
+      <Slider data={bestSellersProducts} heading="Best Sellers Products" />
       <ProductsTab />
 
       <Slider

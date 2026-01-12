@@ -74,7 +74,7 @@ export default function Error({ error, reset }) {
             className="text-gray-600 mb-6 text-lg"
             variants={itemVariants}
           >
-            {error?.message || "We're sorry, but an unexpected error occurred."}
+            {"We're sorry, but an unexpected problem appeared please wait."}
           </motion.p>
 
           <motion.p

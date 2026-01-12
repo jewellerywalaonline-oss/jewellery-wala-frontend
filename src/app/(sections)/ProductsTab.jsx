@@ -13,8 +13,8 @@ const getProducts = cache(async (q) => {
       headers: { "Content-Type": "application/json" },
     }
   );
+  if (!response.ok ) return [];
   const data = await response.json();
-  if (!response.ok || !data._status) return [];
   return data._data;
 });
 
@@ -110,7 +110,7 @@ export default async function ProductsTab() {
 
                     {/* View All Button */}
                     <div className="text-center mt-12">
-                      <Link href={`/search?q=${tab.value}`}>
+                      <Link href={`/category/shop-by-category?q=${tab.value}`}>
                         <Button className="group relative bg-white hover:bg-amber-50 text-amber-600 border-2 border-amber-500 hover:border-amber-600 px-8 py-6 rounded-full font-semibold text-sm uppercase tracking-wider transition-all duration-300 shadow-md hover:shadow-xl hover:shadow-amber-500/20 transform hover:scale-105 overflow-hidden">
                           <span className="relative flex items-center gap-3">
                             View All {tab.label}

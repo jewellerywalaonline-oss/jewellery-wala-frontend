@@ -17,6 +17,8 @@ import { Loader, LayoutGrid, List } from "lucide-react";
 
 export default function ProductListing() {
   const searchParams = useParams();
+  const urlParmas = useSearchParams();
+  const search = urlParmas.get("q");
   const categorySlug =
     searchParams.slug[0] === "shop-by-category" ? "" : searchParams.slug[0];
   const subCategorySlug = searchParams.slug[1];
@@ -90,6 +92,7 @@ export default function ProductListing() {
         isNewArrival: quickFilter === "newArrival" ? true : undefined,
         isBestSeller: quickFilter === "bestSeller" ? true : undefined,
         isTopRated: quickFilter === "topRated" ? true : undefined,
+        searchQuery : search
       };
 
       const response = await fetch(
@@ -162,6 +165,7 @@ export default function ProductListing() {
     priceTo,
     category,
     quickFilter,
+    search
   ]);
 
   // Intersection Observer for infinite scroll
