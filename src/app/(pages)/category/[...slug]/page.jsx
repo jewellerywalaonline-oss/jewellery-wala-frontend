@@ -5,7 +5,6 @@ import { siteConfig } from "@/lib/utils";
 import FilterSidebar from "../FilterSidebar";
 import { ChevronRight } from "lucide-react";
 
-
 export const metadata = {
   title: `Shop Jewellery Online - ${siteConfig.name} | Gold, Silver & Diamond Collection`,
   description: `Browse our extensive collection of premium jewellery in Jodhpur. Shop rings, necklaces, earrings, bracelets, bangles, and more. Gold, silver, and diamond jewellery with traditional Rajasthani craftsmanship.`,
@@ -57,9 +56,12 @@ const getMaterial = cache(async () => {
   return data._data;
 });
 
-export default async function page({ params }) {
+export default async function page({ params, searchParams }) {
   const allParams = await params;
+  const allSearchParams = await searchParams;
+  const query = allSearchParams?.q;
   const slug = await allParams.slug;
+  console.log(allParams);
 
   const categorySlug = slug[0];
   const subCategorySlug = slug[1] || "";
@@ -74,52 +76,69 @@ export default async function page({ params }) {
         {/* Premium Version 1: Clean & Elegant */}
         <div className="relative py-5 md:py-10 animate-fadeIn">
           {/* Floating decorative elements */}
-        
 
-          <div className="relative text-center space-y-3">
-            {/* Breadcrumb navigation */}
-            {(subSubCategorySlug || subCategorySlug) && (
-              <div className="flex justify-center items-center gap-2 text-sm font-light text-gray-500 uppercase tracking-wider animate-fadeIn">
-                <span className="hover:text-amber-600 transition-colors cursor-pointer">
-                  {subSubCategorySlug
-                    ? subCategorySlug.replace(/[-0-9]/g, " ")
-                    : categorySlug.replace(/[-0-9]/g, " ")}
-                </span>
-                <ChevronRight size={14} className="text-amber-400" />
-              </div>
-            )}
-
-            {/* Main Title with Icon */}
-            <div className="relative inline-block">
-             
-
+          {query ? (
+            <div className="relative text-center space-y-3">
               <h1 className="text-5xl sm:text-6xl md:text-7xl font-extralight text-gray-900 capitalize tracking-tight leading-tight ">
-                {subSubCategorySlug
-                  ? subSubCategorySlug.replace(/[-0-9]/g, " ")
-                  : subCategorySlug
-                  ? subCategorySlug.replace(/[-0-9]/g, " ")
-                  : categorySlug.replace(/[-0-9]/g, " ")}
+                Search Results for &quot;{query}&quot;
               </h1>
-
               {/* Animated underline */}
               <div
                 className="h-px bg-gradient-to-r from-transparent via-amber-400 to-transparent mt-4 mx-auto animate-expandLine"
                 style={{ width: "60%" }}
               />
+              {/* Decorative dots */}
+              <div
+                className="flex items-center justify-center gap-2 pt-2 animate-fadeIn"
+                style={{ animationDelay: "0.8s" }}
+              >
+                <div className="w-2 h-2 rounded-full bg-amber-400" />
+                <div className="w-2 h-2 rounded-full bg-amber-300" />
+                <div className="w-2 h-2 rounded-full bg-amber-200" />
+              </div>
             </div>
+          ) : (
+            <div className="relative text-center space-y-3">
+              {/* Breadcrumb navigation */}
+              {(subSubCategorySlug || subCategorySlug) && (
+                <div className="flex justify-center items-center gap-2 text-sm font-light text-gray-500 uppercase tracking-wider animate-fadeIn">
+                  <span className="hover:text-amber-600 transition-colors cursor-pointer">
+                    {subSubCategorySlug
+                      ? subCategorySlug.replace(/[-0-9]/g, " ")
+                      : categorySlug.replace(/[-0-9]/g, " ")}
+                  </span>
+                  <ChevronRight size={14} className="text-amber-400" />
+                </div>
+              )}
 
-            {/* Decorative dots */}
-            <div
-              className="flex items-center justify-center gap-2 pt-2  animate-fadeIn"
-              style={{ animationDelay: "0.8s" }}
-            >
-              <div className="w-2 h-2 rounded-full bg-amber-400" />
-              <div className="w-2 h-2 rounded-full bg-amber-300" />
-              <div className="w-2 h-2 rounded-full bg-amber-200" />
+              {/* Main Title with Icon */}
+              <div className="relative inline-block">
+                <h1 className="text-5xl sm:text-6xl md:text-7xl font-extralight text-gray-900 capitalize tracking-tight leading-tight ">
+                  {subSubCategorySlug
+                    ? subSubCategorySlug.replace(/[-0-9]/g, " ")
+                    : subCategorySlug
+                    ? subCategorySlug.replace(/[-0-9]/g, " ")
+                    : categorySlug.replace(/[-0-9]/g, " ")}
+                </h1>
+
+                {/* Animated underline */}
+                <div
+                  className="h-px bg-gradient-to-r from-transparent via-amber-400 to-transparent mt-4 mx-auto animate-expandLine"
+                  style={{ width: "60%" }}
+                />
+              </div>
+
+              {/* Decorative dots */}
+              <div
+                className="flex items-center justify-center gap-2 pt-2  animate-fadeIn"
+                style={{ animationDelay: "0.8s" }}
+              >
+                <div className="w-2 h-2 rounded-full bg-amber-400" />
+                <div className="w-2 h-2 rounded-full bg-amber-300" />
+                <div className="w-2 h-2 rounded-full bg-amber-200" />
+              </div>
             </div>
-
-          
-          </div>
+          )}
         </div>
 
         {/* Main Content */}
@@ -132,8 +151,6 @@ export default async function page({ params }) {
           </main>
         </div>
       </div>
-
-     
     </div>
   );
 }
