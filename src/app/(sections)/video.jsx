@@ -30,7 +30,7 @@ const FullVideoSection = () => {
         style={{
           backgroundImage: image
             ? `url('${image}')`
-            : "url('/images/poster.jpg')",
+            : "url('/images/poster.webp')",
         }}
         initial={{ scale: 1.1 }}
         animate={{ scale: 1 }}

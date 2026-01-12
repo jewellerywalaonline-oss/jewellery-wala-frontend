@@ -311,7 +311,7 @@ export default function Checkout() {
         currency: currency,
         name: "Jewellery walla",
         description: `Order #${orderId}`,
-        image: logo || "/images/logo.png", // Your logo
+        image: logo || "/images/logo.webp", // Your logo
         order_id: razorpayOrderId,
         prefill: {
           name: orderData.shippingAddress.fullName,

@@ -96,7 +96,7 @@ export default function Footer() {
           <div className="sm:col-span-2 lg:col-span-2">
             <div className="relative group inline-block mb-4">
               <Image
-                src={logo || "/images/logo.png"}
+                src={logo || "/images/logo.webp"}
                 alt="Logo"
                 width={100}
                 height={100}

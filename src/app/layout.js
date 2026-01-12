@@ -44,7 +44,7 @@ function OrganizationSchema() {
     name: siteConfig.name,
     legalName: siteConfig.legalName,
     url: siteConfig.url,
-    logo: `${siteConfig.url}/logo.png`,
+    logo: `${siteConfig.url}/logo.webp`,
     description: siteConfig.description,
     foundingDate: siteConfig.business.foundedYear,
     priceRange: siteConfig.business.priceRange,

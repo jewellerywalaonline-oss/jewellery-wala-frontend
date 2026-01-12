@@ -11,7 +11,7 @@ import GuestDataInitializer from "@/components/providers/GuestDataInitializer";
 const Loading = () => (
   <div className="max-w-[1200px] mx-auto flex flex-col items-center justify-center w-full h-screen bg-white">
     <Image
-      src="/images/logo.png"
+      src="/images/logo.webp"
       className="animate-pulse w-24 h-20"
       alt="Loading"
       width={100}

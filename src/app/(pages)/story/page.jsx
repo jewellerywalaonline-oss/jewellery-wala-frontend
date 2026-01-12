@@ -71,7 +71,7 @@ export function generateJsonLd() {
       'name': siteConfig.name,
       'logo': {
         '@type': 'ImageObject',
-        'url': `${siteConfig.url}/logo.png`
+        'url': `${siteConfig.url}/logo.webp`
       }
     },
     'datePublished': '2023-01-01T00:00:00.000Z',

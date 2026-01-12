@@ -265,7 +265,7 @@ export default function Header({ navigationData }) {
             {/* Logo - Enhanced with subtle animation */}
             <Link href="/" className="group">
               <Image
-                src={logo || "/images/logo.png"}
+                src={logo || "/images/logo.webp"}
                 alt="Jewellery Wala"
                 width={100}
                 height={100}
