@@ -108,7 +108,7 @@ export default function Checkout() {
 
   const totalAmount = cartItems?.reduce(
     (total, item) => total + item?.product?.discount_price * item.quantity,
-    0
+    0,
   );
 
   // Load saved shipping data from sessionStorage (for guests only)
@@ -240,7 +240,7 @@ export default function Checkout() {
     // Store return URL to come back after login
     localStorage.setItem(
       "googleLoginReturnTo",
-      `/checkout?type=${purchaseType}`
+      `/checkout?type=${purchaseType}`,
     );
     // Open login modal with delay to prevent dialog conflict (if coming from COD dialog)
     setTimeout(() => {
@@ -336,7 +336,7 @@ export default function Checkout() {
               setLoading(false);
               // Redirect to order success page
               router.push(
-                `/order-success?orderId=${orderId}&otp=${verifyResponse.order.deliveryOTP}&packageId=${verifyResponse.order.packageId}`
+                `/order-success?orderId=${orderId}&otp=${verifyResponse.order.deliveryOTP}&packageId=${verifyResponse.order.packageId}`,
               );
             } else {
               setAlert({
@@ -839,6 +839,7 @@ export default function Checkout() {
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handlePayment(true)}
+                            disabled={loading}
                           >
                             Continue
                           </AlertDialogAction>

@@ -203,7 +203,7 @@ export default function OrederSummery({ cartItems, type, orderData, coupon }) {
             <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
               <span className="text-amber-600 text-lg">✓</span>
               <span className="text-sm text-amber-700">
-                ₹50 Advance And Rest In COD
+                10% Advance And Rest In COD
               </span>
             </div>
           </div>
