@@ -251,14 +251,14 @@ async function getProducts(slug: string) {
   cacheLife("products");
   cacheTag(productTag(slug), TAG_PRODUCTS);
 
-  try {
-    const response = await serverFetch(`/api/website/product/details/${slug}`, { timeout: 5000 });
-    if (!response.ok) return null;
-    const data = await response.json();
-    return data?._status ? (data._data as ProductData) : null;
-  } catch {
-    return null;
-  }
+  // Throw (instead of returning null) on failure so the "use cache" layer
+  // does NOT cache a null → otherwise a transient API blip would serve 404
+  // for the entire cache window.
+  const response = await serverFetch(`/api/website/product/details/${slug}`, { timeout: 15000 });
+  if (!response.ok) throw new Error(`Product fetch failed: ${response.status}`);
+  const data = await response.json();
+  if (!data?._status) throw new Error("Product not found");
+  return data._data as ProductData;
 }
 
 // ── Product detail skeleton ─────────────────────────────────────────
@@ -286,10 +286,12 @@ function ProductDetailSkeleton() {
 
 // ── Product content fetcher — wrapped in Suspense ────────────────────
 async function ProductContent({ slug }: { slug: string }) {
-  const product = await getProducts(slug);
-
-  if (!product) {
+  let product: ProductData;
+  try {
+    product = await getProducts(slug);
+  } catch {
     notFound();
+    return null;
   }
 
   const productUrl = `${siteConfig.url}/product-details/${slug}`;

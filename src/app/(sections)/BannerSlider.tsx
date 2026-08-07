@@ -50,7 +50,7 @@ export default function BannerSlider({ slides }: BannerSliderProps) {
               src={slide.src}
               alt={`Banner ${i + 1}`}
               onClick={() => handleSlideClick(slide)}
-              className="h-full w-full cursor-pointer object-cover"
+              className="h-full w-full cursor-pointer aspect-video"
               loading={i === 0 ? "eager" : "lazy"}
               priority={i === 0}
               sizes="100vw"
