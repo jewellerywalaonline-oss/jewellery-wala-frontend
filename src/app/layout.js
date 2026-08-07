@@ -12,6 +12,9 @@ import LoginModal from "@/components/comman/LoginModal";
 import PhoneNumberModal from "@/components/comman/PhoneNumberModal";
 import { BottomTabNavigation } from "@/components/ui/BottomTabNavigation";
 import ToolBar from "@/components/comman/ToolBar";
+import Maintenance from "@/components/comman/Maintenance";
+
+const IS_MAINTENANCE_MODE = true;
 
 const lato = Lato({
   subsets: ["latin"],
@@ -206,18 +209,22 @@ export default async function RootLayout({ children }) {
       <body
         className={`pt-0 !mr-0 bg-background antialiased flex flex-col ${lato.variable} pb-12 md:pb-0`}
       >
-        <Client>
-          <Header navigationData={navigation} />
-          <main className="flex-1 ">{children}</main>
-          <Footer />
-          <ScrollToTop />
-          <Toaster richColors closeButton position="top-right" />
-          <LoginModal />
-          <RequirementModal />
-          <PhoneNumberModal />
-          <BottomTabNavigation />
-          <ToolBar />
-        </Client>
+        {IS_MAINTENANCE_MODE ? (
+          <Maintenance />
+        ) : (
+          <Client>
+            <Header navigationData={navigation} />
+            <main className="flex-1 ">{children}</main>
+            <Footer />
+            <ScrollToTop />
+            <Toaster richColors closeButton position="top-right" />
+            <LoginModal />
+            <RequirementModal />
+            <PhoneNumberModal />
+            <BottomTabNavigation />
+            <ToolBar />
+          </Client>
+        )}
       </body>
     </html>
   );
