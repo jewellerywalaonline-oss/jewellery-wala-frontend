@@ -1,5 +1,6 @@
 import { siteConfig, defaultMetadata } from "@/lib/utils";
 import { notFound, redirect } from "next/navigation";
+import { connection } from "next/server";
 import { cacheLife, cacheTag } from "next/cache";
 import { productTag, TAG_PRODUCTS } from "@/lib/revalidation-tags";
 import { serverFetch } from "@/lib/server-fetch";
@@ -251,14 +252,14 @@ async function getProducts(slug: string) {
   cacheLife("products");
   cacheTag(productTag(slug), TAG_PRODUCTS);
 
-  // Throw (instead of returning null) on failure so the "use cache" layer
-  // does NOT cache a null → otherwise a transient API blip would serve 404
-  // for the entire cache window.
-  const response = await serverFetch(`/api/website/product/details/${slug}`, { timeout: 15000 });
-  if (!response.ok) throw new Error(`Product fetch failed: ${response.status}`);
-  const data = await response.json();
-  if (!data?._status) throw new Error("Product not found");
-  return data._data as ProductData;
+  try {
+    const response = await serverFetch(`/api/website/product/details/${slug}`, { timeout: 5000 });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data?._status ? (data._data as ProductData) : null;
+  } catch {
+    return null;
+  }
 }
 
 // ── Product detail skeleton ─────────────────────────────────────────
@@ -286,12 +287,10 @@ function ProductDetailSkeleton() {
 
 // ── Product content fetcher — wrapped in Suspense ────────────────────
 async function ProductContent({ slug }: { slug: string }) {
-  let product: ProductData;
-  try {
-    product = await getProducts(slug);
-  } catch {
+  const product = await getProducts(slug);
+
+  if (!product) {
     notFound();
-    return null;
   }
 
   const productUrl = `${siteConfig.url}/product-details/${slug}`;
@@ -310,6 +309,20 @@ async function ProductContent({ slug }: { slug: string }) {
   );
 }
 
+// ── Dynamic marker — renders nothing but makes this page render per-request,
+//    so generateMetadata for unknown slugs isn't prerendered at build time. ──
+async function DynamicMarker() {
+  const Connection = async () => {
+    await connection();
+    return null;
+  };
+  return (
+    <Suspense>
+      <Connection />
+    </Suspense>
+  );
+}
+
 export default async function Page({ params }: ProductDetailsPageProps) {
   const allParams = await params;
   const { slug } = allParams;
@@ -319,8 +332,11 @@ export default async function Page({ params }: ProductDetailsPageProps) {
   }
 
   return (
-    <Suspense fallback={<ProductDetailSkeleton />}>
-      <ProductContent slug={slug} />
-    </Suspense>
+    <>
+      <DynamicMarker />
+      <Suspense fallback={<ProductDetailSkeleton />}>
+        <ProductContent slug={slug} />
+      </Suspense>
+    </>
   );
 }
