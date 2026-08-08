@@ -25,7 +25,7 @@ export async function generateStaticParams() {
     const data = await res.json();
     const products = data._data as { slug: string }[];
     if (!Array.isArray(products) || products.length === 0) return [{ slug: "placeholder" }];
-    return products.slice(0, 50).map((p) => ({ slug: p.slug }));
+    return products.slice(0, 10).map((p) => ({ slug: p.slug }));
   } catch {
     return [{ slug: "placeholder" }];
   }

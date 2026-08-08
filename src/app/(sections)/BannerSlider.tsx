@@ -33,7 +33,7 @@ export default function BannerSlider({ slides }: BannerSliderProps) {
   };
 
   return (
-    <div className="w-full z-0 h-[30vh] md:h-[50vh] lg:h-[70vh] overflow-hidden banner-swiper">
+    <div className="w-full z-0 h-[30vh] md:h-[50vh] lg:h-[80vh] overflow-hidden banner-swiper">
       <Swiper
         modules={[Autoplay, Pagination, Navigation]}
         autoplay={{ delay: 4000, disableOnInteraction: false }}
