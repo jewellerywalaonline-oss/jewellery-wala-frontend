@@ -19,6 +19,12 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   cacheLife: CACHE,
   images: {
+    // Vercel Hobby caps image optimization at 1,000 requests/month. Once the
+    // limit is crossed, /_next/image starts failing — mobile browsers (which
+    // request more width variants per page) break first. All images are
+    // already pre-optimized webp/avif on the Cloudflare CDN (R2), so route
+    // them straight from the CDN and skip the optimizer entirely.
+    unoptimized: true,
     formats: ["image/avif", "image/webp"],
     dangerouslyAllowSVG: true,
     remotePatterns: [
