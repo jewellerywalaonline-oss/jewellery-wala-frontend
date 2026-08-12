@@ -13,6 +13,18 @@ interface ProductDetailsPageProps {
   params: Promise<{ slug: string }>;
 }
 
+export interface ProductReviewSchema {
+  "@type": "Review";
+  reviewBody: string;
+  author: { "@type": "Person"; name: string };
+  reviewRating: {
+    "@type": "Rating";
+    ratingValue: number;
+    bestRating: 5;
+    worstRating: 1;
+  };
+}
+
 // ISR: revalidate at most every 30 minutes 
 // IT ISNT SUPPORTED WITH nextConfig.cacheComponents setting do not USE IT 
 // export const revalidate = 1800;
@@ -122,7 +134,11 @@ export async function generateMetadata({ params }: ProductDetailsPageProps) {
   };
 }
 
-export async function generateProductSchema(product: ProductData, productUrl: string) {
+export async function generateProductSchema(
+  product: ProductData,
+  productUrl: string,
+  reviews: ProductReviewSchema[] = [],
+) {
   const productImage = product.image || `${siteConfig.url}/og-image.jpg`;
   const price = product.discount_price || product.price;
   const currency = "INR";
@@ -189,15 +205,17 @@ export async function generateProductSchema(product: ProductData, productUrl: st
           url: siteConfig.url,
         },
       },
-      aggregateRating: product.rating && product.reviewCount && product.reviewCount >= 3
-        ? {
-            "@type": "AggregateRating",
-            ratingValue: product.rating,
-            reviewCount: product.reviewCount,
-            bestRating: 5,
-            worstRating: 1,
-          }
-        : undefined,
+      aggregateRating:
+        product.rating && product.reviewCount && product.reviewCount >= 1
+          ? {
+              "@type": "AggregateRating",
+              ratingValue: product.rating,
+              reviewCount: product.reviewCount,
+              bestRating: 5,
+              worstRating: 1,
+            }
+          : undefined,
+      review: reviews.length > 0 ? reviews : undefined,
     },
     {
       "@context": "https://schema.org",
@@ -262,6 +280,46 @@ async function getProducts(slug: string) {
   }
 }
 
+// Top product reviews for the Product structured data — filled only when
+// real review content exists (never fabricated).
+async function getProductReviews(productId: string): Promise<ProductReviewSchema[]> {
+  "use cache";
+  cacheLife("products");
+  cacheTag(productTag("review-" + productId), TAG_PRODUCTS);
+
+  try {
+    const response = await serverFetch(`/api/website/review/get/${productId}`, {
+      timeout: 5000,
+    });
+    if (!response.ok) return [];
+    const data = await response.json();
+    const reviews = Array.isArray(data?._data) ? data._data : [];
+    return reviews
+      .filter(
+        (r: any) =>
+          r &&
+          r.comment &&
+          String(r.comment).trim() &&
+          r.rating &&
+          r.userId?.name,
+      )
+      .slice(0, 5)
+      .map((r: any) => ({
+        "@type": "Review",
+        reviewBody: String(r.comment).trim(),
+        author: { "@type": "Person", name: String(r.userId.name).trim() },
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: r.rating,
+          bestRating: 5,
+          worstRating: 1,
+        },
+      }));
+  } catch {
+    return [];
+  }
+}
+
 // ── Product detail skeleton ─────────────────────────────────────────
 function ProductDetailSkeleton() {
   return (
@@ -294,7 +352,8 @@ async function ProductContent({ slug }: { slug: string }) {
   }
 
   const productUrl = `${siteConfig.url}/product-details/${slug}`;
-  const schemas = await generateProductSchema(product, productUrl);
+  const reviews = await getProductReviews(product._id);
+  const schemas = await generateProductSchema(product, productUrl, reviews);
 
   return (
     <>

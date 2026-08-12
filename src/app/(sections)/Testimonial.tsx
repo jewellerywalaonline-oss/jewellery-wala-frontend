@@ -28,11 +28,7 @@ const Testimonial = ({ data }: { data: any[] | null | undefined }) => {
   if (!data || !Array.isArray(data) || data.length === 0) return null;
 
   return (
-    <section
-      className="relative mx-auto w-full overflow-hidden py-4 bg-section-subtle"
-      itemScope
-      itemType="https://schema.org/Review"
-    >
+    <section className="relative mx-auto w-full overflow-hidden py-4 bg-section-subtle">
       <div className="section-container relative z-10 max-w-5xl">
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2 mb-4">
@@ -100,11 +96,7 @@ const Testimonial = ({ data }: { data: any[] | null | undefined }) => {
             >
               {data.map((t, index) => (
                 <SwiperSlide key={t.id || index}>
-                  <article
-                    className="group relative bg-card text-card-foreground rounded-2xl shadow-lg p-8 flex flex-col h-full border overflow-hidden"
-                    itemScope
-                    itemType="https://schema.org/Review"
-                  >
+                  <article className="group relative bg-card text-card-foreground rounded-2xl shadow-lg p-8 flex flex-col h-full border overflow-hidden">
                     <div className="relative mb-6 flex justify-center">
                       <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg relative z-10">
                         <Image
@@ -114,13 +106,12 @@ const Testimonial = ({ data }: { data: any[] | null | undefined }) => {
                           src={t.image}
                           alt={`Customer ${t.title}`}
                           className="w-full h-full object-cover"
-                          itemProp="image"
                         />
                       </div>
                     </div>
 
                     <blockquote className="flex-1 relative z-10 mb-6">
-                      <p className="text-sm md:text-base leading-relaxed text-center fw-body italic text-muted-foreground" itemProp="reviewBody">
+                      <p className="text-sm md:text-base leading-relaxed text-center fw-body italic text-muted-foreground">
                         &ldquo;{t.description}&rdquo;
                       </p>
                     </blockquote>
@@ -130,7 +121,7 @@ const Testimonial = ({ data }: { data: any[] | null | undefined }) => {
                     </div>
 
                     <figcaption className="text-center relative z-10">
-                      <p className="font-semibold text-base md:text-lg mb-1" style={{ color: "var(--brand-heading)" }} itemProp="author">
+                      <p className="font-semibold text-base md:text-lg mb-1" style={{ color: "var(--brand-heading)" }}>
                         {t.title}
                       </p>
                     </figcaption>

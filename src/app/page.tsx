@@ -239,7 +239,54 @@ async function TabProductsSection() {
 
 async function TestimonialSection() {
   const data = await GetTestimonials();
-  return <Testimonial data={data} />;
+  const schema = buildTestimonialSchema(data);
+  return (
+    <>
+      {schema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      )}
+      <Testimonial data={data} />
+    </>
+  );
+}
+
+// Valid Review structured data — every Review has itemReviewed, author
+// (Person) and reviewRating so Google Rich Results stops flagging the
+// testimonials as invalid.
+function buildTestimonialSchema(data: any) {
+  if (!Array.isArray(data) || data.length === 0) return null;
+
+  const itemReviewed = {
+    "@type": "Store",
+    name: siteConfig.name,
+    url: siteConfig.url,
+    image: `${siteConfig.url}/og-image.jpg`,
+  };
+
+  const reviews = data
+    .filter((t) => t && t.title && String(t.title).trim() && t.rating)
+    .map((t) => ({
+      "@type": "Review",
+      reviewBody: String(t.description || "").trim(),
+      author: { "@type": "Person", name: String(t.title).trim() },
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: t.rating,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      itemReviewed,
+    }));
+
+  if (reviews.length === 0) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": reviews,
+  };
 }
 
 // ── Skeleton fallbacks for dynamic sections ──────────────────────────

@@ -66,6 +66,23 @@ const POLICY_LINKS = [
   { label: "Warranty", href: "/our-policy?query=warranty" },
 ];
 
+// Popular store searches — combined with categories below into the
+// "Related Searches" SEO link section at the bottom of the footer.
+const SEARCH_KEYWORDS = [
+  { label: "Silver Jewellery", query: "silver" },
+  { label: "925 Silver", query: "925 silver" },
+  { label: "Gold Jewellery", query: "gold" },
+  { label: "Rings", query: "rings" },
+  { label: "Necklace", query: "necklace" },
+  { label: "Earrings", query: "earrings" },
+  { label: "Bangles", query: "bangles" },
+  { label: "Bracelets", query: "bracelet" },
+  { label: "Chain", query: "chain" },
+  { label: "Mangalsutra", query: "mangalsutra" },
+  { label: "Anklets", query: "anklet" },
+  { label: "Gift Jewellery", query: "gift" },
+];
+
 /* ── Component ──────────────────────────────────────────────────────────── */
 
 export default function Footer({
@@ -347,6 +364,76 @@ export default function Footer({
                 Gaurav Dadhich
               </a>
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Related Searches (SEO) ─────────────────────────────────────── */}
+      <div className="border-t border-border bg-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <h3 className="fw-heading text-sm text-foreground uppercase tracking-widest mb-4 border-b-2 border-[var(--brand-primary)] pb-2 inline-block">
+            Related Searches
+          </h3>
+
+          {(categories?.length ?? 0) > 0 && (
+            <div className="mb-6">
+              <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">
+                Shop Categories
+              </h4>
+              <ul className="flex flex-wrap gap-2">
+                {categories
+                  ?.flatMap((item: NavCategory) => item.subCategories ?? [])
+                  .slice(0, 24)
+                  .map((subCategory: NavSubCategory, idx: number) => (
+                    <li key={subCategory.slug ?? idx}>
+                      <Link
+                        href={`/category/${subCategory.slug}`}
+                        className="inline-block text-xs px-3 py-1.5 rounded-full border border-border bg-background/40 text-muted-foreground hover:text-[var(--brand-primary-dark)] hover:border-[var(--brand-primary)] hover:shadow-sm transition-all duration-200"
+                      >
+                        {subCategory.name}
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          )}
+
+          <div>
+            <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">
+              Popular Searches
+            </h4>
+            <ul className="flex flex-wrap gap-2">
+              {SEARCH_KEYWORDS.map(({ label, query }) => (
+                <li key={query}>
+                  <Link
+                    href={`/search?q=${encodeURIComponent(query)}`}
+                    className="inline-block text-xs px-3 py-1.5 rounded-full border border-border bg-background/40 text-muted-foreground hover:text-[var(--brand-primary-dark)] hover:border-[var(--brand-primary)] hover:shadow-sm transition-all duration-200"
+                  >
+                    {label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link
+                  href={`/search?q=${encodeURIComponent(
+                    `jewellery in ${siteConfig.address.city}`,
+                  )}`}
+                  className="inline-block text-xs px-3 py-1.5 rounded-full border border-border bg-background/40 text-muted-foreground hover:text-[var(--brand-primary-dark)] hover:border-[var(--brand-primary)] hover:shadow-sm transition-all duration-200"
+                >
+                  Jewellery in {siteConfig.address.city}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={`/search?q=${encodeURIComponent(
+                    `silver jewellery in ${siteConfig.address.city}`,
+                  )}`}
+                  className="inline-block text-xs px-3 py-1.5 rounded-full border border-border bg-background/40 text-muted-foreground hover:text-[var(--brand-primary-dark)] hover:border-[var(--brand-primary)] hover:shadow-sm transition-all duration-200"
+                >
+                  Silver Jewellery in {siteConfig.address.city}
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
