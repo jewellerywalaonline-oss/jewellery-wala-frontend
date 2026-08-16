@@ -22,6 +22,10 @@ import {
 import { Button } from "@/components/ui/button";
 import LoadingOverlay from "@/components/comman/LoadingOverlay";
 import Personalized from "@/components/product/Personalized";
+import PersonalizedCheckout, {
+  PERSONALIZED_NAMES_STORAGE_KEY,
+  type PersonalizedCheckoutItem,
+} from "@/components/checkout/PersonalizedCheckout";
 import { getAuthToken } from "@/lib/cookies";
 import {
   detectLocation,
@@ -104,70 +108,101 @@ export default function Checkout() {
   const { data: directProduct } = useProduct(directSlug);
   const { productMap } = useProductsByIds(cartIds);
 
-  // Build enriched cart items (merge Redux state with fetched product data)
-  const cartItems = useMemo(() => {
-    if (purchaseType === "direct") {
-      const rawItems = Array.isArray(buyNowItem) ? buyNowItem : [buyNowItem];
-      return rawItems.map((item) => {
-        const fetched = directProduct ?? undefined;
-        const color = fetched?.colors?.find((c) => c._id === item.colorId);
-        const variant = item.variantId
-          ? fetched?.variants?.find((v) => v._id === item.variantId)
-          : undefined;
-        const size = item.sizeId
-          ? fetched?.sizes?.find((s) => s._id === item.sizeId)
-          : undefined;
-        return {
-          _id: item.productId,
-          product: (fetched ?? {
-            _id: item.productId,
-            name: "Loading...",
-            image: "/placeholder.svg",
-            price: 0,
-            slug: item.slug ?? "",
-            stock: 0,
-          }) as ProductData,
-          quantity: variant ? variant.quantity : item.quantity,
-          colorId: item.colorId ?? undefined,
-          colorCode: color?.code,
-          colorName: color?.name,
-          isPersonalized: fetched?.isPersonalized ?? false,
-          variantId: item.variantId ?? undefined,
-          variantName: variant?.name ?? undefined,
-          variantPrice: variant?.price ?? undefined,
-          sizeId: item.sizeId ?? null,
-          sizeName: size?.name ?? item.sizeName ?? null,
-        };
-      });
+  // Build enriched cart items (merge Redux state with fetched product data).
+// Identical cart lines (same product + color + size + variant) are merged
+// into one with summed quantity — the API does the same when identical items
+// are added, so duplicates in state are stale. Merging keeps React keys
+// unique and order totals correct.
+const cartItems = useMemo(() => {
+  const raw =
+    purchaseType === "direct"
+      ? (Array.isArray(buyNowItem) ? buyNowItem : [buyNowItem]).map((item) => {
+          const fetched = directProduct ?? undefined;
+          const color = fetched?.colors?.find((c) => c._id === item.colorId);
+          const variant = item.variantId
+            ? fetched?.variants?.find((v) => v._id === item.variantId)
+            : undefined;
+          const size = item.sizeId
+            ? fetched?.sizes?.find((s) => s._id === item.sizeId)
+            : undefined;
+          return {
+            _id: `${item.productId}_${item.colorId ?? ""}_${item.sizeId ?? ""}_${item.variantId ?? ""}`,
+            product: (fetched ?? {
+              _id: item.productId,
+              name: "Loading...",
+              image: "/placeholder.svg",
+              price: 0,
+              slug: item.slug ?? "",
+              stock: 0,
+            }) as ProductData,
+            quantity: variant ? variant.quantity : item.quantity,
+            colorId: item.colorId ?? undefined,
+            colorCode: color?.code,
+            colorName: color?.name,
+            isPersonalized: fetched?.isPersonalized ?? false,
+            variantId: item.variantId ?? undefined,
+            variantName: variant?.name ?? undefined,
+            variantPrice: variant?.price ?? undefined,
+            sizeId: item.sizeId ?? null,
+            sizeName: size?.name ?? item.sizeName ?? null,
+          };
+        })
+      : cartItemsState.map((item) => {
+          const fetched = item.productId ? productMap.get(item.productId) : undefined;
+          const color = fetched?.colors?.find((c) => c._id === item.colorId);
+          const size = item.sizeId
+            ? fetched?.sizes?.find((s) => s._id === item.sizeId)
+            : undefined;
+          return {
+            _id: `${item.productId}_${item.colorId ?? ""}_${item.sizeId ?? ""}`,
+            product: (fetched ?? {
+              _id: item.productId,
+              name: "Loading...",
+              image: "/placeholder.svg",
+              price: 0,
+              slug: item.slug ?? "",
+              stock: 0,
+            }) as ProductData,
+            quantity: item.quantity,
+            isPersonalized: fetched?.isPersonalized ?? false,
+            color: color ? { _id: color._id, code: color.code ?? "#000", name: color.name } : undefined,
+            variantId: undefined,
+            variantName: undefined,
+            variantPrice: undefined,
+            size: size ? { _id: size._id, name: size.name } : undefined,
+            sizeId: item.sizeId ?? null,
+            sizeName: size?.name ?? null,
+          };
+        });
+
+  const merged = new Map<string, (typeof raw)[number]>();
+  for (const item of raw) {
+    const existing = merged.get(item._id);
+    if (existing) {
+      existing.quantity += item.quantity;
+    } else {
+      merged.set(item._id, item);
     }
-    return cartItemsState.map((item) => {
-      const fetched = item.productId ? productMap.get(item.productId) : undefined;
-      const color = fetched?.colors?.find((c) => c._id === item.colorId);
-      const size = item.sizeId
-        ? fetched?.sizes?.find((s) => s._id === item.sizeId)
-        : undefined;
-      return {
-        _id: `${item.productId}_${item.colorId ?? ""}_${item.sizeId ?? ""}`,
-        product: (fetched ?? {
-          _id: item.productId,
-          name: "Loading...",
-          image: "/placeholder.svg",
-          price: 0,
-          slug: item.slug ?? "",
-          stock: 0,
-        }) as ProductData,
-        quantity: item.quantity,
-        isPersonalized: fetched?.isPersonalized ?? false,
-        color: color ? { _id: color._id, code: color.code ?? "#000", name: color.name } : undefined,
-        variantId: undefined,
-        variantName: undefined,
-        variantPrice: undefined,
-        size: size ? { _id: size._id, name: size.name } : undefined,
-        sizeId: item.sizeId ?? null,
-        sizeName: size?.name ?? null,
-      };
-    });
-  }, [purchaseType, buyNowItem, cartItemsState, directProduct, productMap]);
+  }
+  return Array.from(merged.values());
+}, [purchaseType, buyNowItem, cartItemsState, directProduct, productMap]);
+
+  // Personalized products in the cart (cart checkout only) — each gets its own
+  // engraved name via the accordion in PersonalizedCheckout.
+  const personalizedCartItems = useMemo<PersonalizedCheckoutItem[]>(() => {
+    if (purchaseType !== "cart") return [];
+    return cartItems
+      .filter((item) => item.isPersonalized)
+      .map((item) => ({
+        key: String(item._id),
+        productId: String(item.product?._id ?? ""),
+        colorId:
+          "color" in item ? (item.color?._id ?? undefined) : undefined,
+        sizeId: item.sizeId ?? undefined,
+        productName: item.product?.name ?? "",
+        image: item.product?.image,
+      }));
+  }, [purchaseType, cartItems]);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -460,20 +495,69 @@ export default function Checkout() {
         return;
       }
 
-      // Personalized items require a name — read the live value from
-      // sessionStorage (the Personalized component writes there) so a name
-      // typed after the form snapshot was taken is still honored.
-      const personalizedName =
-        typeof window !== "undefined"
-          ? (sessionStorage.getItem("personalizedName") ?? "").trim()
-          : "";
+      // Personalized items require a name. Cart checkout: each personalized
+      // product has its own name (from the PersonalizedCheckout accordion,
+      // persisted to sessionStorage so a refresh keeps it). Direct checkout:
+      // the single name from the Personalized component.
+      const readNamesMap = (): Record<string, string> => {
+        if (typeof window === "undefined") return {};
+        try {
+          const raw = sessionStorage.getItem(PERSONALIZED_NAMES_STORAGE_KEY);
+          return raw ? (JSON.parse(raw) as Record<string, string>) : {};
+        } catch {
+          return {};
+        }
+      };
 
-      const hasPersonalizedItem = cartItems.some(
-        (item) => item.isPersonalized
-      );
-      if (hasPersonalizedItem && !personalizedName) {
+      const personalizedItems: Array<{
+        productId: string;
+        colorId?: string;
+        sizeId?: string;
+        name: string;
+      }> = [];
+      const missingPersonalized: string[] = [];
+
+      if (purchaseType === "cart") {
+        const namesMap = readNamesMap();
+        for (const pItem of personalizedCartItems) {
+          const name = (namesMap[pItem.key] ?? "").trim();
+          if (!name) {
+            missingPersonalized.push(pItem.productName);
+          } else {
+            personalizedItems.push({
+              productId: pItem.productId,
+              colorId: pItem.colorId,
+              sizeId: pItem.sizeId,
+              name,
+            });
+          }
+        }
+      } else {
+        const directName =
+          typeof window !== "undefined"
+            ? (sessionStorage.getItem("personalizedName") ?? "").trim()
+            : "";
+        const hasPersonalizedItem = cartItems.some(
+          (item) => item.isPersonalized
+        );
+        if (hasPersonalizedItem && !directName) {
+          missingPersonalized.push(
+            cartItems.find((item) => item.isPersonalized)?.product?.name ??
+              "this product"
+          );
+        } else if (hasPersonalizedItem) {
+          personalizedItems.push({
+            productId: String(
+              cartItems.find((item) => item.isPersonalized)?.product?._id ?? ""
+            ),
+            name: directName,
+          });
+        }
+      }
+
+      if (missingPersonalized.length > 0) {
         toast.error(
-          "Please enter a personalized name before placing your order."
+          `Please enter a personalized name for: ${missingPersonalized.join(", ")}`
         );
         return;
       }
@@ -496,7 +580,8 @@ export default function Checkout() {
       const orderPayload = {
         purchaseType,
         ...orderData,
-        isPersonalizedName: personalizedName,
+        isPersonalizedName: personalizedItems[0]?.name ?? "",
+        personalizedItems,
         ...(purchaseType == "direct" && {
         items: (Array.isArray(buyNowItem) ? buyNowItem : [buyNowItem]).map(
           (item) => ({
@@ -559,7 +644,7 @@ export default function Checkout() {
               setLoading(false);
               // Redirect to order success page
               router.push(
-                `/order-success?orderId=${orderId}&otp=${verifyResponse.order.deliveryOTP}&packageId=${verifyResponse.order.packageId}`,
+                `/order-success?orderId=${orderId}&packageId=${verifyResponse.order.packageId}`,
               );
             } else {
               setAlert({
@@ -758,6 +843,10 @@ export default function Checkout() {
 
             {purchaseType == "direct" &&
               cartItems[0]?.product?.isPersonalized && <Personalized />}
+
+            {purchaseType == "cart" && personalizedCartItems.length > 0 && (
+              <PersonalizedCheckout items={personalizedCartItems} />
+            )}
 
             <GiftOptions
               isGift={orderData.isGift}

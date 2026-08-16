@@ -4,7 +4,12 @@ import dynamic from "next/dynamic";
 
 const DotLottieReact = dynamic(
   () =>
-    import("@lottiefiles/dotlottie-react").then((mod) => mod.DotLottieReact),
+    import("@lottiefiles/dotlottie-react").then((mod) => {
+      // Serve the WASM from our own origin — the CDN defaults (jsdelivr /
+      // unpkg) fail in restricted networks, breaking the animation entirely.
+      mod.setWasmUrl("/wasm/dotlottie-player.wasm");
+      return mod.DotLottieReact;
+    }),
   { ssr: false }
 );
 

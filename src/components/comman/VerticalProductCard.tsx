@@ -45,6 +45,7 @@ export default function VerticalProductCard({ data }: VerticalProductCardProps) 
     slug: data?.slug,
     quantity,
     colorId: selectedColor,
+    sizeId: data?.sizes?.[0]?._id,
   };
 
   const handleWishlistToggle = async () => {

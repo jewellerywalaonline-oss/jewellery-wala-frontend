@@ -7,7 +7,7 @@ const csp = `
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob: https://*.r2.dev https://${process.env.NEXT_PUBLIC_CDN_HOST || "cdn.jewellerywalla.com"} https://lh3.googleusercontent.com https://cdn.jsdelivr.net;
   font-src 'self' data:;
-  connect-src 'self' https://challenges.cloudflare.com;
+  connect-src 'self' https://challenges.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com;
   frame-src https://*.razorpay.com https://challenges.cloudflare.com https://www.youtube.com https://www.google.com https://*.google.com;
   frame-ancestors 'none';
 `

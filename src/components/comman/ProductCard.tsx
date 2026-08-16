@@ -35,6 +35,7 @@ export default function ProductCard({ data }: { data: ProductData }) {
     quantity:
       cartItem && typeof cartItem.quantity === "number" ? cartItem.quantity : 1,
     colorId: data?.colors?.[0]?._id,
+    sizeId: data?.sizes?.[0]?._id,
   };
 
   const displayPrice = data?.price;
