@@ -13,9 +13,12 @@ export default function PremiumPersonalized() {
   const maxLength = 25;
 
   useEffect(() => {
-    if (personalizedName !== null && personalizedName?.length > 0) {
+    if (personalizedName.length > 0) {
       sessionStorage.setItem("personalizedName", personalizedName);
-      setCharCount(personalizedName?.length);
+      setCharCount(personalizedName.length);
+    } else {
+      sessionStorage.removeItem("personalizedName");
+      setCharCount(0);
     }
 
     // Validation: Check for special characters
@@ -35,6 +38,7 @@ export default function PremiumPersonalized() {
 
   const clearText = () => {
     setPersonalizedName("");
+    sessionStorage.removeItem("personalizedName");
     setShowPreview(false);
   };
 

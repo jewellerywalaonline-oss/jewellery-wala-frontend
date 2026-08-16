@@ -66,21 +66,41 @@ const POLICY_LINKS = [
   { label: "Warranty", href: "/our-policy?query=warranty" },
 ];
 
-// Popular store searches — combined with categories below into the
-// "Related Searches" SEO link section at the bottom of the footer.
+// Popular store searches — combined with categories and products below into
+// the "Related Searches" SEO link section at the bottom of the footer.
 const SEARCH_KEYWORDS = [
-  { label: "Silver Jewellery", query: "silver" },
-  { label: "925 Silver", query: "925 silver" },
-  { label: "Gold Jewellery", query: "gold" },
+  { label: "Gold Jewellery", query: "gold jewellery" },
+  { label: "Silver Jewellery", query: "silver jewellery" },
+  { label: "925 Sterling Silver", query: "925 silver" },
+  { label: "Oxidised Jewellery", query: "oxidised jewellery" },
+  { label: "Kundan Jewellery", query: "kundan" },
+  { label: "Meenakari Jewellery", query: "meenakari" },
+  { label: "Polki Jewellery", query: "polki" },
+  { label: "Temple Jewellery", query: "temple jewellery" },
+  { label: "Bridal Jewellery", query: "bridal jewellery" },
+  { label: "Daily Wear Jewellery", query: "daily wear jewellery" },
+  { label: "Festive Jewellery", query: "festive jewellery" },
+  { label: "Gift Jewellery", query: "gift jewellery" },
   { label: "Rings", query: "rings" },
-  { label: "Necklace", query: "necklace" },
+  { label: "Engagement Rings", query: "engagement rings" },
+  { label: "Men's Rings", query: "men rings" },
+  { label: "Necklaces", query: "necklace" },
+  { label: "Pendants", query: "pendant" },
+  { label: "Chains", query: "chain" },
   { label: "Earrings", query: "earrings" },
+  { label: "Jhumkas", query: "jhumka" },
+  { label: "Chandbalis", query: "chandbali" },
   { label: "Bangles", query: "bangles" },
+  { label: "Kada", query: "kada" },
   { label: "Bracelets", query: "bracelet" },
-  { label: "Chain", query: "chain" },
-  { label: "Mangalsutra", query: "mangalsutra" },
   { label: "Anklets", query: "anklet" },
-  { label: "Gift Jewellery", query: "gift" },
+  { label: "Toe Rings", query: "toe ring" },
+  { label: "Mangalsutra", query: "mangalsutra" },
+  { label: "Nose Pins", query: "nose pin" },
+  { label: "Maang Tikka", query: "maang tikka" },
+  { label: "Hair Jewellery", query: "hair jewellery" },
+  { label: "Brooches", query: "brooch" },
+  { label: "Cufflinks", query: "cufflinks" },
 ];
 
 /* ── Component ──────────────────────────────────────────────────────────── */
@@ -371,69 +391,96 @@ export default function Footer({
       {/* ── Related Searches (SEO) ─────────────────────────────────────── */}
       <div className="border-t border-border bg-section">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <h3 className="fw-heading text-sm text-foreground uppercase tracking-widest mb-4 border-b-2 border-[var(--brand-primary)] pb-2 inline-block">
+          <h3 className="fw-heading text-sm text-foreground uppercase tracking-widest mb-6 border-b-2 border-[var(--brand-primary)] pb-2 inline-block">
             Related Searches
           </h3>
 
-          {(categories?.length ?? 0) > 0 && (
-            <div className="mb-6">
-              <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">
-                Shop Categories
-              </h4>
-              <ul className="flex flex-wrap gap-2">
-                {categories
-                  ?.flatMap((item: NavCategory) => item.subCategories ?? [])
-                  .slice(0, 24)
-                  .map((subCategory: NavSubCategory, idx: number) => (
-                    <li key={subCategory.slug ?? idx}>
-                      <Link
-                        href={`/category/${subCategory.slug}`}
-                        className="inline-block text-xs px-3 py-1.5 rounded-full border border-border bg-background/40 text-muted-foreground hover:text-[var(--brand-primary-dark)] hover:border-[var(--brand-primary)] hover:shadow-sm transition-all duration-200"
-                      >
-                        {subCategory.name}
-                      </Link>
-                    </li>
-                  ))}
-              </ul>
-            </div>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+            {/* Shop Categories */}
+            {(categories?.length ?? 0) > 0 && (
+              <div>
+                <h4 className="fw-body text-sm text-foreground mb-4">
+                  Shop Categories
+                </h4>
+                <ul className="space-y-2.5 text-sm">
+                  {categories
+                    ?.flatMap((item: NavCategory) => item.subCategories ?? [])
+                    .slice(0, 20)
+                    .map((subCategory: NavSubCategory, idx: number) => (
+                      <li key={subCategory.slug ?? idx}>
+                        <Link
+                          href={`/category/${subCategory.slug}`}
+                          className="hover-underline text-muted-foreground hover:text-[var(--brand-primary-dark)] transition-colors"
+                        >
+                          {subCategory.name}
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
 
-          <div>
-            <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">
-              Popular Searches
-            </h4>
-            <ul className="flex flex-wrap gap-2">
-              {SEARCH_KEYWORDS.map(({ label, query }) => (
-                <li key={query}>
+            {/* Popular Products */}
+            {featuredProducts.length > 0 && (
+              <div>
+                <h4 className="fw-body text-sm text-foreground mb-4">
+                  Popular Products
+                </h4>
+                <ul className="space-y-2.5 text-sm">
+                  {featuredProducts
+                    .slice(0, 20)
+                    .map((product: FeaturedProduct) => (
+                      <li key={product._id}>
+                        <Link
+                          href={`/product-details/${product.slug}`}
+                          className="hover-underline text-muted-foreground hover:text-[var(--brand-primary-dark)] transition-colors"
+                        >
+                          {product.name}
+                        </Link>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Popular Searches */}
+            <div>
+              <h4 className="fw-body text-sm text-foreground mb-4">
+                Popular Searches
+              </h4>
+              <ul className="space-y-2.5 text-sm">
+                {SEARCH_KEYWORDS.map(({ label, query }) => (
+                  <li key={query}>
+                    <Link
+                      href={`/search?q=${encodeURIComponent(query)}`}
+                      className="hover-underline text-muted-foreground hover:text-[var(--brand-primary-dark)] transition-colors"
+                    >
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+                <li>
                   <Link
-                    href={`/search?q=${encodeURIComponent(query)}`}
-                    className="inline-block text-xs px-3 py-1.5 rounded-full border border-border bg-background/40 text-muted-foreground hover:text-[var(--brand-primary-dark)] hover:border-[var(--brand-primary)] hover:shadow-sm transition-all duration-200"
+                    href={`/search?q=${encodeURIComponent(
+                      `jewellery in ${siteConfig.address.city}`,
+                    )}`}
+                    className="hover-underline text-muted-foreground hover:text-[var(--brand-primary-dark)] transition-colors"
                   >
-                    {label}
+                    Jewellery in {siteConfig.address.city}
                   </Link>
                 </li>
-              ))}
-              <li>
-                <Link
-                  href={`/search?q=${encodeURIComponent(
-                    `jewellery in ${siteConfig.address.city}`,
-                  )}`}
-                  className="inline-block text-xs px-3 py-1.5 rounded-full border border-border bg-background/40 text-muted-foreground hover:text-[var(--brand-primary-dark)] hover:border-[var(--brand-primary)] hover:shadow-sm transition-all duration-200"
-                >
-                  Jewellery in {siteConfig.address.city}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/search?q=${encodeURIComponent(
-                    `silver jewellery in ${siteConfig.address.city}`,
-                  )}`}
-                  className="inline-block text-xs px-3 py-1.5 rounded-full border border-border bg-background/40 text-muted-foreground hover:text-[var(--brand-primary-dark)] hover:border-[var(--brand-primary)] hover:shadow-sm transition-all duration-200"
-                >
-                  Silver Jewellery in {siteConfig.address.city}
-                </Link>
-              </li>
-            </ul>
+                <li>
+                  <Link
+                    href={`/search?q=${encodeURIComponent(
+                      `silver jewellery in ${siteConfig.address.city}`,
+                    )}`}
+                    className="hover-underline text-muted-foreground hover:text-[var(--brand-primary-dark)] transition-colors"
+                  >
+                    Silver Jewellery in {siteConfig.address.city}
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

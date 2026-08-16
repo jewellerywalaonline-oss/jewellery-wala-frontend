@@ -37,6 +37,37 @@ type WhyChooseUsData = {
   description: string;
 };
 
+const DEFAULT_FEATURES: WhyChooseUsData[] = [
+  {
+    _id: "hallmarked-purity",
+    image: "ShieldCheck",
+    title: "Hallmarked Purity",
+    description:
+      "Every piece is BIS-hallmarked 22K/18K gold with transparent purity certification you can verify.",
+  },
+  {
+    _id: "master-karigar-craft",
+    image: "Sparkles",
+    title: "Master Karigar Craft",
+    description:
+      "Handcrafted in Jodhpur by master karigars, with techniques passed down through generations.",
+  },
+  {
+    _id: "generational-trust",
+    image: "Heart",
+    title: "Generational Trust",
+    description:
+      "Families have trusted us for decades — your legacy deserves a jeweller you can count on.",
+  },
+  {
+    _id: "honest-pricing",
+    image: "CheckCircle",
+    title: "Honest Pricing",
+    description:
+      "Live gold rates and fair make-charges, always. No hidden costs, ever.",
+  },
+];
+
 const WhyChooseUsItem = ({
   item,
   index,
@@ -78,7 +109,8 @@ const WhyChooseUsItem = ({
 
 const WhyChooseUsContent = async () => {
   const data = await getWhyChooseUs();
-  const features: WhyChooseUsData[] = data;
+  const features: WhyChooseUsData[] =
+    data && data.length > 0 ? data : DEFAULT_FEATURES;
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
@@ -126,12 +158,18 @@ const WhyChooseUs = () => {
 
       <div className="section-container relative z-10">
         <div className="mb-6 text-center">
-          <div className="mb-3 inline-flex items-center gap-2">
-            <h2 id="why-choose-us" className="section-heading">
-              Why Choose Us
-            </h2>
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-background px-4 py-1.5 shadow-sm">
+            <Gem size={14} className="text-brand-600" />
+            <span className="fw-cta text-xs uppercase tracking-wider text-brand-700">
+              Jodhpur's Trusted Jeweller
+            </span>
           </div>
 
+          <h2 id="why-choose-us" className="section-heading">
+            Jewellery Walla's Promise
+          </h2>
+
+          {/* Traditional kundan-style motif divider */}
           <div className="mb-4 flex items-center justify-center gap-2">
             <div
               className="h-0.5 w-16 bg-gradient-to-r from-transparent"
@@ -141,7 +179,15 @@ const WhyChooseUs = () => {
               }}
             />
             <div
+              className="h-2 w-2 rotate-45"
+              style={{ backgroundColor: "var(--brand-primary)" }}
+            />
+            <div
               className="h-3 w-3 rounded-full"
+              style={{ backgroundColor: "var(--brand-primary)" }}
+            />
+            <div
+              className="h-2 w-2 rotate-45"
               style={{ backgroundColor: "var(--brand-primary)" }}
             />
             <div
@@ -154,8 +200,9 @@ const WhyChooseUs = () => {
           </div>
 
           <p className="section-subheading">
-            Experience excellence in every aspect of your jewellery shopping
-            experience
+            Hallmarked purity, master karigar craftsmanship and honest pricing —
+            a promise kept for generations, because your jewellery is your
+            family's legacy.
           </p>
         </div>
 

@@ -157,6 +157,7 @@ export default function Checkout() {
           stock: 0,
         }) as ProductData,
         quantity: item.quantity,
+        isPersonalized: fetched?.isPersonalized ?? false,
         color: color ? { _id: color._id, code: color.code ?? "#000", name: color.name } : undefined,
         variantId: undefined,
         variantName: undefined,
@@ -459,6 +460,24 @@ export default function Checkout() {
         return;
       }
 
+      // Personalized items require a name — read the live value from
+      // sessionStorage (the Personalized component writes there) so a name
+      // typed after the form snapshot was taken is still honored.
+      const personalizedName =
+        typeof window !== "undefined"
+          ? (sessionStorage.getItem("personalizedName") ?? "").trim()
+          : "";
+
+      const hasPersonalizedItem = cartItems.some(
+        (item) => item.isPersonalized
+      );
+      if (hasPersonalizedItem && !personalizedName) {
+        toast.error(
+          "Please enter a personalized name before placing your order."
+        );
+        return;
+      }
+
       // Check if user is logged in, if not, open login modal
       if (isGuest) {
         handleGuestCheckout();
@@ -477,6 +496,7 @@ export default function Checkout() {
       const orderPayload = {
         purchaseType,
         ...orderData,
+        isPersonalizedName: personalizedName,
         ...(purchaseType == "direct" && {
         items: (Array.isArray(buyNowItem) ? buyNowItem : [buyNowItem]).map(
           (item) => ({

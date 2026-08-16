@@ -123,7 +123,7 @@ export default async function page({
   return (
     <>
       <div className="min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-8">
           {/* Category Banner — shown at the top of the page */}
           <CategoryBanner
             categorySlug={categorySlug}
@@ -158,7 +158,6 @@ function CategoryHeaderSkeleton({ query, categorySlug, subCategorySlug, subSubCa
         </div>
       </div>
       <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 pb-16">
-        <div className="w-full lg:w-64 shrink-0 h-96 bg-muted rounded-xl animate-pulse" />
         <main className="flex-1">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {[1,2,3,4,5,6,7,8].map(i => (
@@ -301,11 +300,9 @@ async function CategoryContent({
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 pb-16">
-        <div className="lg:sticky lg:top-8 lg:self-start">
-          <FilterSidebar color={color} material={material} />
-        </div>
-        <main className="flex-1 animate-fadeIn">
+      <div className="pb-16">
+        <FilterSidebar color={color} material={material} />
+        <main className="animate-fadeIn">
           <ProductListing />
         </main>
       </div>

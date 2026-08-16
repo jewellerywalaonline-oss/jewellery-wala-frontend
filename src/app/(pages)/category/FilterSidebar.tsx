@@ -2,7 +2,14 @@
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { IndianRupee, X, Flame, Star, Trophy } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+} from "@/components/ui/sheet";
+import { IndianRupee, Flame, Star, Trophy } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef } from "react";
 import {
@@ -78,6 +85,7 @@ export default function FilterSidebar({ color, material }: FilterSidebarProps) {
         priceTo: localPrice.priceTo,
       })
     );
+    onClose();
   };
 
   const clearFilters = () => {
@@ -87,13 +95,6 @@ export default function FilterSidebar({ color, material }: FilterSidebarProps) {
     }
     dispatch(resetFilters());
     setLocalPrice({ priceFrom: 0, priceTo: 100000 });
-  };
-
-  // Close on overlay click
-  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
-      onClose?.();
-    }
   };
 
   //
@@ -109,43 +110,16 @@ export default function FilterSidebar({ color, material }: FilterSidebarProps) {
   }, [pathName]);
 
   return (
-    <>
-      {/* Mobile Overlay */}
-      <div
-        className={`lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[1500] transition-opacity duration-300 ${
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={handleOverlayClick}
-      />
-
-      {/* Sidebar */}
-      <div
-        className={`
-          fixed lg:static inset-y-0 left-0 z-50
-          w-80 bg-background shadow-xl lg:shadow-none
-          flex flex-col h-full border border-border
-          transition-transform duration-300 ease-in-out md:rounded-2xl
-          ${
-            isOpen
-              ? "translate-x-0 z-[1501]"
-              : "-translate-x-full lg:translate-x-0"
-          }
-        `}
+    <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent
+        side="left"
+        className="w-[85vw] sm:w-80 bg-background p-0 z-[999] flex flex-col"
       >
-        {/* Header */}
-        <div className="border-b p-4 ">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-brand-900">Filters</h2>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden hover:bg-brand-100 transition-colors"
-              onClick={onClose}
-            >
-              <X className="h-5 w-5 text-brand-700" />
-            </Button>
-          </div>
-        </div>
+        <SheetHeader className="border-b p-4 pr-12">
+          <SheetTitle className="text-xl fw-heading text-brand-900">
+            Filters
+          </SheetTitle>
+        </SheetHeader>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
@@ -284,26 +258,26 @@ export default function FilterSidebar({ color, material }: FilterSidebarProps) {
               </div>
             </div>
           </div>
-
-          {/* Action Buttons */}
-          <div className="space-y-3 pb-4">
-            <Button
-              onClick={applyPriceFilter}
-              variant="gradient"
-              className="w-full fw-cta shadow-sm transition-all duration-200"
-            >
-              Apply Filters
-            </Button>
-            <Button
-              onClick={clearFilters}
-              variant="outline"
-              className="w-full border-brand-300 text-brand-700 hover:bg-brand-50 hover:border-brand-400 transition-all duration-200"
-            >
-              Clear All
-            </Button>
-          </div>
         </div>
-      </div>
-    </>
+
+        {/* Action Buttons */}
+        <SheetFooter className="border-t p-4">
+          <Button
+            onClick={applyPriceFilter}
+            variant="gradient"
+            className="w-full fw-cta shadow-sm transition-all duration-200"
+          >
+            Apply Filters
+          </Button>
+          <Button
+            onClick={clearFilters}
+            variant="outline"
+            className="w-full border-brand-300 text-brand-700 hover:bg-brand-50 hover:border-brand-400 transition-all duration-200"
+          >
+            Clear All
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }

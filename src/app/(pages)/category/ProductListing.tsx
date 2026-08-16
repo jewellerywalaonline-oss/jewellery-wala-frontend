@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { openSidebar } from "@/redux/features/uiSlice";
+import { toggleSidebar } from "@/redux/features/uiSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Loader, LayoutGrid, List } from "lucide-react";
 import type { RootState } from "@/redux/store/store";
@@ -27,7 +27,6 @@ export default function ProductListing() {
   const subSubCategorySlug = searchParams.slug[2];
 
   const [selectedSort, setSelectedSort] = useState<string>();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [gridLayout, setGridLayout] = useState("normal");
 
   const observerTarget = useRef<HTMLDivElement | null>(null);
@@ -37,17 +36,31 @@ export default function ProductListing() {
     useSelector((state: RootState) => state.filters);
 
   // ── Filter params (memoized to avoid stale closures) ────────────────
-  const filterParams = useMemo(() => ({
-    categorySlug,
-    subCategorySlug: category.length > 0 ? category : (subCategorySlug ?? ""),
-    subSubCategorySlug: category.length > 0 ? "" : (subSubCategorySlug ?? ""),
-    colorIds: color,
-    materialIds: material,
-    priceFrom,
-    priceTo,
-    quickFilter,
-    searchQuery: search,
-  }), [categorySlug, subCategorySlug, subSubCategorySlug, color, material, priceFrom, priceTo, category, quickFilter, search]);
+  const filterParams = useMemo(
+    () => ({
+      categorySlug,
+      subCategorySlug: category.length > 0 ? category : (subCategorySlug ?? ""),
+      subSubCategorySlug: category.length > 0 ? "" : (subSubCategorySlug ?? ""),
+      colorIds: color,
+      materialIds: material,
+      priceFrom,
+      priceTo,
+      quickFilter,
+      searchQuery: search,
+    }),
+    [
+      categorySlug,
+      subCategorySlug,
+      subSubCategorySlug,
+      color,
+      material,
+      priceFrom,
+      priceTo,
+      category,
+      quickFilter,
+      search,
+    ],
+  );
 
   // ── React Query infinite scroll ────────────────────────────────────
   const {
@@ -74,7 +87,11 @@ export default function ProductListing() {
     if (!allProducts.length) return [];
     const sorted = [...allProducts];
     if (selectedSort === "newest") {
-      sorted.sort((a, b) => new Date(b.createdAt ?? "").getTime() - new Date(a.createdAt ?? "").getTime());
+      sorted.sort(
+        (a, b) =>
+          new Date(b.createdAt ?? "").getTime() -
+          new Date(a.createdAt ?? "").getTime(),
+      );
     } else if (selectedSort === "low") {
       sorted.sort((a, b) => a.price - b.price);
     } else if (selectedSort === "high") {
@@ -87,13 +104,6 @@ export default function ProductListing() {
     return sorted;
   }, [allProducts, selectedSort]);
 
-  // ── Scroll effect ──────────────────────────────────────────────────
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 350);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   // ── Infinite scroll observer ───────────────────────────────────────
   useEffect(() => {
     const target = observerTarget.current;
@@ -101,11 +111,16 @@ export default function ProductListing() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage && !isLoading) {
+        if (
+          entries[0].isIntersecting &&
+          hasNextPage &&
+          !isFetchingNextPage &&
+          !isLoading
+        ) {
           fetchNextPage();
         }
       },
-      { threshold: 0.1, rootMargin: "100px" }
+      { threshold: 0.1, rootMargin: "100px" },
     );
 
     observer.observe(target);
@@ -113,14 +128,16 @@ export default function ProductListing() {
   }, [hasNextPage, isFetchingNextPage, isLoading, fetchNextPage]);
 
   const toggle = () => {
-    dispatch(openSidebar());
+    dispatch(toggleSidebar());
   };
 
   if (isError) {
     return (
       <div className="text-center py-16">
         <p className="text-destructive text-lg mb-2">Failed to load products</p>
-        <p className="text-muted-foreground text-sm">Please try adjusting your filters or refresh the page.</p>
+        <p className="text-muted-foreground text-sm">
+          Please try adjusting your filters or refresh the page.
+        </p>
       </div>
     );
   }
@@ -172,19 +189,8 @@ export default function ProductListing() {
         <div className={`flex items-center gap-3`}>
           <Button
             variant="outline"
-            className={`lg:hidden ${
-              isScrolled && !isOpen
-                ? "block animate-slide-in fixed top-[12%] z-[500] left-[10px]"
-                : "hidden animate-slide-out"
-            }`}
             onClick={toggle}
-          >
-            Filter
-          </Button>
-          <Button
-            variant="outline"
-            className={`block lg:hidden`}
-            onClick={toggle}
+            aria-expanded={isOpen}
           >
             Filter
           </Button>
@@ -209,7 +215,7 @@ export default function ProductListing() {
             className={`grid gap-2 sm:gap-3 md:gap-3 lg:gap-5 animate-fade-in duration-100 sm:px-0 ${
               gridLayout === "single"
                 ? "grid-cols-1 max-w-md mx-auto"
-                : "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3"
+                : "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
             }`}
           >
             {sortedProducts.map((p, index) => (
