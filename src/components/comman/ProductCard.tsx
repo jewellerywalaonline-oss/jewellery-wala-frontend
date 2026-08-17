@@ -1,23 +1,19 @@
 "use client";
-import { Heart, ShoppingCart, Star, Loader2, Sparkles } from "lucide-react";
+import { Heart, ArrowRight, Star, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getAuthToken } from "@/lib/cookies";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../redux/features/cart";
+import { setBuyNowItem } from "../../redux/features/cart";
 import { useSelector } from "react-redux";
 import { addToWishlist, removeFromWishlist } from "@/redux/features/wishlist";
 import type { ProductData } from "@/types";
 import type { RootState } from "@/redux/store/store";
 
 export default function ProductCard({ data }: { data: ProductData }) {
-  const cartItem = useSelector((state: RootState) =>
-    (state.cart?.cartItems ?? []).find((item) => item.productId === data?._id),
-  );
-
-  const [loading, setLoading] = useState(false);
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -28,15 +24,7 @@ export default function ProductCard({ data }: { data: ProductData }) {
   );
 
   const dispatch = useDispatch();
-
-  const cartObj = {
-    productId: data?._id,
-    slug: data?.slug,
-    quantity:
-      cartItem && typeof cartItem.quantity === "number" ? cartItem.quantity : 1,
-    colorId: data?.colors?.[0]?._id,
-    sizeId: data?.sizes?.[0]?._id,
-  };
+  const router = useRouter();
 
   const displayPrice = data?.price;
   const displayCurrentPrice = data?.discount_price;
@@ -172,46 +160,27 @@ export default function ProductCard({ data }: { data: ProductData }) {
     }
   };
 
-  const handleAddToCart = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (loading || outOfStock) return;
+  // Buy Now — mirrors the product detail page: builds a lean direct-purchase
+  // item (first color / first size by default), stores it in redux, and goes
+  // straight to /checkout?type=direct. The server re-derives price, stock and
+  // variant data at order time, so this payload is purely a selection hint.
+  const handleBuyNow = () => {
+    if (outOfStock) return;
 
-    const isLoggedIn = !!getAuthToken();
-
-    setLoading(true);
-
-    if (isLoggedIn) {
-      try {          const response = await fetch(
-          "/api/website/cart/add",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${getAuthToken()}`,
-            },
-            body: JSON.stringify(cartObj),
-          },
-        );
-        const responseData = await response.json();
-        if (response.ok || responseData._status) {
-          dispatch(addToCart(cartObj));
-          toast.success(responseData._message);
-        } else {
-          toast.error(responseData._message);
-        }
-      } catch (err) {
-        const serverErr = err as { response?: { data?: { message?: string } }; message?: string };
-        toast.error(
-          serverErr?.response?.data?.message || (err instanceof Error ? err.message : "Something went wrong"),
-        );
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      dispatch(addToCart({ ...cartObj, isGuest: true }));
-      toast.success("Added to cart");
-      setLoading(false);
+    const buyNowItem: Record<string, unknown> = {
+      productId: data?._id,
+      slug: data?.slug,
+      quantity: 1,
+    };
+    if (data?.colors?.[0]?._id) {
+      buyNowItem.colorId = data.colors[0]._id;
     }
+    if (data?.sizes?.[0]?._id) {
+      buyNowItem.sizeId = data.sizes[0]._id;
+      buyNowItem.sizeName = data.sizes[0].name || null;
+    }
+    dispatch(setBuyNowItem(buyNowItem));
+    router.push("/checkout?type=direct");
   };
 
   return (
@@ -435,31 +404,21 @@ export default function ProductCard({ data }: { data: ProductData }) {
           </div>
         )}
 
-        {/* 7. Add to Cart */}
+        {/* 7. Buy Now */}
         <button
-          disabled={loading || outOfStock}
+          disabled={outOfStock}
           className="w-full h-11 rounded-xl text-sm fw-cta bg-brand-500 text-white
                    flex items-center justify-center gap-2
                    shadow-sm hover:bg-brand-600 hover:shadow-md active:scale-[0.98]
                    disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-sm disabled:hover:bg-brand-500 disabled:active:scale-100
                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-2
                    transition-all duration-300"
-          onClick={handleAddToCart}
-          aria-label={`Add ${data.name} to cart`}
+          onClick={handleBuyNow}
+          aria-label={`Buy ${data.name} now`}
           type="button"
         >
-          {loading ? (
-            <Loader2 size={16} className="animate-spin" aria-hidden="true" />
-          ) : (
-            <ShoppingCart size={16} aria-hidden="true" />
-          )}
-          <span>
-            {loading
-              ? "Adding..."
-              : outOfStock
-                ? "Out of Stock"
-                : "Add to Cart"}
-          </span>
+          <span>{outOfStock ? "Out of Stock" : "Buy Now"}</span>
+          <ArrowRight size={16} aria-hidden="true" />
         </button>
       </div>
     </article>

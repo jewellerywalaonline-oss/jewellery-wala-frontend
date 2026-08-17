@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { ShoppingCart, ShoppingBag, Heart, Loader2, Zap } from "lucide-react";
+import { ShoppingCart, ShoppingBag, Heart, Loader2 } from "lucide-react";
 
 interface ActionButtonsProps {
   loading: boolean;
@@ -48,7 +48,7 @@ export default function ActionButtons({
                  disabled:opacity-50 disabled:cursor-not-allowed
                  transition-all duration-300 text-sm tracking-wider shadow-md hover:shadow-lg active:shadow-sm"
       >
-        <Zap size={17} />
+        <ShoppingBag size={17} />
         <span>Buy Now</span>
       </motion.button>
 
@@ -75,11 +75,7 @@ export default function ActionButtons({
             </motion.div>
           ) : (
             <>
-              {isOutOfStock ? (
-                <ShoppingCart size={17} className="opacity-60" />
-              ) : (
-                <ShoppingBag size={17} />
-              )}
+              <ShoppingCart size={17} className={isOutOfStock ? "opacity-60" : ""} />
               <span>{isOutOfStock ? "Out of Stock" : "Add to Cart"}</span>
             </>
           )}
